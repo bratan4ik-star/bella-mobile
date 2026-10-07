@@ -5,9 +5,9 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#f2f2f3",
-  "theme_color": "#5980a6",
+  "orientation": "any",
+  "background_color": "#161826",
+  "theme_color": "#161826",
   "icons": [
     {
       "src": "icon-192.png",
@@ -18,7 +18,15 @@
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "id": "./",
+  "description": "Особистий фінансовий менеджер"
 }
