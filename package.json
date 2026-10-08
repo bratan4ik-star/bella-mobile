@@ -1,0 +1,7 @@
+{
+  "name": "fin-manager",
+  "private": true,
+  "type": "module",
+  "scripts": { "test": "node tests/smoke.mjs" },
+  "devDependencies": { "playwright": "^1.56.0" }
+}

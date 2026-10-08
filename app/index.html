@@ -51,8 +51,8 @@
 <div class="sc" style="{{ scPad }}flex:1;overflow:auto">
 
 <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-<sc-if value="{{ showWelcome }}" hint-placeholder-val="{{ false }}"><div style="border:1px solid var(--a);padding:14px;margin:6px 0 14px"><div style="font:600 20px var(--font-heading)">Почати з нуля?</div><div style="font-size:13px;color:var(--m);margin:4px 0 12px">Зараз у застосунку приклад даних. Можна очистити його й ввести свої операції, активи та цілі.</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onClick="{{ startFresh }}" style="padding:12px 8px;border:1px solid var(--a);background:var(--a);color:var(--ab);border-radius:0;font:500 14px var(--font-body)">Почати з нуля</button><button onClick="{{ keepDemo }}" style="padding:12px 8px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 14px var(--font-body)">Залишити приклад</button></div></div></sc-if>
-<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0 10px"><div style="display:flex;align-items:center;gap:10px"><button onClick="{{ openMenu }}" aria-label="Меню" style="display:{{ menuBtnDisp }};width:44px;height:44px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;place-items:center;flex:none">{{ iMenu }}</button><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Жовтень 2026</div></div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0 10px"><div style="display:flex;align-items:center;gap:10px"><button onClick="{{ openMenu }}" aria-label="Меню" style="display:{{ menuBtnDisp }};width:44px;height:44px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;place-items:center;flex:none">{{ iMenu }}</button><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Жовтень 2026</div></div>
 <div style="display:flex;align-items:center;gap:8px">
 <button onClick="{{ openSet }}" aria-label="Налаштування" style="width:44px;height:44px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;display:grid;place-items:center">{{ iSet }}</button>
 <button onClick="{{ openHelp }}" aria-label="Довідка" style="width:44px;height:44px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;display:grid;place-items:center">{{ iHelp }}</button></div></div>
@@ -60,17 +60,18 @@
 <button onClick="{{ toggleHide }}" aria-label="{{ hideLabel }}" aria-pressed="{{ s.hide }}" style="display:flex;align-items:center;gap:6px;height:44px;padding:0 4px;border:0;background:transparent;color:var(--a7);font:500 12px var(--font-body)">{{ iEye }}{{ hideLabel }}</button></div>
 <div style="position:relative;border:1px solid var(--d);padding:16px;margin-bottom:18px">
 <i class="corner tl" style="position:absolute;top:-6px;left:-6px;width:11px;height:11px;color:var(--m)"></i>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Загальний капітал</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Загальний капітал</div>
 <div style="font:600 50px/1 var(--font-heading);letter-spacing:-.02em;margin:6px 0 2px">{{ nwText }} <span style="font-size:26px;color:var(--a7)">{{ sym }}</span></div>
-<div style="font-size:13px;color:var(--a7);font-weight:500">{{ nwDelta }} {{ sym }} · {{ nwPct }}% за місяць</div>
-<svg viewBox="0 0 300 64" style="width:100%;height:64px;margin-top:12px;display:block"><polyline points="{{ spark }}" fill="none" stroke="var(--a)" stroke-width="1.5"></polyline></svg>
+<sc-if value="{{ hasBase }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--a7);font-weight:500">{{ nwDelta }} {{ sym }} · {{ nwPct }}% за місяць</div></sc-if>
+<sc-if value="{{ noBase }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m)">Динаміка з'явиться, коли накопичаться знімки за кілька днів</div></sc-if>
+<sc-if value="{{ hasSpark }}" hint-placeholder-val="{{ true }}"><svg viewBox="0 0 300 64" style="width:100%;height:64px;margin-top:12px;display:block"><polyline points="{{ spark }}" fill="none" stroke="var(--a)" stroke-width="1.5"></polyline></svg></sc-if>
 </div>
 <sc-if value="{{ vFeed }}" hint-placeholder-val="{{ true }}">
 <div style="display:flex;flex-direction:column;gap:14px">
 <sc-for list="{{ homeCards }}" as="c" hint-placeholder-count="6">
 <button onClick="{{ c.go }}" style="position:relative;text-align:left;border:1px solid var(--d);background:transparent;color:var(--t);padding:14px;border-radius:0;display:flex;flex-direction:column;gap:8px">
 <i class="corner tr" style="position:absolute;top:-6px;right:-6px;width:11px;height:11px;color:var(--m)"></i>
-<div style="display:flex;justify-content:space-between;align-items:center;color:var(--a7)"><span style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase">{{ c.label }}</span>{{ c.icon }}</div>
+<div style="display:flex;justify-content:space-between;align-items:center;color:var(--a7)"><span style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase">{{ c.label }}</span>{{ c.icon }}</div>
 <div style="font:600 34px/1 var(--font-heading);letter-spacing:-.015em">{{ c.value }}</div>
 <div style="font-size:13px;color:var(--m)">{{ c.sub }}</div>
 </button></sc-for></div>
@@ -80,7 +81,7 @@
 <sc-for list="{{ homeCards }}" as="c" hint-placeholder-count="6">
 <button onClick="{{ c.go }}" style="text-align:left;border:0;border-right:1px solid var(--d);border-bottom:1px solid var(--d);background:transparent;color:var(--t);padding:14px 12px;border-radius:0;min-height:128px;display:flex;flex-direction:column;justify-content:space-between;gap:10px">
 <span style="color:var(--a7)">{{ c.icon }}</span>
-<span><span style="display:block;font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">{{ c.label }}</span><span style="display:block;font:600 24px/1.1 var(--font-heading);margin-top:2px">{{ c.value }}</span></span></button></sc-for></div>
+<span><span style="display:block;font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">{{ c.label }}</span><span style="display:block;font:600 24px/1.1 var(--font-heading);margin-top:2px">{{ c.value }}</span></span></button></sc-for></div>
 </sc-if>
 <sc-if value="{{ vSpec }}" hint-placeholder-val="{{ false }}">
 <div style="border-top:1px solid var(--t)">
@@ -98,40 +99,68 @@
 <div style="text-align:center"><div style="font:600 22px var(--font-heading)">{{ monthLabel }}</div><button onClick="{{ monthAll }}" style="border:0;background:transparent;color:var(--a7);font:500 12px var(--font-body);text-decoration:underline">{{ monthAllLabel }}</button></div>
 <button onClick="{{ monthNext }}" aria-label="Наступний місяць" style="width:44px;height:44px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;display:grid;place-items:center">{{ iR }}</button></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-<div style="border:1px solid var(--d);padding:12px"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Доходи</div><div style="font:600 26px/1.1 var(--font-heading);color:var(--a7)">+{{ incText }}</div></div>
-<div style="border:1px solid var(--d);padding:12px"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Витрати</div><div style="font:600 26px/1.1 var(--font-heading)">−{{ expText }}</div></div></div>
+<div style="border:1px solid var(--d);padding:12px"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Доходи</div><div style="font:600 26px/1.1 var(--font-heading);color:var(--a7)">+{{ incText }}</div></div>
+<div style="border:1px solid var(--d);padding:12px"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Витрати</div><div style="font:600 26px/1.1 var(--font-heading)">−{{ expText }}</div></div></div>
 <div style="display:flex;justify-content:space-between;align-items:baseline;padding:12px 0 6px"><span style="font-size:13px;color:var(--m)">Чистий баланс</span><span style="font:600 24px var(--font-heading)">{{ balText }}</span></div>
 <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--m)"><span>Використання доходу на витрати</span><b>{{ usePct }}%</b></div>
 <div style="height:4px;background:var(--d);margin:6px 0 16px"><div style="height:4px;background:var(--a);width:{{ useBar }}%"></div></div>
 
+<div style="display:flex;border:1px solid var(--d);margin:8px 0 4px"><sc-for list="{{ bTabs }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="flex:1;min-height:44px;padding:0 4px;border:0;border-radius:0;font:500 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
+<sc-if value="{{ tOv }}" hint-placeholder-val="{{ true }}">
 <div style="position:relative;border:1px solid var(--a);padding:14px;margin-bottom:16px"><i style="position:absolute;top:-4px;left:-4px;width:7px;height:7px;border-top:1px solid var(--a);border-left:1px solid var(--a)"></i><i style="position:absolute;bottom:-4px;right:-4px;width:7px;height:7px;border-bottom:1px solid var(--a);border-right:1px solid var(--a)"></i>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Вільно до кінця місяця</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Вільно до кінця місяця</div>
 <div style="font:600 34px/1.1 var(--font-heading);color:{{ freeCol }};margin-top:2px">{{ freeText }}</div>
 <div style="font-size:13px;color:var(--m);margin-top:2px">≈ {{ perDayText }} на день · лишилось днів: {{ daysLeft }}</div>
 <div style="display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:13px;margin-top:12px;padding-top:10px;border-top:1px solid var(--d)"><span style="color:var(--m)">Доходи місяця</span><span>+{{ fInc }}</span><span style="color:var(--m)">Витрати місяця</span><span>−{{ fExp }}</span><span style="color:var(--m)">Повторювані, що ще будуть</span><span>−{{ fRec }}</span><span style="color:var(--m)">Залишок лімітів</span><span>−{{ fLim }}</span></div>
 <div style="display:flex;justify-content:space-between;font-size:13px;margin-top:10px;padding-top:10px;border-top:1px solid var(--d)"><span style="color:var(--m)">Норма заощаджень</span><b>{{ saveRate }}%</b></div></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding-bottom:6px">Структура витрат</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding-bottom:6px">Структура витрат</div>
 <sc-for list="{{ catBars }}" as="b" hint-placeholder-count="3"><div style="padding:5px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>{{ b.label }}</span><span style="color:var(--m)">{{ b.val }} · {{ b.pct }}%</span></div><div style="height:3px;background:var(--d);margin-top:4px"><div style="height:3px;background:var(--a);width:{{ b.pct }}%"></div></div></div></sc-for>
 <sc-if value="{{ noCatBars }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m)">Витрат за період немає. Додайте операцію, і тут з'явиться розподіл за категоріями.</div></sc-if>
 
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Динаміка по місяцях</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Динаміка по місяцях</div>
 <sc-for list="{{ dynBars }}" as="d" hint-placeholder-count="3"><div style="display:grid;grid-template-columns:34px 1fr;gap:8px;align-items:center;padding:4px 0"><span style="font-size:12px;color:var(--m)">{{ d.label }}</span><div><div style="height:6px;background:var(--a);width:{{ d.ip }}%"></div><div style="height:6px;background:var(--m);margin-top:3px;width:{{ d.ep }}%"></div></div></div></sc-for>
 <div style="display:flex;gap:14px;font-size:11px;color:var(--m);padding-top:4px"><span><b style="color:var(--a)">▬</b> доходи</span><span>▬ витрати</span></div>
 
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Ліміти витрат, ₴ · {{ limMonth }}</div>
+</sc-if>
+<sc-if value="{{ tRep }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Звіт за період, {{ sym }}</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px"><sc-for list="{{ repSeg }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="padding:4px 10px;min-height:44px;border:1px solid var(--d);border-radius:0;font:500 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
+<sc-if value="{{ repHas }}" hint-placeholder-val="{{ true }}">
+<div style="display:grid;grid-template-columns:52px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:6px;font-size:11px;color:var(--m);padding:4px 0;border-bottom:1px solid var(--d)"><span>Місяць</span><span style="text-align:right">Доходи</span><span style="text-align:right">Витрати</span><span style="text-align:right">Баланс</span></div>
+<sc-for list="{{ repRows }}" as="r" hint-placeholder-count="6"><div style="padding:6px 0;border-bottom:1px solid var(--d)"><div style="display:grid;grid-template-columns:52px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:6px;font-size:13px"><span style="color:var(--m)">{{ r.label }}</span><span style="text-align:right">{{ r.inc }}</span><span style="text-align:right">{{ r.exp }}</span><b style="text-align:right;font-weight:600;color:{{ r.col }}">{{ r.net }}</b></div><div style="margin-top:4px"><div style="height:3px;background:var(--a);width:{{ r.ip }}%"></div><div style="height:3px;background:var(--m);margin-top:2px;width:{{ r.ep }}%"></div></div></div></sc-for>
+<div style="display:grid;grid-template-columns:52px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:6px;font-size:13px;font-weight:600;padding:8px 0"><span>Разом</span><span style="text-align:right">{{ repTot.inc }}</span><span style="text-align:right">{{ repTot.exp }}</span><span style="text-align:right">{{ repTot.net }}</span></div>
+<div style="font-size:12px;color:var(--m);padding-bottom:6px">Норма заощаджень за період: {{ repTot.rate }}</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:12px 0 4px">Витрати за категоріями</div>
+<sc-for list="{{ repCats }}" as="c" hint-placeholder-count="5"><div style="padding:5px 0"><div style="display:flex;justify-content:space-between;gap:8px;font-size:13px"><span>{{ c.c }}</span><span>{{ c.v }} · {{ c.share }}</span></div><div style="height:3px;background:var(--d);margin-top:3px"><div style="height:3px;background:var(--m);width:{{ c.w }}%"></div></div><div style="font-size:11px;color:var(--m);margin-top:2px">у середньому {{ c.avg }} на місяць</div></div></sc-for>
+<sc-if value="{{ repNoCats }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m)">Витрат за цей період немає.</div></sc-if>
+<button onClick="{{ expXlsx }}" style="width:100%;margin-top:10px;padding:12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Експорт у Excel (.xlsx)</button>
+</sc-if>
+<sc-if value="{{ repNone }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m)">Додайте першу операцію або імпортуйте виписку, і тут з'явиться звіт.</div></sc-if>
+</sc-if>
+
+<sc-if value="{{ tSet }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Ліміти витрат, ₴ · {{ limMonth }}</div>
 <sc-for list="{{ limRows }}" as="l" hint-placeholder-count="3"><div style="padding:8px 0;border-bottom:1px solid var(--d)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="flex:1">{{ l.cat }}</span><span style="font-size:13px;color:{{ l.col }}">{{ l.spent }} з</span><input type="number" aria-label="Ліміт" value="{{ l.limit }}" onInput="{{ l.set }}" style="width:84px;padding:6px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body);text-align:right"></div><div style="height:3px;background:var(--d);margin-top:6px"><div style="height:3px;background:{{ l.col }};width:{{ l.pct }}%"></div></div></div></sc-for>
 
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Фільтри</div>
+</sc-if>
+<sc-if value="{{ tOps }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Фільтри</div>
 <div style="display:flex;border:1px solid var(--d)"><sc-for list="{{ typeFilter }}" as="f" hint-placeholder-count="3"><button onClick="{{ f.go }}" style="flex:1;padding:10px 0;border:0;border-radius:0;font:500 13px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
 <select aria-label="Категорія" value="{{ s.fCat }}" onChange="{{ h.fCat }}" style="padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body)"><option value="">Усі категорії</option><sc-for list="{{ catOptions }}" as="o"><option value="{{ o.v }}">{{ o.v }}</option></sc-for></select>
 <select aria-label="Валюта" value="{{ s.fCur }}" onChange="{{ h.fCur }}" style="padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body)"><option value="">Усі валюти</option><option value="UAH">UAH</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="PLN">PLN</option></select></div>
+<sc-if value="{{ hasAcc }}" hint-placeholder-val="{{ false }}"><select aria-label="Рахунок" value="{{ s.fAcc }}" onChange="{{ setFAcc }}" style="margin-top:10px;padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body);width:100%"><option value="">Усі рахунки</option><sc-for list="{{ accOpts }}" as="o"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></sc-if>
 <input type="text" aria-label="Пошук" placeholder="Пошук за описом, напр. Сільпо" value="{{ s.fSearch }}" onInput="{{ h.fSearch }}" style="width:100%;margin-top:10px;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)">
-<div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 4px"><span style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Історія операцій · {{ txCount }}</span><button onClick="{{ resetFilters }}" style="border:0;background:transparent;color:var(--a7);font:500 12px var(--font-body);text-decoration:underline;padding:8px 0">Скинути</button></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 4px"><span style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Історія операцій · {{ txCount }}</span><span style="display:flex;gap:14px;align-items:center"><button onClick="{{ toggleSelMode }}" style="border:0;background:transparent;color:var(--a7);font:600 12px var(--font-body);padding:8px 0">{{ selLabel }}</button><button onClick="{{ resetFilters }}" style="border:0;background:transparent;color:var(--a7);font:500 12px var(--font-body);text-decoration:underline;padding:8px 0">Скинути</button></span></div>
+<sc-if value="{{ selMode }}" hint-placeholder-val="{{ false }}"><div style="border:1px solid var(--a);padding:10px;margin:4px 0 8px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px"><span>Вибрано: {{ selCount }}</span><span style="display:flex;gap:6px"><button onClick="{{ selAllGo }}" style="padding:6px 10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">Усі видимі</button><button onClick="{{ selClear }}" style="padding:6px 10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">Зняти</button></span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px"><select aria-label="Нова категорія" value="{{ s.selCat }}" onChange="{{ setSelCat }}" style="min-width:0;padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body)"><option value="">Нова категорія…</option><sc-for list="{{ selCats }}" as="o"><option value="{{ o.v }}">{{ o.v }}</option></sc-for></select><button onClick="{{ selApply }}" style="padding:10px 14px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Змінити</button></div>
+<button onClick="{{ selDel }}" style="padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">{{ selDelLabel }}</button>
+<div style="font-size:12px;color:var(--m)">Торкніться операцій у списку, щоб вибрати. Зміни можна скасувати в журналі.</div></div></sc-if>
 <sc-if value="{{ wideList }}" hint-placeholder-val="{{ false }}">
 <div style="margin-top:6px;border:1px solid var(--d)">
 <div style="display:grid;grid-template-columns:84px minmax(0,1.5fr) minmax(0,1fr) 120px 100px 44px;align-items:center;border-bottom:1px solid var(--t);background:transparent">
-<sc-for list="{{ colHdrs }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.go }}" style="padding:12px 10px;border:0;border-radius:0;background:transparent;color:{{ c.col }};font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;text-align:{{ c.al }}">{{ c.label }}{{ c.arrow }}</button></sc-for><span></span></div>
+<sc-for list="{{ colHdrs }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.go }}" style="padding:12px 10px;border:0;border-radius:0;background:transparent;color:{{ c.col }};font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;text-align:{{ c.al }}">{{ c.label }}{{ c.arrow }}</button></sc-for><span></span></div>
 <sc-for list="{{ txList }}" as="t" hint-placeholder-count="5">
 <div style="display:grid;grid-template-columns:84px minmax(0,1.5fr) minmax(0,1fr) 120px 100px 44px;align-items:center;border-bottom:1px solid var(--d)" >
 <button onClick="{{ t.edit }}" style="display:contents;color:var(--t);text-align:left"><span style="padding:12px 10px;font-size:13px;color:var(--m)">{{ t.dateFull }}</span><span style="padding:12px 10px;font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.desc }}</span><span style="padding:12px 10px;font-size:13px;color:var(--m)">{{ t.cat }}</span><span style="padding:12px 10px;text-align:right;font:600 18px var(--font-heading);color:{{ t.col }}">{{ t.amt }}</span><span style="padding:12px 10px;text-align:right;font-size:12px;color:var(--m)">{{ t.conv }}</span></button>
@@ -147,25 +176,63 @@
 <button onClick="{{ t.del }}" aria-label="Видалити операцію" style="width:44px;height:44px;border:0;background:transparent;color:var(--m);display:grid;place-items:center">{{ iTrash }}</button></div></sc-for>
 </sc-if>
 <sc-if value="{{ noTx }}" hint-placeholder-val="{{ false }}"><div style="padding:28px 0;text-align:center;color:var(--m)"><div style="font:600 20px var(--font-heading);color:var(--t)">{{ emptyTitle }}</div><div style="font-size:13px;margin:4px 0 14px">{{ emptyHint }}</div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button onClick="{{ openAdd }}" style="padding:12px 16px;border:1px solid var(--a);background:var(--a);color:var(--ab);border-radius:0;font:600 13px var(--font-body)">Додати першу операцію</button><button onClick="{{ goImport }}" style="padding:12px 16px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">Імпортувати виписку</button></div></div></sc-if>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:20px 0 4px">Повторювані щомісяця</div>
+</sc-if>
+<sc-if value="{{ tSet }}" hint-placeholder-val="{{ false }}">
+<details style="border:1px solid var(--d);padding:10px;margin-top:20px"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Правила категорій · {{ rulesCount }}</summary>
+<div style="font-size:12px;color:var(--m);line-height:1.45;margin:8px 0">Якщо опис операції містить вказаний текст, їй призначається категорія. Правила діють під час імпорту виписки й за кнопкою нижче. Категорії ОВДП, Депозит, ETF і Криптовалюта сюди не входять: вони прив'язуються до інвестицій окремо.</div>
+<sc-for list="{{ ruleRows }}" as="r" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--d)"><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis">«{{ r.t }}» → <b style="font-weight:600">{{ r.c }}</b></span><button onClick="{{ r.del }}" aria-label="Видалити правило" style="width:44px;height:44px;border:0;background:transparent;color:var(--m);display:grid;place-items:center">{{ iTrash }}</button></div></sc-for>
+<sc-if value="{{ noRules }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m);padding:4px 0">Правил ще немає.</div></sc-if>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:8px"><input type="text" aria-label="Текст в описі" placeholder="Текст в описі, напр. Сільпо" value="{{ s.rlTxt }}" onInput="{{ setRlTxt }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"><select aria-label="Категорія правила" value="{{ s.rlCat }}" onChange="{{ setRlCat }}" style="min-width:0;padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body)"><sc-for list="{{ ruleCats }}" as="o"><option value="{{ o.v }}">{{ o.v }}</option></sc-for></select></div>
+<button onClick="{{ addRule }}" style="width:100%;margin-top:8px;padding:10px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Додати правило</button>
+<div style="display:flex;border:1px solid var(--d);margin-top:12px"><sc-for list="{{ rlScopeSeg }}" as="f" hint-placeholder-count="2"><button onClick="{{ f.go }}" style="flex:1;padding:10px 0;border:0;border-radius:0;font:500 13px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
+<button onClick="{{ rlApply }}" style="width:100%;margin-top:8px;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">{{ rlApplyLabel }}</button></details>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:20px 0 4px">Повторювані щомісяця</div>
 <sc-for list="{{ recRows }}" as="r" hint-placeholder-count="1"><div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--d)"><span>{{ r.desc }} <span style="color:var(--m);font-size:12px">· {{ r.day }}-го · {{ r.amt }}</span></span><button onClick="{{ r.del }}" aria-label="Видалити шаблон" style="width:44px;height:44px;border:0;background:transparent;color:var(--m);display:grid;place-items:center">{{ iTrash }}</button></div></sc-for>
 <sc-if value="{{ noRec }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m)">Позначте «Повторювати щомісяця» у формі операції</div></sc-if>
 </sc-if>
+</sc-if>
 
 <sc-if value="{{ isNw }}" hint-placeholder-val="{{ false }}">
-<div style="padding-top:16px"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Усього</div>
+<div style="padding-top:16px"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Усього</div>
 <div style="font:600 50px/1 var(--font-heading);letter-spacing:-.02em">{{ nwText }} {{ sym }}</div>
 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0"><div style="border:1px solid var(--d);padding:8px"><div style="font-size:11px;color:var(--m)">Готівка</div><b style="font:600 17px var(--font-heading)">{{ cashText }}</b></div><div style="border:1px solid var(--d);padding:8px"><div style="font-size:11px;color:var(--m)">Інвестиції</div><b style="font:600 17px var(--font-heading)">{{ invText }}</b></div><div style="border:1px solid var(--d);padding:8px"><div style="font-size:11px;color:var(--m)">Скарбнички</div><b style="font:600 17px var(--font-heading)">{{ goalsText }}</b></div></div>
-<div style="border:1px solid var(--d);padding:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Динаміка капіталу</span>
+<div style="font-size:13px;color:var(--a7);margin:-4px 0 10px"><sc-if value="{{ hasDebtNote }}" hint-placeholder-val="{{ false }}"><span>Борги враховано в капіталі: {{ debtNote }}</span></sc-if></div>
+<details open="{{ accOpenV }}" style="border:1px solid var(--d);padding:10px;margin-bottom:12px"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Рахунки · {{ accCount }}</summary>
+<sc-for list="{{ accRows }}" as="a" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--d)"><span style="flex:1;min-width:0"><span style="display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis">{{ a.name }}</span><span style="display:block;font-size:12px;color:var(--m)">{{ a.sub }}</span></span><b style="font:600 17px var(--font-heading)">{{ a.bal }}</b><button onClick="{{ a.del }}" aria-label="Видалити рахунок" style="min-width:44px;height:44px;border:0;background:transparent;color:var(--m);font:500 12px var(--font-body)">{{ a.delText }}</button></div></sc-for>
+<sc-if value="{{ hasUn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between;gap:8px;padding:8px 0;border-bottom:1px solid var(--d);font-size:13px;color:var(--m)"><span>Без рахунку (інші операції та початковий залишок)</span><span>{{ unText }}</span></div></sc-if>
+<sc-if value="{{ noAcc }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--m);line-height:1.45;padding:6px 0">Рахунків ще немає. Додайте картки й готівку, і вони підуть у капітал окремими рядками. Операції без рахунку враховуються як раніше.</div></sc-if>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:8px;margin-top:8px"><input type="text" aria-label="Назва рахунку" placeholder="Назва рахунку" value="{{ s.naName }}" onInput="{{ setNaName }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"><select aria-label="Валюта рахунку" value="{{ s.naCur }}" onChange="{{ setNaCur }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body)"><option value="UAH">UAH</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="PLN">PLN</option></select></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:8px"><input type="number" step="any" inputmode="decimal" aria-label="Початковий залишок рахунку" placeholder="Залишок" value="{{ s.naOpen }}" onInput="{{ setNaOpen }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"><button onClick="{{ addAcc }}" style="padding:10px 14px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Додати рахунок</button></div>
+<sc-if value="{{ canTr }}" hint-placeholder-val="{{ false }}"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 6px">Переказ між рахунками</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px"><select aria-label="З рахунку" value="{{ trFromV }}" onChange="{{ setTrFrom }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body)"><sc-for list="{{ accOpts }}" as="o"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select><select aria-label="На рахунок" value="{{ trToV }}" onChange="{{ setTrTo }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body)"><sc-for list="{{ accOpts }}" as="o"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:8px"><input type="number" step="any" inputmode="decimal" aria-label="Сума переказу" placeholder="Сума з рахунку" value="{{ s.trAmt }}" onInput="{{ setTrAmt }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"><button onClick="{{ addTr }}" style="padding:10px 14px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Переказати</button></div>
+<sc-if value="{{ trCross }}" hint-placeholder-val="{{ false }}"><input type="number" step="any" inputmode="decimal" aria-label="Сума зарахування" placeholder="Зараховано, {{ trToCur }} (або за курсом)" value="{{ s.trAmtTo }}" onInput="{{ setTrAmtTo }}" style="margin-top:8px;min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"></sc-if>
+<div style="min-height:16px;font-size:12px;color:var(--a7);padding-top:4px">{{ s.trMsg }}</div>
+<sc-for list="{{ trRows }}" as="t" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--m);border-top:1px solid var(--d)"><span style="flex:1;min-width:0">{{ t.text }}</span><button onClick="{{ t.del }}" aria-label="Видалити переказ" style="width:44px;height:44px;border:0;background:transparent;color:var(--m);display:grid;place-items:center">{{ iTrash }}</button></div></sc-for></sc-if></details>
+<details style="border:1px solid var(--d);padding:10px;margin-bottom:12px"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Борги та кредити · {{ debtCount }}</summary>
+<div style="font-size:12px;color:var(--m);line-height:1.45;margin:8px 0">«Я винен» зменшує капітал, «Мені винні» збільшує. Платежі лише зменшують залишок боргу й не додаються в Бюджет. Відсотки не нараховуються.</div>
+<sc-for list="{{ debtRows }}" as="d" hint-placeholder-count="2"><div style="padding:8px 0;border-bottom:1px solid var(--d)"><div style="display:flex;align-items:center;gap:8px"><span style="flex:1;min-width:0"><span style="display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis">{{ d.who }}</span><span style="display:block;font-size:12px;color:var(--m)">{{ d.badge }} · <span style="color:{{ d.dueCol }}">{{ d.due }}</span></span></span><b style="font:600 15px var(--font-heading)">{{ d.left }}</b><button onClick="{{ d.del }}" aria-label="Видалити борг" style="min-width:44px;height:44px;border:0;background:transparent;color:var(--m);font:500 12px var(--font-body)">{{ d.delText }}</button></div>
+<div style="height:3px;background:var(--d);margin:6px 0"><div style="height:3px;background:var(--a);width:{{ d.pct }}%"></div></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px"><input type="number" step="any" inputmode="decimal" aria-label="Сума платежу" placeholder="Платіж" value="{{ d.pay }}" onInput="{{ d.setPay }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"><button onClick="{{ d.doPay }}" style="padding:10px 14px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Платіж</button></div></div></sc-for>
+<sc-if value="{{ noDebts }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m);padding:4px 0">Боргів немає.</div></sc-if>
+<div style="display:flex;border:1px solid var(--d);margin-top:10px"><sc-for list="{{ dbDirSeg }}" as="f" hint-placeholder-count="2"><button onClick="{{ f.go }}" style="flex:1;padding:10px 0;border:0;border-radius:0;font:500 13px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
+<input type="text" aria-label="Кому або від кого" placeholder="Кому / від кого" value="{{ s.dbWho }}" onInput="{{ setDbWho }}" style="margin-top:8px;min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) 84px;gap:8px;margin-top:8px"><input type="number" step="any" inputmode="decimal" aria-label="Сума боргу" placeholder="Сума" value="{{ s.dbAmt }}" onInput="{{ setDbAmt }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"><select aria-label="Валюта боргу" value="{{ s.dbCur }}" onChange="{{ setDbCur }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body)"><option value="UAH">UAH</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="PLN">PLN</option></select></div>
+<label style="display:block;font-size:12px;color:var(--m);margin-top:8px">Строк (необов'язково)<input type="date" value="{{ s.dbDue }}" onInput="{{ setDbDue }}" style="display:block;margin-top:4px;min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"></label>
+<button onClick="{{ addDebt }}" style="width:100%;margin-top:8px;padding:10px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Додати борг</button></details>
+<details style="border:1px solid var(--d);padding:10px;margin-bottom:12px"><summary style="cursor:pointer;min-height:44px;display:flex;align-items:center;font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Початковий залишок готівки та карток</summary>
+<div style="font-size:12px;color:var(--m);margin:8px 0">Скільки грошей було на картках і готівкою до першої операції в застосунку. Додається до готівки в капіталі.</div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px"><sc-for list="{{ openRows }}" as="ob" hint-placeholder-count="4"><label style="font-size:12px;color:var(--m)">{{ ob.cur }} {{ ob.sym }}<input type="number" step="any" inputmode="decimal" value="{{ ob.val }}" onChange="{{ ob.set }}" placeholder="0" style="display:block;width:100%;margin-top:4px;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:16px var(--font-body)"></label></sc-for></div></details>
+<div style="border:1px solid var(--d);padding:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Динаміка капіталу</span>
 <div style="display:flex;gap:4px"><sc-for list="{{ nwTfSeg }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" style="padding:4px 8px;min-height:32px;border:1px solid var(--d);border-radius:0;font:500 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div></div>
 <svg viewBox="0 0 300 64" style="width:100%;height:90px;display:block;margin-top:6px" preserveAspectRatio="none"><polyline points="{{ nwSpark }}" fill="none" stroke="var(--a)" stroke-width="1.5" vector-effect="non-scaling-stroke"></polyline></svg>
 <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--m)"><span>{{ nwFrom }}</span><span>{{ nwChartDelta }}</span><span>{{ nwTo }}</span></div>
 <div style="font-size:11px;color:var(--m);margin-top:6px">{{ nwHistNote }}</div></div></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">За категоріями активів</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">За категоріями активів</div>
 <sc-for list="{{ allocCat }}" as="b" hint-placeholder-count="4"><button onClick="{{ b.pick }}" style="display:block;width:100%;text-align:left;padding:5px 0;border:0;background:transparent;color:var(--t);border-radius:0;min-height:0;opacity:{{ b.op }}"><div style="display:flex;justify-content:space-between;font-size:13px"><span>{{ b.label }}</span><span style="color:var(--m)">{{ b.pct }}%</span></div><div style="height:3px;background:var(--d);margin-top:4px"><div style="height:3px;background:var(--a);width:{{ b.pct }}%"></div></div></button></sc-for>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Валютна диверсифікація</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Валютна диверсифікація</div>
 <sc-for list="{{ allocCur }}" as="b" hint-placeholder-count="3"><div style="padding:5px 0"><div style="display:flex;justify-content:space-between;font-size:13px"><span>{{ b.label }}</span><span style="color:var(--m)">{{ b.pct }}%</span></div><div style="height:3px;background:var(--d);margin-top:4px"><div style="height:3px;background:var(--a);width:{{ b.pct }}%"></div></div></div></sc-for>
-<div style="display:flex;justify-content:space-between;align-items:center;padding:20px 0 6px"><span style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Реєстр активів</span>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:20px 0 6px"><span style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Реєстр активів</span>
 <div style="display:flex;border:1px solid var(--d)"><sc-for list="{{ nwSortSeg }}" as="f" hint-placeholder-count="2"><button onClick="{{ f.go }}" style="padding:6px 10px;border:0;border-radius:0;font:500 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div></div>
 <sc-if value="{{ catChip }}" hint-placeholder-val="{{ false }}"><button onClick="{{ catReset }}" style="display:block;margin:6px 0;padding:8px 12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">{{ catChipText }} ✕</button></sc-if>
 <sc-for list="{{ assetRows }}" as="a" hint-placeholder-count="5">
@@ -173,11 +240,11 @@
 </sc-if>
 
 <sc-if value="{{ isOvdp }}" hint-placeholder-val="{{ false }}">
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:16px 0 8px">Мої позиції ОВДП</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:16px 0 8px">Мої позиції ОВДП</div>
 <sc-if value="{{ posAlert }}" hint-placeholder-val="{{ false }}"><div style="border:1px solid var(--a);padding:10px 12px;margin-bottom:10px;font-size:13px;line-height:1.45"><b style="color:var(--a7)">Увага:</b> {{ posAlertText }}</div></sc-if>
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px"><div style="border:1px solid var(--d);padding:8px"><div style="font-size:11px;color:var(--m)">Всього</div><b style="font:600 17px var(--font-heading)">{{ posTotal }}</b></div><div style="border:1px solid var(--d);padding:8px"><div style="font-size:11px;color:var(--m)">Серед. купон</div><b style="font:600 17px var(--font-heading)">{{ posAvg }}</b></div><div style="border:1px solid var(--d);padding:8px"><div style="font-size:11px;color:var(--m)">Найближче</div><b style="font:600 17px var(--font-heading)">{{ posNext }}</b></div></div>
 <sc-for list="{{ posRows }}" as="p" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--d)"><button onClick="{{ p.open }}" style="flex:1;min-width:0;text-align:left;padding:10px 0;border:0;background:transparent;color:var(--t);border-radius:0"><span style="display:flex;justify-content:space-between;gap:8px"><b style="font-weight:500">{{ p.name }}</b><span style="font:600 18px var(--font-heading)">{{ p.amount }}</span></span><span style="display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--m)"><span>{{ p.sub }}</span><span style="color:{{ p.col }}">{{ p.status }}</span></span></button><button onClick="{{ p.del }}" aria-label="Видалити позицію" style="width:44px;height:44px;border:0;background:transparent;color:var(--m);display:grid;place-items:center">{{ iTrash }}</button></div></sc-for>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:16px 0 8px">Додати позицію</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:16px 0 8px">Додати позицію</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <dc-import name="Field" label="Брокер" type="text" placeholder="" value="{{ op.broker }}" handler="{{ h.op_broker }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="ISIN (необов'язково)" type="text" placeholder="" value="{{ op.isin }}" handler="{{ h.op_isin }}" hint-size="100%,64px"></dc-import>
@@ -185,10 +252,10 @@
 <dc-import name="Field" label="Купон, %" type="number" placeholder="" value="{{ op.coupon }}" handler="{{ h.op_coupon }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Погашення" type="date" placeholder="" value="{{ op.maturity }}" handler="{{ h.op_maturity }}" hint-size="100%,64px"></dc-import></div>
 <button onClick="{{ addPos }}" style="width:100%;margin:10px 0 6px;padding:12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:600 14px var(--font-body)">Додати позицію</button>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:16px 0 4px">Мої ОВДП (завантажити в калькулятор)</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:16px 0 4px">Мої ОВДП (завантажити в калькулятор)</div>
 <sc-for list="{{ watchRows }}" as="w" hint-placeholder-count="1"><div style="display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid var(--d)"><button onClick="{{ w.load }}" style="flex:1;text-align:left;border:0;background:transparent;color:var(--t);padding:6px 0"><b style="display:block">{{ w.name }}</b><span style="font-size:12px;color:var(--m)">{{ w.sub }}</span></button><span style="font:600 12px var(--font-body);color:var(--a7)">{{ w.mark }}</span></div></sc-for>
 <sc-if value="{{ noWatch }}" hint-placeholder-val="{{ true }}"><div style="font-size:13px;color:var(--m)">Позицій немає. Додайте їх вище або збережіть параметри кнопкою нижче.</div></sc-if>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 8px">Параметри облігації</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 8px">Параметри облігації</div>
 <div style="display:flex;flex-direction:column;gap:10px">
 <dc-import name="Field" label="Назва / ISIN" type="text" placeholder="" value="{{ o.name }}" handler="{{ h.o_name }}" hint-size="100%,64px"></dc-import>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -204,36 +271,36 @@
 <dc-import name="Field" label="Комісії (за операцію)" type="number" placeholder="" value="{{ o.fee }}" handler="{{ h.o_fee }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Ціна продажу (необов'язково)" type="number" placeholder="напр. 1031,83" value="{{ o.sell }}" handler="{{ h.o_sell }}" hint-size="100%,64px"></dc-import></div></div>
 <div style="position:relative;border:1px solid var(--d);padding:16px;margin-top:18px"><i class="corner tl" style="position:absolute;top:-6px;left:-6px;width:11px;height:11px;color:var(--m)"></i>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Дохідність (YTM)</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Дохідність (YTM)</div>
 <div style="font:600 52px/1 var(--font-heading);color:var(--a7)">{{ ytm }}%</div>
 <div style="font-size:12px;color:var(--a7);margin-top:4px">Пільга: 0% ПДФО і військового збору на ОВДП</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;font-size:13px"><sc-for list="{{ ovRes }}" as="r"><div><span style="color:var(--m)">{{ r.k }}</span><br><b>{{ r.v }}</b></div></sc-for></div></div>
 <div style="display:flex;gap:10px;margin-top:12px"><button onClick="{{ ovToBudget }}" style="flex:1;padding:12px 8px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Дохід у бюджет</button><button onClick="{{ ovSave }}" style="flex:1;padding:12px 8px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Зберегти в мої ОВДП</button></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 4px">Графік виплат</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 4px">Графік виплат</div>
 <sc-for list="{{ schedule }}" as="x" hint-placeholder-count="4"><div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0 4px;border-bottom:1px solid var(--d);font-size:14px"><span>{{ x.d }} <span style="color:var(--m);font-size:12px">{{ x.t }}</span></span><span style="display:flex;align-items:center;gap:2px"><b>{{ x.v }}</b><button onClick="{{ x.add }}" aria-label="Внести виплату в бюджет" style="width:44px;height:44px;border:0;background:transparent;color:var(--a7);display:grid;place-items:center">{{ iPlusS }}</button></span></div></sc-for>
 <sc-if value="{{ noSched }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m)">Вкажіть дату погашення пізніше дати купівлі</div></sc-if>
 </sc-if>
 
 <sc-if value="{{ isInvest }}" hint-placeholder-val="{{ false }}">
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:16px 0 4px">Портфель · {{ pfTotal }}</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:16px 0 4px">Портфель · {{ pfTotal }}</div>
 <sc-for list="{{ pfRows }}" as="p" hint-placeholder-count="4"><div style="padding:10px 0;border-bottom:1px solid var(--d)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="flex:1;min-width:0"><b>{{ p.name }}</b><div style="font-size:12px;color:var(--m)">{{ p.cat }} · {{ p.pct }}% річних · {{ p.cv }}</div></div><input type="number" aria-label="Вартість" value="{{ p.value }}" onInput="{{ p.set }}" style="width:96px;padding:6px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body);text-align:right"><span style="font-size:12px;color:var(--m)">{{ p.cur }}</span><button onClick="{{ p.del }}" aria-label="Видалити актив" style="width:44px;height:44px;border:0;background:transparent;color:var(--m);display:grid;place-items:center">{{ iTrash }}</button></div></div></sc-for>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 8px">Додати актив</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 8px">Додати актив</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <dc-import name="Field" label="Назва" type="text" placeholder="S&P 500, BTC" value="{{ af.name }}" handler="{{ h.a_name }}" hint-size="100%,64px"></dc-import>
 <label style="font-size:12px;color:var(--m)">Категорія<select value="{{ af.cat }}" onChange="{{ h.a_cat }}" style="display:block;width:100%;margin-top:4px;padding:11px 8px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:16px var(--font-body)"><sc-for list="{{ assetCats }}" as="o"><option value="{{ o.v }}">{{ o.v }}</option></sc-for></select></label>
 <dc-import name="Field" label="Вартість" type="number" placeholder="" value="{{ af.value }}" handler="{{ h.a_value }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Дохідність, % річних" type="number" placeholder="" value="{{ af.pct }}" handler="{{ h.a_pct }}" hint-size="100%,64px"></dc-import></div>
 <div style="display:grid;grid-template-columns:96px 1fr;gap:10px;margin-top:10px"><select aria-label="Валюта активу" value="{{ af.cur }}" onChange="{{ h.a_cur }}" style="padding:11px 8px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:16px var(--font-body)"><option value="UAH">UAH</option><option value="USD">USD</option><option value="EUR">EUR</option><option value="PLN">PLN</option></select><button onClick="{{ addAsset }}" style="padding:12px;border:0;border-radius:0;background:var(--a);color:var(--ab);font:600 15px var(--font-body)">Додати</button></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:22px 0 4px">Цільовий розподіл і ребалансування</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:22px 0 4px">Цільовий розподіл і ребалансування</div>
 <sc-for list="{{ rebRows }}" as="r" hint-placeholder-count="4"><div style="padding:9px 0;border-bottom:1px solid var(--d)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="flex:1">{{ r.cat }}</span><span style="font-size:13px;color:var(--m)">зараз {{ r.now }}% · ціль</span><input type="number" aria-label="Цільова частка, %" value="{{ r.target }}" onInput="{{ r.set }}" style="width:56px;padding:6px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body);text-align:right"></div><div style="font-size:12px;color:var(--a7);margin-top:2px">{{ r.advice }}</div></div></sc-for>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Складний відсоток</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Складний відсоток</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <dc-import name="Field" label="Початкова сума" type="number" placeholder="" value="{{ cp.cp }}" handler="{{ h.c_cp }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Внесок на місяць" type="number" placeholder="" value="{{ cp.cm }}" handler="{{ h.c_cm }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Ставка, % річних" type="number" placeholder="" value="{{ cp.cr }}" handler="{{ h.c_cr }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Років" type="number" placeholder="" value="{{ cp.cy }}" handler="{{ h.c_cy }}" hint-size="100%,64px"></dc-import></div>
 <div style="position:relative;border:1px solid var(--d);padding:16px;margin-top:16px"><i class="corner tl" style="position:absolute;top:-6px;left:-6px;width:11px;height:11px;color:var(--m)"></i>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Через {{ cp.cy }} р.</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Через {{ cp.cy }} р.</div>
 <div style="font:600 44px/1 var(--font-heading);color:var(--a7)">{{ cFv }}</div>
 <svg viewBox="0 0 300 50" style="width:100%;height:50px;margin-top:8px;display:block"><polyline points="{{ cSpark }}" fill="none" stroke="var(--a)" stroke-width="1.5"></polyline></svg>
 <div style="font-size:13px;color:var(--m)">Внесено {{ cPaid }} · відсотки {{ cGain }}</div></div>
@@ -248,7 +315,7 @@
 <div style="font-size:13px;color:var(--m)">{{ g.saved }} з {{ g.target }}</div>
 <div style="font-size:13px;color:var(--a7);margin-top:2px">{{ g.need }}</div>
 <div style="display:flex;gap:8px;margin-top:10px"><input type="number" aria-label="Сума внеску" placeholder="1000" value="{{ g.amt }}" onInput="{{ g.setAmt }}" style="flex:1;min-width:0;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:16px var(--font-body)"><button onClick="{{ g.add }}" style="padding:0 14px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Внести</button><button onClick="{{ g.del }}" aria-label="Видалити ціль" style="width:44px;border:0;background:transparent;color:var(--m);display:grid;place-items:center">{{ iTrash }}</button></div></div></sc-for></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Нова ціль</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Нова ціль</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <dc-import name="Field" label="Назва" type="text" placeholder="" value="{{ ng.title }}" handler="{{ h.g_title }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Сума цілі" type="number" placeholder="" value="{{ ng.target }}" handler="{{ h.g_target }}" hint-size="100%,64px"></dc-import>
@@ -259,19 +326,19 @@
 
 <sc-if value="{{ isPassive }}" hint-placeholder-val="{{ false }}">
 <div style="position:relative;border:1px solid var(--d);padding:16px;margin-top:16px"><i class="corner tl" style="position:absolute;top:-6px;left:-6px;width:11px;height:11px;color:var(--m)"></i>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Пасивний дохід на місяць</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Пасивний дохід на місяць</div>
 <div style="font:600 50px/1 var(--font-heading);color:var(--a7)">{{ passText }}</div>
 <div style="height:4px;background:var(--d);margin:12px 0 6px"><div style="height:4px;background:var(--a);width:{{ fiPct }}%"></div></div>
 <div style="font-size:13px;color:var(--m)">Покриває {{ fiCover }}% середніх витрат ({{ avgExp }}) · капітал {{ capText }} · середня дохідність {{ avgYield }}%</div></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:18px 0 4px">Активи</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 4px">Активи</div>
 <sc-for list="{{ passRows }}" as="r" hint-placeholder-count="4"><div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--d)"><button onClick="{{ r.open }}" style="display:flex;flex:1;min-width:0;justify-content:space-between;align-items:center;gap:8px;text-align:left;padding:10px 0;border:0;background:transparent;color:var(--t);border-radius:0"><span><b style="display:block">{{ r.name }}</b><span style="display:block;font-size:12px;color:var(--m)">{{ r.note }}</span></span><span style="font:600 20px var(--font-heading)">{{ r.m }}</span></button><button onClick="{{ r.edit }}" aria-label="Редагувати" style="width:32px;height:32px;min-width:32px;min-height:32px;padding:0;flex:none;display:grid;place-items:center;border:1px solid var(--d);background:transparent;color:var(--m);border-radius:0">{{ iEdit }}</button></div></sc-for>
-<div style="display:flex;justify-content:space-between;align-items:center;padding:20px 0 8px"><span style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Прогноз досягнення цілі</span><button onClick="{{ passReset }}" style="border:0;background:transparent;color:var(--a7);font:500 12px var(--font-body);text-decoration:underline;padding:8px 0">Скинути до авто</button></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:20px 0 8px"><span style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Прогноз досягнення цілі</span><button onClick="{{ passReset }}" style="border:0;background:transparent;color:var(--a7);font:500 12px var(--font-body);text-decoration:underline;padding:8px 0">Скинути до авто</button></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
 <dc-import name="Field" label="Початковий капітал" type="number" placeholder="" value="{{ pc }}" handler="{{ h.p_pc }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Внесок на місяць" type="number" placeholder="" value="{{ pmt }}" handler="{{ h.p_pmt }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Дохідність, % річних" type="number" placeholder="" value="{{ py }}" handler="{{ h.p_y }}" hint-size="100%,64px"></dc-import>
 <dc-import name="Field" label="Цільовий дохід/міс" type="number" placeholder="" value="{{ pt }}" handler="{{ h.p_t }}" hint-size="100%,64px"></dc-import></div>
-<div style="border:1px solid var(--d);padding:14px;margin-top:14px"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Ціль буде досягнута через</div><div style="font:600 34px/1.1 var(--font-heading);color:var(--a7)">{{ goalIn }}</div><div style="font-size:13px;color:var(--m)">Орієнтовна дата: {{ goalDate }} · дохід зараз {{ curProj }}</div>
+<div style="border:1px solid var(--d);padding:14px;margin-top:14px"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Ціль буде досягнута через</div><div style="font:600 34px/1.1 var(--font-heading);color:var(--a7)">{{ goalIn }}</div><div style="font-size:13px;color:var(--m)">Орієнтовна дата: {{ goalDate }} · дохід зараз {{ curProj }}</div>
 <svg viewBox="0 0 300 60" style="width:100%;height:60px;margin-top:8px;display:block"><line x1="0" x2="300" y1="{{ targetY }}" y2="{{ targetY }}" stroke="var(--m)" stroke-width="1" stroke-dasharray="4 4"></line><polyline points="{{ passSpark }}" fill="none" stroke="var(--a)" stroke-width="1.5"></polyline></svg></div>
 </sc-if>
 
@@ -282,12 +349,13 @@
 <button onClick="{{ useDemo }}" style="width:100%;margin-top:10px;padding:12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Використати приклад виписки</button>
 <div style="font-size:13px;color:var(--m);margin-top:12px">Категорії визначаються з опису, перекази між власними рахунками можна врахувати або пропустити. Підтримуються .xlsx і .csv. Файл .xls збережіть як .xlsx. Рядки перед заголовком таблиці пропускаються, дата в Excel-форматі розпізнається.</div></sc-if>
 <sc-if value="{{ importPreview }}" hint-placeholder-val="{{ false }}">
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">Знайдені стовпці</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">Знайдені стовпці</div>
 <div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 16px"><sc-for list="{{ impCols }}" as="c"><span style="padding:3px 8px;border:1px solid var(--a);color:var(--a7);font-size:12px">{{ c }}</span></sc-for></div>
 <sc-for list="{{ importRows }}" as="r" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--d)"><div style="min-width:0"><div style="font-weight:500">{{ r.desc }}</div><div style="font-size:12px;color:var(--m)">{{ r.date }}{{ r.invNote }}</div><select onChange="{{ r.setCat }}" style="margin-top:4px;min-height:32px;max-width:170px;border:1px solid var(--d);border-radius:0;background:transparent;color:var(--t);font:13px var(--font-body)"><sc-for list="{{ r.opts }}" as="o"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.v }}</option></sc-for></select></div><b style="font:600 20px var(--font-heading)">{{ r.amt }}</b></div></sc-for>
-<sc-if value="{{ impDlgOpen }}" hint-placeholder-val="{{ false }}"><div style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:60;padding:16px"><div style="background:var(--b);border:1px solid var(--a);padding:16px;width:100%;max-width:380px"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">{{ impDlgCat }}</div><div style="font:600 22px var(--font-heading);margin:4px 0 12px">{{ impDlgTitle }}</div><div style="font-size:12px;color:var(--m);margin-bottom:8px;line-height:1.4">{{ impDlgNote }}</div><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);margin-bottom:6px">Додати до позиції:</div><sc-for list="{{ impDlgPos }}" as="p"><button onClick="{{ p.pick }}" style="width:100%;min-height:44px;margin-bottom:6px;padding:8px 12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;text-align:left;font:500 14px var(--font-body);display:flex;justify-content:space-between;gap:8px"><span>{{ p.name }}</span><b style="white-space:nowrap">{{ p.val }}</b></button></sc-for><button onClick="{{ impDlgNew }}" style="width:100%;min-height:44px;margin-bottom:6px;padding:8px 12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:600 14px var(--font-body)">Нова позиція (за назвою операції)</button><button onClick="{{ impDlgCancel }}" style="width:100%;min-height:44px;border:0;background:transparent;color:var(--m);font:500 14px var(--font-body)">Скасувати (повернути «Інше»)</button></div></div></sc-if>
+<sc-if value="{{ impDlgOpen }}" hint-placeholder-val="{{ false }}"><div style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:60;padding:16px"><div style="background:var(--b);border:1px solid var(--a);padding:16px;width:100%;max-width:380px"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">{{ impDlgCat }}</div><div style="font:600 22px var(--font-heading);margin:4px 0 12px">{{ impDlgTitle }}</div><div style="font-size:12px;color:var(--m);margin-bottom:8px;line-height:1.4">{{ impDlgNote }}</div><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:6px">Додати до позиції:</div><sc-for list="{{ impDlgPos }}" as="p"><button onClick="{{ p.pick }}" style="width:100%;min-height:44px;margin-bottom:6px;padding:8px 12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;text-align:left;font:500 14px var(--font-body);display:flex;justify-content:space-between;gap:8px"><span>{{ p.name }}</span><b style="white-space:nowrap">{{ p.val }}</b></button></sc-for><button onClick="{{ impDlgNew }}" style="width:100%;min-height:44px;margin-bottom:6px;padding:8px 12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:600 14px var(--font-body)">Нова позиція (за назвою операції)</button><button onClick="{{ impDlgCancel }}" style="width:100%;min-height:44px;border:0;background:transparent;color:var(--m);font:500 14px var(--font-body)">Скасувати (повернути «Інше»)</button></div></div></sc-if>
 <button onClick="{{ toggleTr }}" style="width:100%;margin:10px 0;padding:12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body);text-align:left">{{ impTrLabel }} (натисніть, щоб змінити)</button>
 <button onClick="{{ aiCat }}" style="width:100%;margin:0 0 10px;padding:12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 14px var(--font-body);text-align:left">{{ aiCatLabel }}</button>
+<sc-if value="{{ hasAcc }}" hint-placeholder-val="{{ false }}"><label style="display:block;font-size:12px;color:var(--m);margin-bottom:10px">Додати імпортовані операції до рахунку<select aria-label="Рахунок для імпорту" value="{{ s.impAcc }}" onChange="{{ setImpAcc }}" style="display:block;margin-top:4px;padding:10px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:14px var(--font-body);width:100%"><option value="">Без рахунку</option><sc-for list="{{ accOpts }}" as="o"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></label></sc-if>
 <button onClick="{{ confirmImport }}" style="width:100%;padding:14px;border:0;border-radius:0;background:var(--a);color:var(--ab);font:600 15px var(--font-body)">Імпортувати {{ importCount }} операцій</button></sc-if>
 <sc-if value="{{ importDone }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 0;text-align:center"><div style="font:600 30px var(--font-heading)">Імпортовано</div><div style="color:var(--m);margin:6px 0 18px">Операції додано до бюджету</div><button onClick="{{ goBudget }}" style="padding:12px 20px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Відкрити бюджет</button></div></sc-if>
 </div>
@@ -298,17 +366,24 @@
 <button onClick="{{ expJson }}" style="padding:14px 8px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Копія JSON</button>
 <button onClick="{{ setToImport }}" style="padding:14px 8px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Імпорт виписки</button>
 <button onClick="{{ impJson }}" style="padding:14px 8px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Відновити з JSON</button>
+<button onClick="{{ expXlsx }}" style="grid-column:1 / -1;padding:14px 8px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Експорт у Excel (.xlsx)</button>
 <button onClick="{{ dedupe }}" style="grid-column:1 / -1;padding:14px 8px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">{{ dedupeLabel }}</button>
 <button onClick="{{ clearAll }}" style="grid-column:1 / -1;padding:14px 8px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 14px var(--font-body)">{{ clearLabel }}</button></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Синхронізація · Google Drive</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Синхронізація · Google Drive</div>
 <div style="border:1px solid var(--d);padding:12px;display:flex;flex-direction:column;gap:10px">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-weight:500">Стан</span><span style="font-size:13px;color:var(--a7);text-align:right">{{ gStatusText }}</span></div>
-<label style="font-size:12px;color:var(--m)">Client ID (Google Cloud)<input type="text" value="{{ gcid }}" onChange="{{ setGcid }}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="xxxx.apps.googleusercontent.com" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:11px 8px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font-size:14px"></label>
+<sc-if value="{{ notNative }}" hint-placeholder-val="{{ true }}"><label style="font-size:12px;color:var(--m)">Client ID (Google Cloud)<input type="text" value="{{ gcid }}" onChange="{{ setGcid }}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="xxxx.apps.googleusercontent.com" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:11px 8px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font-size:14px"></label></sc-if><sc-if value="{{ isNative }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m);line-height:1.45">Вхід через обліковий запис Google. Ключ доступу вже вбудовано в застосунок, вводити нічого не потрібно.</div></sc-if>
 <label style="font-size:12px;color:var(--m)">Пароль шифрування файлу (однаковий на всіх пристроях, не синхронізується)<input type="password" value="{{ gpw }}" onChange="{{ setGpw }}" autocomplete="off" placeholder="порожньо = без шифрування" style="display:block;width:100%;box-sizing:border-box;margin-top:4px;padding:11px 8px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font-size:14px"></label>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onClick="{{ syncNow }}" style="padding:12px 6px;border:1px solid var(--a);background:var(--a);color:var(--ab);border-radius:0;font:600 13px var(--font-body)">Синхронізувати</button>
 <button onClick="{{ gOff }}" style="padding:12px 6px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">Вимкнути</button></div>
 <div style="font-size:12px;color:var(--m);line-height:1.5">Файл лежить у прихованій папці застосунку на вашому Drive. Автоматично синхронізується при відкритті, перемагає новіша зміна.</div></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Безпека</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Копії на Google Drive</div>
+<div style="border:1px solid var(--d);padding:12px;display:flex;flex-direction:column;gap:10px">
+<div style="font-size:12px;color:var(--m);line-height:1.45">Після синхронізації застосунок раз на день зберігає окрему копію в прихованій теці Drive (зберігаються останні 20). Звідти можна повернути дані на потрібну дату. Перед відновленням поточний стан теж зберігається копією.</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onClick="{{ bkShowGo }}" style="padding:12px 6px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">Показати копії</button><button onClick="{{ bkNowGo }}" style="padding:12px 6px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">Створити зараз</button></div>
+<div style="min-height:16px;font-size:12px;color:var(--a7)">{{ bkMsgText }}</div>
+<sc-for list="{{ bkRows }}" as="b" hint-placeholder-count="3"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-top:1px solid var(--d)"><span style="min-width:0;font-size:14px">{{ b.label }}</span><button onClick="{{ b.go }}" style="padding:8px 12px;flex:none;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">{{ b.btn }}</button></div></sc-for></div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:22px 0 8px">Безпека</div>
 <div style="border:1px solid var(--d);padding:12px;display:flex;flex-direction:column;gap:10px">
 <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">PIN-код</span><span style="font-size:13px;color:var(--a7)">{{ pinStatus }}</span></div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onClick="{{ pinSetup }}" style="padding:12px 6px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">{{ pinSetupLabel }}</button>
@@ -316,9 +391,15 @@
 <sc-if value="{{ hasPin }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pinRemove }}" style="padding:12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">Вимкнути PIN</button>
 <div style="font-size:12px;color:var(--m)">Автоблокування через</div>
 <div style="display:flex;border:1px solid var(--d)"><sc-for list="{{ autoSeg }}" as="f" hint-placeholder-count="3"><button onClick="{{ f.go }}" style="flex:1;padding:12px 0;border:0;border-radius:0;font:500 13px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div></sc-if>
+<sc-if value="{{ bioCan }}" hint-placeholder-val="{{ false }}"><button onClick="{{ toggleBio }}" aria-pressed="{{ s.bio }}" style="display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0;border:0;background:transparent;color:var(--t);font:500 14px var(--font-body)"><span>Розблокування за відбитком / обличчям</span><span style="font:600 13px var(--font-body);color:var(--a7)">{{ bioState }}</span></button></sc-if>
 <button onClick="{{ toggleHide }}" aria-pressed="{{ s.hide }}" style="display:flex;justify-content:space-between;align-items:center;min-height:44px;padding:0;border:0;background:transparent;color:var(--t);font:500 14px var(--font-body)"><span>Приховати суми на екрані</span><span style="font:600 13px var(--font-body);color:var(--a7)">{{ hideState }}</span></button>
-<div style="font-size:12px;color:var(--m);line-height:1.45">PIN захищає вхід у застосунок і зберігається у вигляді хеша. Після 5 помилок вхід блокується на 30 с. Дані в браузері не шифруються, тому для захисту копій зберігайте файл JSON у надійному місці.</div></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:22px 0 4px">Історія змін</div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--d)"><span style="font-weight:500">Шифрування даних на пристрої</span><span style="font-size:13px;color:var(--a7)">{{ encStatus }}</span></div>
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px"><input type="password" autocomplete="new-password" placeholder="{{ encPh }}" value="{{ s.encIn }}" onInput="{{ setEncIn }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:16px var(--font-body)"><input type="password" autocomplete="new-password" placeholder="Повторіть пароль" value="{{ s.encIn2 }}" onInput="{{ setEncIn2 }}" style="min-width:0;width:100%;box-sizing:border-box;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:16px var(--font-body)"></div>
+<div style="min-height:16px;font-size:12px;color:var(--a7)">{{ s.encMsg }}</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button onClick="{{ encOnGo }}" style="padding:12px 6px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">{{ encBtn }}</button>
+<sc-if value="{{ s.encOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ encOffGo }}" style="padding:12px 6px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:500 13px var(--font-body)">Вимкнути шифрування</button></sc-if></div>
+<div style="font-size:12px;color:var(--m);line-height:1.45">PIN лише закриває екран і зберігається у вигляді хеша. Справжній захист дає шифрування паролем (AES-256): без пароля дані на пристрої не прочитати. Пароль не відновлюється, тому зберігайте копію JSON у надійному місці. Копії JSON не шифруються.</div></div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:22px 0 4px">Історія змін</div>
 <sc-for list="{{ logRows }}" as="l" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--d)"><div style="flex:1"><div style="font-weight:500">{{ l.text }}</div><div style="font-size:12px;color:var(--m)">{{ l.ts }}</div></div><button onClick="{{ l.undo }}" style="display:flex;align-items:center;gap:6px;padding:0 12px;height:44px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">{{ iUndo }}Скасувати</button></div></sc-for>
 <sc-if value="{{ noLog }}" hint-placeholder-val="{{ false }}"><div style="padding:24px 0;color:var(--m);font-size:14px">Змін ще немає. Тут з'являться додані, змінені й видалені записи.</div></sc-if>
 </sc-if>
@@ -335,14 +416,14 @@
 <sc-if value="{{ detOpen }}" hint-placeholder-val="{{ false }}">
 <div class="bfi" onClick="{{ detClose }}" style="position:absolute;inset:0;background:rgba(10,12,14,.5);z-index:9"></div>
 <div class="sc bsu" style="position:absolute;z-index:10;left:{{ setLeft }};right:{{ setRight }};bottom:{{ setBottom }};top:{{ setTop }};width:{{ setW }};max-height:92%;overflow:auto;background:var(--b);color:var(--t);border:1px solid var(--t);padding:16px 16px 28px;box-sizing:border-box">
-<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">{{ detKicker }}</div><div style="font:600 24px/1.1 var(--font-heading);margin-top:4px">{{ detTitle }}</div></div><button onClick="{{ detClose }}" aria-label="Закрити" style="width:44px;height:44px;border:0;background:transparent;color:var(--t);display:grid;place-items:center;flex:none">{{ iX }}</button></div>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">{{ detKicker }}</div><div style="font:600 24px/1.1 var(--font-heading);margin-top:4px">{{ detTitle }}</div></div><button onClick="{{ detClose }}" aria-label="Закрити" style="width:44px;height:44px;border:0;background:transparent;color:var(--t);display:grid;place-items:center;flex:none">{{ iX }}</button></div>
 <div style="border:1px solid var(--d);margin:12px 0 4px"><sc-for list="{{ detInfo }}" as="r" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;gap:10px;padding:9px 12px;border-bottom:1px solid var(--d);font-size:14px"><span style="color:var(--m)">{{ r.k }}</span><b style="font-weight:500;text-align:right">{{ r.v }}</b></div></sc-for></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:14px 0 8px">Редагувати</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 8px">Редагувати</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><sc-for list="{{ detFields }}" as="f" hint-placeholder-count="5"><dc-import name="Field" label="{{ f.label }}" type="{{ f.type }}" placeholder="" value="{{ f.value }}" handler="{{ f.handler }}" hint-size="100%,64px"></dc-import></sc-for></div>
-<sc-if value="{{ hasCalc }}" hint-placeholder-val="{{ false }}"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:14px 0 8px">Параметри ОВДП (як у калькуляторі)</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><sc-for list="{{ detCalc }}" as="f" hint-placeholder-count="9"><dc-import name="Field" label="{{ f.label }}" type="{{ f.type }}" placeholder="" value="{{ f.value }}" handler="{{ f.handler }}" hint-size="100%,64px"></dc-import></sc-for></div></sc-if>
-<sc-if value="{{ hasOps }}" hint-placeholder-val="{{ false }}"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:14px 0 4px">Пов'язані операції</div><div style="font-size:12px;color:var(--m);margin-bottom:6px">{{ opsHint }}</div><div style="border:1px solid var(--d)"><sc-for list="{{ detOps }}" as="o"><div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--d)"><div style="flex:1;min-width:0"><div style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ o.desc }}</div><div style="font-size:12px;color:var(--m)">{{ o.date }}</div></div><input type="number" inputmode="decimal" aria-label="Сума" value="{{ o.amt }}" onInput="{{ o.setAmt }}" style="width:96px;min-height:40px;padding:6px 8px;border:1px solid var(--d);border-radius:0;background:transparent;color:var(--t);font:500 14px var(--font-body);text-align:right"><button onClick="{{ o.del }}" aria-label="Видалити операцію" style="width:40px;height:40px;border:0;background:transparent;color:var(--m);font-size:20px">×</button></div></sc-for></div></sc-if>
-<sc-if value="{{ detIsAsset }}" hint-placeholder-val="{{ false }}"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:14px 0 6px">Категорія</div><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ detCats }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.go }}" style="padding:8px 12px;border:1px solid var(--d);border-radius:0;font:500 13px var(--font-body);background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</button></sc-for></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:14px 0 6px">Валюта</div><div style="display:flex;gap:6px"><sc-for list="{{ detCurs }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.go }}" style="padding:8px 14px;border:1px solid var(--d);border-radius:0;font:500 13px var(--font-body);background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</button></sc-for></div></sc-if>
+<sc-if value="{{ hasCalc }}" hint-placeholder-val="{{ false }}"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 8px">Параметри ОВДП (як у калькуляторі)</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><sc-for list="{{ detCalc }}" as="f" hint-placeholder-count="9"><dc-import name="Field" label="{{ f.label }}" type="{{ f.type }}" placeholder="" value="{{ f.value }}" handler="{{ f.handler }}" hint-size="100%,64px"></dc-import></sc-for></div></sc-if>
+<sc-if value="{{ hasOps }}" hint-placeholder-val="{{ false }}"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 4px">Пов'язані операції</div><div style="font-size:12px;color:var(--m);margin-bottom:6px">{{ opsHint }}</div><div style="border:1px solid var(--d)"><sc-for list="{{ detOps }}" as="o"><div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--d)"><div style="flex:1;min-width:0"><div style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ o.desc }}</div><div style="font-size:12px;color:var(--m)">{{ o.date }}</div></div><input type="number" inputmode="decimal" aria-label="Сума" value="{{ o.amt }}" onInput="{{ o.setAmt }}" style="width:96px;min-height:40px;padding:6px 8px;border:1px solid var(--d);border-radius:0;background:transparent;color:var(--t);font:500 14px var(--font-body);text-align:right"><button onClick="{{ o.del }}" aria-label="Видалити операцію" style="width:40px;height:40px;border:0;background:transparent;color:var(--m);font-size:20px">×</button></div></sc-for></div></sc-if>
+<sc-if value="{{ detIsAsset }}" hint-placeholder-val="{{ false }}"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 6px">Категорія</div><div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ detCats }}" as="c" hint-placeholder-count="5"><button onClick="{{ c.go }}" style="padding:8px 12px;border:1px solid var(--d);border-radius:0;font:500 13px var(--font-body);background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</button></sc-for></div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 6px">Валюта</div><div style="display:flex;gap:6px"><sc-for list="{{ detCurs }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.go }}" style="padding:8px 14px;border:1px solid var(--d);border-radius:0;font:500 13px var(--font-body);background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</button></sc-for></div></sc-if>
 <button onClick="{{ detLink }}" style="display:block;width:100%;margin-top:18px;padding:12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;text-align:left;font:500 14px var(--font-body)">{{ detLinkLabel }} →</button>
 <div style="display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px"><button onClick="{{ detSave }}" style="padding:14px;border:1px solid var(--a);background:var(--a);color:var(--ab);border-radius:0;font:600 15px var(--font-body)">Зберегти</button><button onClick="{{ detDel }}" aria-label="Видалити" style="width:52px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;display:grid;place-items:center">{{ iTrash }}</button></div>
 </div>
@@ -363,19 +444,19 @@
 <div class="bfi" onClick="{{ closeSet }}" style="position:absolute;inset:0;background:rgba(10,12,14,.5);z-index:5"></div>
 <div class="sc bsu" style="position:absolute;z-index:6;left:{{ setLeft }};right:{{ setRight }};bottom:{{ setBottom }};top:{{ setTop }};width:{{ setW }};max-height:90%;overflow:auto;background:var(--b);color:var(--t);border:1px solid var(--t);padding:18px 16px 28px;box-sizing:border-box">
 <div style="display:flex;justify-content:space-between;align-items:center"><div style="font:600 26px var(--font-heading)">Налаштування</div><button onClick="{{ closeSet }}" aria-label="Закрити" style="width:44px;height:44px;border:0;background:transparent;color:var(--t);display:grid;place-items:center">{{ iX }}</button></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:14px 0 8px">Основна валюта</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 8px">Основна валюта</div>
 <div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--d)"><sc-for list="{{ curSeg }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="padding:12px 10px;border:0;border-radius:0;font:600 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:20px 0 8px">Режим</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:20px 0 8px">Режим</div>
 <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--d)"><sc-for list="{{ modeSeg }}" as="f" hint-placeholder-count="2"><button onClick="{{ f.go }}" style="padding:12px 10px;border:0;border-radius:0;font:600 13px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:20px 0 8px">Стиль оформлення</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:20px 0 8px">Стиль оформлення</div>
 <div style="display:flex;flex-direction:column;gap:8px"><sc-for list="{{ lookMain }}" as="l" hint-placeholder-count="2"><button onClick="{{ l.go }}" aria-pressed="{{ l.on }}" style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;padding:12px;border:{{ l.bd }};border-radius:0;background:transparent;color:var(--t)"><span style="font:600 18px var(--font-heading)">{{ l.n }}</span><span style="font-size:12px;color:var(--m)">{{ l.d }}</span></button></sc-for></div>
 <button onClick="{{ toggleMore }}" aria-expanded="{{ moreOpen }}" style="width:100%;margin-top:12px;padding:12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;text-align:left;font:500 13px var(--font-body)">{{ moreLabel }}</button>
 <sc-if value="{{ moreOpen }}" hint-placeholder-val="{{ false }}">
 <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px"><sc-for list="{{ lookOther }}" as="l" hint-placeholder-count="4"><button onClick="{{ l.go }}" aria-pressed="{{ l.on }}" style="display:flex;flex-direction:column;gap:2px;align-items:flex-start;text-align:left;padding:12px;border:{{ l.bd }};border-radius:0;background:transparent;color:var(--t)"><span style="font:600 18px var(--font-heading)">{{ l.n }}</span><span style="font-size:12px;color:var(--m)">{{ l.d }}</span></button></sc-for></div>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:20px 0 8px">Колір</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:20px 0 8px">Колір</div>
 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"><sc-for list="{{ palList }}" as="p" hint-placeholder-count="6"><button onClick="{{ p.go }}" aria-pressed="{{ p.on }}" style="display:flex;flex-direction:column;gap:8px;align-items:stretch;text-align:left;padding:10px;border:{{ p.bd }};border-radius:0;background:transparent;color:var(--t)"><span style="display:flex;height:34px;border:1px solid var(--d)"><span style="flex:3;background:{{ p.c0 }}"></span><span style="flex:2;background:{{ p.c1 }}"></span><span style="flex:1;background:{{ p.c2 }}"></span></span><span style="font:600 16px var(--font-heading)">{{ p.n }}</span></button></sc-for></div>
 </sc-if>
-<div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);padding:20px 0 8px">Головний екран</div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:20px 0 8px">Головний екран</div>
 <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"><sc-for list="{{ variants }}" as="v" hint-placeholder-count="3"><button onClick="{{ v.go }}" style="padding:10px 6px;border:1px solid var(--d);border-radius:0;font:500 13px var(--font-body);background:{{ v.bg }};color:{{ v.fg }}">{{ v.id }} · {{ v.label }}</button></sc-for></div>
 <button onClick="{{ setToImport }}" style="width:100%;margin-top:10px;padding:12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body);text-align:left">Імпорт виписки (Excel / CSV) →</button>
 <button onClick="{{ setToData }}" style="width:100%;margin-top:20px;padding:12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body);text-align:left">Синхронізація, PIN і резервні копії →</button>
@@ -405,13 +486,24 @@
 <div style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ catChips }}" as="c" hint-placeholder-count="6"><button onClick="{{ c.go }}" style="padding:9px 12px;border:1px solid var(--d);border-radius:0;font:500 13px var(--font-body);background:{{ c.bg }};color:{{ c.fg }}">{{ c.label }}</button></sc-for></div>
 <div style="display:flex;gap:8px"><input type="text" aria-label="Нова категорія" placeholder="Нова категорія" value="{{ newCat }}" onInput="{{ h.newCat }}" style="flex:1;min-width:0;padding:10px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body)"><button onClick="{{ addCat }}" style="padding:0 14px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 13px var(--font-body)">+ Категорія</button></div>
 <input type="date" aria-label="Дата" value="{{ f.date }}" onInput="{{ h.f_date }}" style="padding:12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:16px var(--font-body);width:100%">
+<sc-if value="{{ hasAcc }}" hint-placeholder-val="{{ false }}"><select aria-label="Рахунок" value="{{ f.acc }}" onChange="{{ h.f_acc }}" style="padding:12px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:16px var(--font-body);width:100%"><option value="">Без рахунку</option><sc-for list="{{ accOpts }}" as="o"><option value="{{ o.v }}">{{ o.label }}</option></sc-for></select></sc-if>
 <sc-if value="{{ canRec }}" hint-placeholder-val="{{ true }}"><label style="display:flex;align-items:center;gap:10px;font-size:14px;min-height:44px"><input type="checkbox" checked="{{ f.rec }}" onChange="{{ toggleRec }}" style="width:20px;height:20px;accent-color:var(--a)">Повторювати щомісяця</label></sc-if>
-<sc-if value="{{ txDlgOpen }}" hint-placeholder-val="{{ false }}"><div style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:80;padding:16px"><div style="background:var(--b);border:1px solid var(--a);padding:16px;width:100%;max-width:380px"><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m)">{{ txDlgCat }} · до інвестицій</div><div style="font:600 22px var(--font-heading);margin:4px 0 12px">{{ txDlgTitle }}</div><div style="font-size:12px;color:var(--m);margin-bottom:8px;line-height:1.4">{{ txDlgNote }}</div><div style="font:600 11px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--m);margin-bottom:6px">Додати до позиції:</div><sc-for list="{{ txDlgPos }}" as="p"><button onClick="{{ p.pick }}" style="width:100%;min-height:44px;margin-bottom:6px;padding:8px 12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;text-align:left;font:500 14px var(--font-body);display:flex;justify-content:space-between;gap:8px"><span>{{ p.name }}</span><b style="white-space:nowrap">{{ p.val }}</b></button></sc-for><button onClick="{{ txDlgNew }}" style="width:100%;min-height:44px;margin-bottom:6px;padding:8px 12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:600 14px var(--font-body)">Нова позиція (за назвою операції)</button><button onClick="{{ txDlgCancel }}" style="width:100%;min-height:44px;border:0;background:transparent;color:var(--m);font:500 14px var(--font-body)">Скасувати (повернути «Інше»)</button></div></div></sc-if>
+<sc-if value="{{ txDlgOpen }}" hint-placeholder-val="{{ false }}"><div style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:80;padding:16px"><div style="background:var(--b);border:1px solid var(--a);padding:16px;width:100%;max-width:380px"><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m)">{{ txDlgCat }} · до інвестицій</div><div style="font:600 22px var(--font-heading);margin:4px 0 12px">{{ txDlgTitle }}</div><div style="font-size:12px;color:var(--m);margin-bottom:8px;line-height:1.4">{{ txDlgNote }}</div><div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);margin-bottom:6px">Додати до позиції:</div><sc-for list="{{ txDlgPos }}" as="p"><button onClick="{{ p.pick }}" style="width:100%;min-height:44px;margin-bottom:6px;padding:8px 12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;text-align:left;font:500 14px var(--font-body);display:flex;justify-content:space-between;gap:8px"><span>{{ p.name }}</span><b style="white-space:nowrap">{{ p.val }}</b></button></sc-for><button onClick="{{ txDlgNew }}" style="width:100%;min-height:44px;margin-bottom:6px;padding:8px 12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:600 14px var(--font-body)">Нова позиція (за назвою операції)</button><button onClick="{{ txDlgCancel }}" style="width:100%;min-height:44px;border:0;background:transparent;color:var(--m);font:500 14px var(--font-body)">Скасувати (повернути «Інше»)</button></div></div></sc-if>
 <button onClick="{{ saveTx }}" style="padding:14px;border:0;border-radius:0;background:var(--a);color:var(--ab);font:600 15px var(--font-body)">Зберегти запис</button>
 <sc-if value="{{ isEdit }}" hint-placeholder-val="{{ false }}"><button onClick="{{ delFromSheet }}" style="padding:12px;border:1px solid var(--d);border-radius:0;background:transparent;color:var(--t);font:500 14px var(--font-body)">Видалити операцію</button></sc-if>
 </div>
 </sc-if>
 
+<sc-if value="{{ s.encLocked }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;inset:0;z-index:50;background:var(--b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px">
+<div style="color:var(--a7)">{{ iLock }}</div>
+<div style="font:600 28px/1.1 var(--font-heading);text-align:center">Введіть пароль даних</div>
+<input type="password" autocomplete="current-password" placeholder="Пароль" value="{{ s.encUnlockPw }}" onInput="{{ setUnlockPw }}" onKeyDown="{{ unlockKey }}" style="width:min(320px,100%);padding:12px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:16px var(--font-body)">
+<div style="min-height:18px;font-size:13px;color:var(--a7);text-align:center">{{ s.encUnlockMsg }}</div>
+<button onClick="{{ unlockGo }}" style="width:min(320px,100%);padding:14px;border:1px solid var(--a);background:var(--a);color:var(--ab);border-radius:0;font:600 15px var(--font-body)">Розблокувати</button>
+<button onClick="{{ wipeGo }}" style="min-height:44px;padding:0 16px;border:0;background:transparent;color:var(--m);font:500 13px var(--font-body);text-decoration:underline">{{ wipeLabel }}</button>
+</div>
+</sc-if>
 <sc-if value="{{ lockOpen }}" hint-placeholder-val="{{ false }}">
 <div style="position:absolute;inset:0;background:var(--b);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px">
 <div style="color:var(--a7)">{{ iLock }}</div>
@@ -419,6 +511,7 @@
 <div style="display:flex;gap:14px"><sc-for list="{{ pinDots }}" as="d"><span style="width:14px;height:14px;border:1px solid var(--t);background:{{ d.bg }}"></span></sc-for></div>
 <div style="min-height:20px;font-size:13px;color:var(--a7);text-align:center">{{ pinMsg }}</div>
 <div style="display:grid;grid-template-columns:repeat(3,72px);gap:12px"><sc-for list="{{ pinKeys }}" as="k"><button onClick="{{ k.go }}" aria-label="{{ k.aria }}" style="height:60px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:600 26px var(--font-heading);visibility:{{ k.vis }}">{{ k.label }}</button></sc-for></div>
+<sc-if value="{{ bioShow }}" hint-placeholder-val="{{ false }}"><button onClick="{{ bioGo }}" style="height:44px;padding:0 16px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Увійти за відбитком</button></sc-if>
 <sc-if value="{{ pinCancel }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pinCancelGo }}" style="height:44px;padding:0 16px;border:0;background:transparent;color:var(--a7);font:500 14px var(--font-body);text-decoration:underline">Скасувати</button></sc-if>
 </div>
 </sc-if>
@@ -434,6 +527,9 @@ class Component extends DCLogic {
   constructor(p){
     super(p);
     let sv={};try{sv=JSON.parse(localStorage.getItem('bella_proto2')||'{}')}catch(e){}
+    let encBlob=null;if(sv&&sv.enc&&sv.ct){encBlob=sv;sv={}}
+    if(!encBlob&&!sv.gpw){try{const og=localStorage.getItem('bella_gpw');if(og)sv.gpw=og}catch(e){}}
+    if(window.AndroidApp&&AndroidApp.signIn&&!sv.gcid)sv.gcid='android';
     if(!sv.mod){sv.mod=1;sv.noct=1;sv.look='modernist';sv.pal='mod';sv.dark=false;sv.lastEdit=new Date().toISOString()}
     if(!sv.noct){sv.noct=1;sv.look='nocturne';sv.pal='noct';sv.dark=true;sv.lastEdit=new Date().toISOString()}
     const D={
@@ -446,32 +542,153 @@ class Component extends DCLogic {
       targets:{'ОВДП':40,'ETF / Акції':30,'Депозит':20,'Криптовалюта':10},
       recurring:[],
       nwHist:[],nwTf:'ALL',nwCat:'',ovdpPos:[],op:{broker:'',isin:'',amount:'',coupon:'',maturity:''},
-      watchlist:[],log:[],pinHash:'',autoLock:'5',hide:false,
+      watchlist:[],log:[],accounts:[],transfers:[],debts:[],rules:[],lastDriveBackup:'',bio:true,lastBackup:'',gpw:'',catMap:{},openBal:{UAH:'',USD:'',EUR:'',PLN:''},pinHash:'',autoLock:'5',hide:false,
       ovdp:{name:'ОВДП 04.08.2027 (UA4000238422)',cur:'UAH',nominal:'1000',coupon:'17.1',freq:'2',start:'2026-10-04',maturity:'2027-08-04',price:'1037.75',qty:'1',fee:'0',sell:''},
       comp:{cp:'100000',cm:'10000',cr:'12',cy:'10'},
       pass:{pc:'',pmt:'0',y:'',t:''},gcid:'',gOn:false
     };
-    this.PK=Object.keys(D);
+    this.PK=Object.keys(D);this._D=D;this._encBlob=encBlob;this._pwBusy=0;
     this.state=Object.assign({},D,sv,{
       screen:'home',det:null,menuOpen:false,setOpen:false,sheet:false,editId:null,toast:null,clearArm:false,imp:'idle',impTr:true,impDlg:null,txDlg:null,impRows:[],impCols:[],impSkipped:0,
       fCat:'',fType:'',fCur:'',fSearch:'',sort:'date_desc',newCat:'',gAdd:{},
-      form:{type:'expense',amt:'',cur:'UAH',cat:'Харчування',desc:'',date:this.TODAY,rec:false},
+      form:{type:'expense',amt:'',cur:'UAH',cat:'Харчування',desc:'',date:this.TODAY,rec:false,acc:''},
       ng:{title:'',target:'',deadline:'',cur:'UAH'},
       af:{name:'',cat:'ОВДП',value:'',cur:'UAH',pct:''},
-      narrow:typeof window!=='undefined'&&window.innerWidth<=500,wide:typeof window!=='undefined'&&window.innerWidth>=900,help:false,helpKey:'',locked:!!sv.pinHash,pinMode:null,pinBuf:'',pinTmp:'',pinMsg:'',fails:+(localStorage.getItem('bella_pinfails')||0),lockUntil:+(localStorage.getItem('bella_lockuntil')||0)
+      narrow:typeof window!=='undefined'&&window.innerWidth<=500,wide:typeof window!=='undefined'&&window.innerWidth>=900,help:false,helpKey:'',bTab:'ov',naName:'',naCur:'UAH',naOpen:'',trFrom:'',trTo:'',trAmt:'',trAmtTo:'',trMsg:'',accDelArm:'',dbWho:'',dbDir:'owe',dbAmt:'',dbCur:'UAH',dbDue:'',dbPay:{},dbDelArm:'',impAcc:'',fAcc:'',selMode:false,selIds:[],selCat:'',selArm:false,rlTxt:'',rlCat:'',rlScope:'other',bkList:null,bkBusy:false,bkMsg:'',bkArm:'',encLocked:!!encBlob,encOn:!!encBlob,encIn:'',encIn2:'',encMsg:'',encUnlockPw:'',encUnlockMsg:'',encWipeArm:false,locked:!!sv.pinHash,pinMode:null,pinBuf:'',pinTmp:'',pinMsg:'',fails:+(localStorage.getItem('bella_pinfails')||0),lockUntil:+(localStorage.getItem('bella_lockuntil')||0)
     });
   }
   componentDidMount(){
-    this._vis=()=>{if(document.hidden&&this.state.autoLock==='0'&&this.state.pinHash)this.setState({locked:true,pinBuf:'',pinMode:null,pinMsg:''})};
+    this._vis=()=>{if(!document.hidden)this.genRecurring();if(document.hidden&&this.state.autoLock==='0'&&this.state.pinHash)this.setState({locked:true,pinBuf:'',pinMode:null,pinMsg:''})};
     document.addEventListener('visibilitychange',this._vis);this.resetTimer();
     document.documentElement.dataset.look=this.state.look||'nocturne';this._lastScr=this.state.screen;
     this.loadRates();
+    this.genRecurring();
+    if(!this.state.lastBackup&&!this.state.encLocked)this.upd({lastBackup:this.TODAY},null,true);
+    this.bioCheck();this._rt=setTimeout(()=>this.syncReminders(),1500);
+    try{if(!this.state.encLocked&&localStorage.getItem('bella_gpw')!==null){this.persistNow();localStorage.removeItem('bella_gpw')}}catch(e){}
     if(this.state.gOn&&this.state.gcid)this.doSync(false);
     this._kd=e=>{const t=e.target,tg=t&&t.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||e.ctrlKey||e.metaKey||e.altKey||this.state.locked||this.state.narrow)return;const K=['home','budget','networth','ovdp','invest','goals','passive','import','data'];if(/^[0-8]$/.test(e.key))this.setState({screen:K[+e.key],imp:'idle',sheet:false,toast:null});else if(e.key==='n'||e.key==='N'||e.key==='т'||e.key==='Т'){e.preventDefault();this.setState({sheet:true,editId:null})}};window.addEventListener('keydown',this._kd);
     this._rs=()=>{const n=window.innerWidth<=500,w=window.innerWidth>=900;if(n!==this.state.narrow||w!==this.state.wide)this.setState({narrow:n,wide:w})};window.addEventListener('resize',this._rs);
   }
-  componentDidUpdate(){if(this._lastScr!==undefined&&this._lastScr!==this.state.screen){const el=document.querySelector('.sc[style*="flex: 1"]')||document.querySelector('.sc');if(el){el.classList.remove('bpg');void el.offsetWidth;el.classList.add('bpg');el.scrollTop=0}}const l=this.state.look||'nocturne';if(document.documentElement.dataset.look!==l)document.documentElement.dataset.look=l;this._lastScr=this.state.screen}
+  componentDidUpdate(){this.bioCheck();if(this._lastScr!==undefined&&this._lastScr!==this.state.screen){const el=document.querySelector('.sc[style*="flex: 1"]')||document.querySelector('.sc');if(el){el.classList.remove('bpg');void el.offsetWidth;el.classList.add('bpg');el.scrollTop=0}}const l=this.state.look||'nocturne';if(document.documentElement.dataset.look!==l)document.documentElement.dataset.look=l;this._lastScr=this.state.screen}
   componentWillUnmount(){window.removeEventListener('keydown',this._kd);window.removeEventListener('resize',this._rs);document.removeEventListener('visibilitychange',this._vis);clearTimeout(this._lt)}
+  ruleCat(desc){const d=String(desc||'').toLowerCase();const r=(this.state.rules||[]).find(x=>x.t&&d.includes(String(x.t).toLowerCase()));return r?r.c:null}
+  ruleChanges(scope){const s=this.state;return s.txs.filter(t=>{const rc=this.ruleCat(t.desc);return rc&&rc!==t.cat&&!this.INVC.includes(t.cat)&&(scope==='all'||t.cat==='Інше')})}
+  toggleSel(id){const a=this.state.selIds;this.setState({selIds:a.includes(id)?a.filter(x=>x!==id):[...a,id],selArm:false})}
+  localData(){const L=this.state,local={updated:L.lastEdit,data:{}};this.SK.forEach(k=>local.data[k]=L[k]);return local}
+  // ---- датовані копії на Google Drive ----
+  bkLabel(name){const m=/^bella-backup-(\d{4})-(\d{2})-(\d{2})(?:_(\d{2})-(\d{2}))?(-before-restore)?\.json$/.exec(name);if(!m)return name;return m[3]+'.'+m[2]+'.'+m[1]+(m[4]?' '+m[4]+':'+m[5]:'')+(m[6]?' · перед відновленням':'')}
+  async bkList_(tok){const B='https://www.googleapis.com';const q=await(await this.gFetch(tok,B+'/drive/v3/files?spaces=appDataFolder&q='+encodeURIComponent("name contains 'bella-backup-'")+'&fields=files(id,name)&pageSize=100&orderBy=name%20desc')).json();return(q.files||[]).filter(f=>/^bella-backup-/.test(f.name)).sort((a,b)=>b.name.localeCompare(a.name))}
+  async bkCreate(tok,name){
+    const B='https://www.googleapis.com',pw=this.state.gpw||'',local=this.localData(),body=JSON.stringify(pw?await this.encJ(local,pw):local),bd='b'+Date.now();
+    const mp='--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+JSON.stringify({name,parents:['appDataFolder']})+'\r\n--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+body+'\r\n--'+bd+'--';
+    await this.gFetch(tok,B+'/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body:mp});
+    // зберігаємо найновіші 20 копій
+    const all=await this.bkList_(tok);for(const f of all.slice(20))await this.gFetch(tok,B+'/drive/v3/files/'+f.id,{method:'DELETE'})
+  }
+  async dailyBackup(tok){
+    const T=this.TODAY,name='bella-backup-'+T+'.json';if(this.state.lastDriveBackup===T)return false;
+    const have=(await this.bkList_(tok)).some(f=>f.name===name);
+    if(!have)await this.bkCreate(tok,name);
+    this.upd({lastDriveBackup:T},null,true);return !have
+  }
+  stamp(){const d=new Date(),z=n=>String(n).padStart(2,'0');return this.TODAY+'_'+z(d.getHours())+'-'+z(d.getMinutes())}
+  async bkShow(){
+    if(this.state.bkBusy)return;this.setState({bkBusy:true,bkMsg:'Завантаження списку…'});
+    try{const tok=await this.gToken(true),l=await this.bkList_(tok);this.setState({bkList:l.map(f=>({id:f.id,name:f.name})),bkBusy:false,bkMsg:l.length?'':'Копій ще немає'})}
+    catch(e){this.setState({bkBusy:false,bkMsg:'Помилка: '+String(e.message||e)})}
+  }
+  async bkNow(){
+    if(this.state.bkBusy)return;this.setState({bkBusy:true,bkMsg:'Створення копії…'});
+    try{const tok=await this.gToken(true);await this.bkCreate(tok,'bella-backup-'+this.stamp()+'.json');const l=await this.bkList_(tok);this.setState({bkList:l.map(f=>({id:f.id,name:f.name})),bkBusy:false,bkMsg:'Копію створено'})}
+    catch(e){this.setState({bkBusy:false,bkMsg:'Помилка: '+String(e.message||e)})}
+  }
+  async bkRestore(f){
+    if(this.state.bkArm!==f.id)return this.setState({bkArm:f.id});
+    this.setState({bkBusy:true,bkMsg:'Відновлення…',bkArm:''});
+    try{
+      const tok=await this.gToken(true),B='https://www.googleapis.com',pw=this.state.gpw||'';
+      let rem=await(await this.gFetch(tok,B+'/drive/v3/files/'+f.id+'?alt=media')).json();
+      if(rem.enc){if(!pw)throw new Error('введіть пароль шифрування');rem=await this.decJ(rem,pw)}
+      if(!rem||!rem.data||!Array.isArray(rem.data.txs))throw new Error('файл копії пошкоджено');
+      await this.bkCreate(tok,'bella-backup-'+this.stamp()+'-before-restore.json');
+      this._applyingRemote=true;this.upd(rem.data,'Відновлено з копії Drive: '+this.bkLabel(f.name));this.upd({lastEdit:new Date().toISOString()});this._applyingRemote=false;
+      const l=await this.bkList_(tok);this.setState({bkList:l.map(x=>({id:x.id,name:x.name})),bkBusy:false,bkMsg:'Дані відновлено з копії '+this.bkLabel(f.name)});
+      this.toast('Дані відновлено. Попередній стан збережено окремою копією.',()=>this.setState({toast:null}));this.doSync(false)
+    }catch(e){this._applyingRemote=false;this.setState({bkBusy:false,bkMsg:'Помилка: '+String(e.message||e)})}
+  }
+  repData(per){
+    // Підсумки по місяцях і категоріях у валюті перегляду. per: 3, 6, 12 місяців або 0 (весь період).
+    const s=this.state,R=this.R,cur=s.cur,conv=(a,f)=>a*R[f]/R[cur];
+    let last=this.TODAY.slice(0,7);s.txs.forEach(t=>{const k=t.date.slice(0,7);if(k>last)last=k});
+    let [y,m]=last.split('-').map(Number),n=per;
+    if(!n){const f=s.txs.reduce((a,t)=>t.date<a?t.date:a,'9999-99');if(f==='9999-99')n=1;else{const [fy,fm]=f.slice(0,7).split('-').map(Number);n=(y-fy)*12+(m-fm)+1}}
+    const months=[];for(let i=0;i<n&&i<240;i++){months.unshift(y+'-'+String(m).padStart(2,'0'));m--;if(m<1){m=12;y--}}
+    const set=new Set(months),mm={},cats={};months.forEach(k=>mm[k]={i:0,e:0});
+    s.txs.forEach(t=>{const k=t.date.slice(0,7);if(!set.has(k))return;const v=conv(t.amount,t.cur);if(t.type==='income')mm[k].i+=v;else{mm[k].e+=v;cats[t.cat]=(cats[t.cat]||0)+v}});
+    const rows=months.map(k=>({k,i:mm[k].i,e:mm[k].e,net:mm[k].i-mm[k].e}));
+    const ti=rows.reduce((a,r)=>a+r.i,0),te=rows.reduce((a,r)=>a+r.e,0);
+    const catRows=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([c,v])=>({c,v,share:te?v/te*100:0,avg:v/months.length}));
+    return {months,rows,catRows,ti,te}
+  }
+  crc32(u){let t=this._crcT;if(!t){t=this._crcT=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}}let r=-1;for(let i=0;i<u.length;i++)r=t[(r^u[i])&255]^(r>>>8);return(r^-1)>>>0}
+  zipStore(files){
+    // Мінімальний zip без стиснення (достатньо для xlsx).
+    const enc=new TextEncoder(),parts=[],cen=[],u16=n=>[n&255,(n>>8)&255],u32=n=>[n&255,(n>>8)&255,(n>>16)&255,(n>>>24)&255];let off=0,cs=0;
+    files.forEach(f=>{const nm=enc.encode(f.name),crc=this.crc32(f.data),sz=f.data.length;
+      const lh=Uint8Array.from([0x50,0x4b,3,4,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(sz),...u32(sz),...u16(nm.length),0,0]);
+      const ch=Uint8Array.from([0x50,0x4b,1,2,20,0,20,0,0,8,0,0,0,0,0x21,0,...u32(crc),...u32(sz),...u32(sz),...u16(nm.length),0,0,0,0,0,0,0,0,0,0,0,0,...u32(off)]);
+      parts.push(lh,nm,f.data);cen.push(ch,nm);off+=lh.length+nm.length+sz;cs+=ch.length+nm.length});
+    const end=Uint8Array.from([0x50,0x4b,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(cs),...u32(off),0,0]);
+    const all=[...parts,...cen,end],out=new Uint8Array(all.reduce((a,x)=>a+x.length,0));let p=0;all.forEach(x=>{out.set(x,p);p+=x.length});return out
+  }
+  xlsxBuild(sheets){
+    // sheets: [{name, widths:[..], rows:[[...]]}]; перший рядок аркуша виділяється жирним.
+    const esc=v=>String(v).replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const col=i=>{let n='',x=i+1;while(x>0){const r=(x-1)%26;n=String.fromCharCode(65+r)+n;x=Math.floor((x-1)/26)}return n};
+    const sheetXml=sh=>'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>'+sh.widths.map((w,i)=>'<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join('')+'</cols><sheetData>'+sh.rows.map((r,ri)=>'<row r="'+(ri+1)+'">'+r.map((v,ci)=>{const ref=col(ci)+(ri+1),st=ri===0?' s="1"':'';return typeof v==='number'&&isFinite(v)?'<c r="'+ref+'"'+st+'><v>'+v+'</v></c>':'<c r="'+ref+'"'+st+' t="inlineStr"><is><t xml:space="preserve">'+esc(v==null?'':v)+'</t></is></c>'}).join('')+'</row>').join('')+'</sheetData></worksheet>';
+    const enc=new TextEncoder(),X='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>',f=(name,txt)=>({name,data:enc.encode(txt)});
+    return this.zipStore([
+      f('[Content_Types].xml',X+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>'+sheets.map((_,i)=>'<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>').join('')+'</Types>'),
+      f('_rels/.rels',X+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'),
+      f('xl/workbook.xml',X+'<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>'+sheets.map((sh,i)=>'<sheet name="'+esc(sh.name)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>').join('')+'</sheets></workbook>'),
+      f('xl/_rels/workbook.xml.rels',X+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+sheets.map((_,i)=>'<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>').join('')+'<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'),
+      f('xl/styles.xml',X+'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"/></cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'),
+      ...sheets.map((sh,i)=>f('xl/worksheets/sheet'+(i+1)+'.xml',sheetXml(sh)))
+    ])
+  }
+  dlBin(name,u8,type){
+    if(window.AndroidApp&&AndroidApp.saveBase64){let b='';for(let i=0;i<u8.length;i+=8192)b+=String.fromCharCode.apply(null,u8.subarray(i,i+8192));AndroidApp.saveBase64(name,btoa(b),type);return}
+    const bl=new Blob([u8],{type}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=name;document.body.appendChild(a);a.click();a.remove()
+  }
+  expXlsx(){
+    const s=this.state,R=this.R,cur=s.cur,r2=n=>Math.round(n*100)/100,conv=(a,f)=>a*R[f]/R[cur];
+    const tx=[...s.txs].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+    const rep=this.repData(0);
+    const sh1={name:'Операції',widths:[12,10,36,20,14,8,18,20],rows:[['Дата','Тип','Опис','Категорія','Сума','Валюта','Сума у '+cur+' (±)','Рахунок'],...tx.map(t=>[t.date,t.type==='income'?'Дохід':'Витрата',t.desc,t.cat,r2(t.amount),t.cur,r2((t.type==='income'?1:-1)*conv(t.amount,t.cur)),((s.accounts||[]).find(a=>a.id===t.acc)||{}).name||''])]};
+    const sh2={name:'По місяцях',widths:[12,16,16,16,22],rows:[['Місяць','Доходи, '+cur,'Витрати, '+cur,'Баланс, '+cur,'Норма заощаджень, %'],...rep.rows.map(r=>[r.k,r2(r.i),r2(r.e),r2(r.net),r.i>0?r2(r.net/r.i*100):''])]};
+    const sh3={name:'По категоріях',widths:[24,16,14,22],rows:[['Категорія','Витрати, '+cur,'Частка, %','Середньо на місяць, '+cur],...rep.catRows.map(c=>[c.c,r2(c.v),r2(c.share),r2(c.avg)])]};
+    this.dlBin('finance_'+this.TODAY+'.xlsx',this.xlsxBuild([sh1,sh2,sh3]),'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    this.toast('Експортовано в Excel: '+tx.length+' операцій',()=>this.setState({toast:null}))
+  }
+  genRecurring(){
+    // Додає операції за шаблонами «Повторювати щомісяця» за всі місяці, що настали, без дублів.
+    const s=this.state,T=this.TODAY,ym=T.slice(0,7);
+    if(!s.recurring.length)return;
+    const out=[],rec=s.recurring.map(r=>{
+      let last=r.last;
+      if(!last){const m=s.txs.filter(t=>t.desc===r.desc&&t.cat===r.cat&&t.type===r.type&&Math.abs(t.amount-r.amount)<.005).sort((a,b)=>b.date.localeCompare(a.date))[0];last=m?m.date.slice(0,7):ym}
+      let y=+last.slice(0,4),m=+last.slice(5,7),n=0;
+      while(n<36){m++;if(m>12){m=1;y++}const k=y+'-'+String(m).padStart(2,'0');if(k>ym)break;
+        const d=Math.min(r.day||1,new Date(y,m,0).getDate()),date=k+'-'+String(d).padStart(2,'0');
+        if(date>T)break;
+        if(!s.txs.some(t=>t.recId===r.id&&t.recYm===k))out.push({id:Date.now()+out.length,type:r.type,desc:r.desc,amount:r.amount,cur:r.cur,cat:r.cat,acc:r.acc,date,recId:r.id,recYm:k});
+        last=k;n++}
+      return last===r.last?r:Object.assign({},r,{last})});
+    if(!out.length&&rec.every((r,i)=>r===s.recurring[i]))return;
+    this.upd({txs:[...out,...s.txs],recurring:rec},out.length?'Повторювані операції: '+out.length:null,!out.length);
+    if(out.length)this.toast('Додано повторюваних операцій: '+out.length,()=>{this.undoAt(0);setTimeout(()=>this.upd({recurring:this.state.recurring.map(r=>out.some(o=>o.recId===r.id)?Object.assign({},r,{last:ym}):r)},null,true),80)});
+  }
   resetTimer=()=>{clearTimeout(this._lt);const s=this.state,m=parseInt(s.autoLock);if(!s.pinHash||s.locked||!m)return;this._lt=setTimeout(()=>this.setState({locked:true,pinBuf:'',pinMode:null,pinMsg:'',sheet:false,help:false}),m*60000)};
   async hashPin(p){const b=new TextEncoder().encode('bella:'+p);const d=await crypto.subtle.digest('SHA-256',b);return Array.from(new Uint8Array(d)).map(x=>x.toString(16).padStart(2,'0')).join('')}
   async pinDone(buf){
@@ -492,28 +709,73 @@ class Component extends DCLogic {
   async encJ(o,pw){const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),k=await this.cKey(pw,salt);const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},k,new TextEncoder().encode(JSON.stringify(o)));return {enc:1,salt:this.b64(salt),iv:this.b64(iv),ct:this.b64(new Uint8Array(ct))}}
   async decJ(o,pw){try{const k=await this.cKey(pw,this.ub64(o.salt));const p=await crypto.subtle.decrypt({name:'AES-GCM',iv:this.ub64(o.iv)},k,this.ub64(o.ct));return JSON.parse(new TextDecoder().decode(p))}catch(e){throw new Error('невірний пароль шифрування')}}
   loadGsi(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();const sc=document.createElement('script');sc.src='https://accounts.google.com/gsi/client';sc.onload=res;sc.onerror=()=>rej(new Error('немає мережі'));document.head.appendChild(sc)})}
-  async gToken(interactive){await this.loadGsi();return new Promise((res,rej)=>{const c=google.accounts.oauth2.initTokenClient({client_id:this.state.gcid.trim(),scope:'https://www.googleapis.com/auth/drive.appdata',prompt:interactive?'':'none',callback:r=>r.access_token?res(r.access_token):rej(new Error(r.error||'вхід')),error_callback:e=>rej(new Error(e.type||'вхід'))});c.requestAccessToken()})}
+  async gToken(interactive){if(window.AndroidApp&&AndroidApp.signIn)return this.nativeToken(interactive);await this.loadGsi();return new Promise((res,rej)=>{const c=google.accounts.oauth2.initTokenClient({client_id:this.state.gcid.trim(),scope:'https://www.googleapis.com/auth/drive.appdata',prompt:interactive?'':'none',callback:r=>r.access_token?res(r.access_token):rej(new Error(r.error||'вхід')),error_callback:e=>rej(new Error(e.type||'вхід'))});c.requestAccessToken()})}
+  nativeToken(interactive){
+    // Android-обгортка: вхід через браузер (OAuth + PKCE), токен повертає AndroidApp.signIn.
+    const W=window;if(!W.__gAuth){W.__gAuth={};W.__gAuthCb=(id,t,e)=>{const f=W.__gAuth[id];if(f){delete W.__gAuth[id];f(t,e)}}}
+    return new Promise((res,rej)=>{const id='g'+Date.now()+Math.random().toString(36).slice(2),tm=setTimeout(()=>{delete W.__gAuth[id];rej(new Error('вхід не завершено'))},180000);
+      W.__gAuth[id]=(t,e)=>{clearTimeout(tm);t?res(t):rej(new Error(e||'вхід'))};AndroidApp.signIn(!!interactive,id)})
+  }
   async gFetch(tok,url,opt){opt=opt||{};const r=await fetch(url,Object.assign({},opt,{headers:Object.assign({Authorization:'Bearer '+tok},opt.headers||{})}));if(!r.ok)throw new Error('HTTP '+r.status);return r}
+  COLS=['txs','portfolio','goals','recurring','ovdpPos','accounts','transfers','debts','rules'];
+  loadBase(){try{return JSON.parse(localStorage.getItem('bella_base')||'{}')||{}}catch(e){return {}}}
+  saveBase(d){try{const b={};this.COLS.forEach(k=>b[k]=JSON.parse(JSON.stringify(d[k]||[])));localStorage.setItem('bella_base',JSON.stringify(b))}catch(e){}}
+  mergeColl(base,local,remote){
+    // Три версії елемента: база (остання синхронізація), локальна, з Drive.
+    // Видалення відновлюється лише якщо інший пристрій його не змінював; конфлікт — перемагає локальна версія.
+    const B=new Map((base||[]).map(x=>[x.id,x])),L=new Map(local.map(x=>[x.id,x])),R=new Map(remote.map(x=>[x.id,x]));
+    const eq=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+    const pick=id=>{const b=B.get(id),l=L.get(id),r=R.get(id);
+      if(l&&r){if(eq(l,r))return l;if(!b)return l;if(eq(l,b))return r;return l}
+      if(l)return(!b||!eq(l,b))?l:null;
+      if(r)return(!b||!eq(r,b))?r:null;
+      return null};
+    const seen=new Set(),out=[];
+    for(const x of [...local,...remote]){if(seen.has(x.id))continue;seen.add(x.id);const v=pick(x.id);if(v)out.push(v)}
+    return out}
   doSync=async(interactive)=>{
     if(!this.state.gcid.trim()||this._syncing)return;this._syncing=true;this.setState({gStatus:'Синхронізація…'});
     try{
       const tok=await this.gToken(interactive),B='https://www.googleapis.com';
       const q=await(await this.gFetch(tok,B+'/drive/v3/files?spaces=appDataFolder&q='+encodeURIComponent("name='bella-sync.json'")+'&fields=files(id)')).json();
       const id=q.files[0]&&q.files[0].id,L=this.state,local={updated:L.lastEdit,data:{}};this.SK.forEach(k=>local.data[k]=L[k]);
-      const pw=localStorage.getItem('bella_gpw')||'';const up=async()=>{const body=JSON.stringify(pw?await this.encJ(local,pw):local);
+      const pw=this.state.gpw||'';const up=async()=>{const body=JSON.stringify(pw?await this.encJ(local,pw):local);
         if(id)await this.gFetch(tok,B+'/upload/drive/v3/files/'+id+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body});
         else{const bd='b'+Date.now(),mp='--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+JSON.stringify({name:'bella-sync.json',parents:['appDataFolder']})+'\r\n--'+bd+'\r\nContent-Type: application/json\r\n\r\n'+body+'\r\n--'+bd+'--';await this.gFetch(tok,B+'/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body:mp})}};
       let msg;
       if(!id){await up();msg='Вивантажено в Drive'}
-      else{let rem=await(await this.gFetch(tok,B+'/drive/v3/files/'+id+'?alt=media')).json();if(rem.enc){if(!pw)throw new Error('введіть пароль шифрування');rem=await this.decJ(rem,pw)}const rt=Date.parse(rem.updated),lt=Date.parse(L.lastEdit);
-        if(rt>lt){this._applyingRemote=true;{const m={};(rem.data.nwHist||[]).concat(L.nwHist||[]).forEach(x=>{m[x.d]=x});rem.data.nwHist=Object.values(m).sort((a,b)=>a.d.localeCompare(b.d)).slice(-800)}this.upd(rem.data);this.upd({lastEdit:rem.updated});this._applyingRemote=false;msg='Завантажено новіші дані'}
-        else if(lt>rt){await up();msg='Вивантажено в Drive'}else msg='Усе актуально'}
+      else{
+        let rem=await(await this.gFetch(tok,B+'/drive/v3/files/'+id+'?alt=media')).json();
+        if(rem.enc){if(!pw)throw new Error('введіть пароль шифрування');rem=await this.decJ(rem,pw)}
+        const rt=Date.parse(rem.updated),lt=Date.parse(L.lastEdit),rd=rem.data||{},base=this.loadBase();
+        // Скалярні налаштування: новіша версія перемагає. Колекції зливаються по елементах з урахуванням бази.
+        const loc=this.localData().data,newer=rt>lt?Object.assign({},loc,rd):loc,merged={};
+        this.SK.forEach(k=>{merged[k]=newer[k]});
+        this.COLS.forEach(k=>{merged[k]=this.mergeColl(base[k],L[k]||[],rd[k]||[])});
+        {const m={};(rd.nwHist||[]).concat(L.nwHist||[]).forEach(x=>{m[x.d]=x});merged.nwHist=Object.values(m).sort((a,b)=>a.d.localeCompare(b.d)).slice(-800)}
+        const changed=this.COLS.some(k=>JSON.stringify(merged[k])!==JSON.stringify(L[k]||[]));
+        const stamp=new Date().toISOString();
+        if(changed){
+          const was=(L.txs||[]).length,now=merged.txs.length;
+          this._applyingRemote=true;
+          this.upd(merged,'Синхронізація з Drive: операцій '+was+' → '+now);
+          this.upd({lastEdit:stamp});
+          this._applyingRemote=false;
+        }
+        // Вивантажуємо злитий результат, щоб інші пристрої отримали його ж.
+        const out={updated:stamp,data:{}};this.SK.forEach(k=>out.data[k]=merged[k]);
+        const outBody=JSON.stringify(pw?await this.encJ(out,pw):out);
+        await this.gFetch(tok,B+'/upload/drive/v3/files/'+id+'?uploadType=media',{method:'PATCH',headers:{'Content-Type':'application/json'},body:outBody});
+        this.saveBase(merged);
+        msg=changed?'Злито з Drive':'Усе актуально';
+      }
       if(!this.state.gOn)this.upd({gOn:true});
+      try{if(await this.dailyBackup(tok))msg+=' · створено щоденну копію'}catch(e){}
       this.setState({gStatus:msg+' · '+new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})});
     }catch(e){const m=String(e.message||e),hint=/popup_failed_to_open|popup_closed/.test(m)?'вікно входу заблоковано або закрито':/access_denied/.test(m)?'акаунт не доданий у Test users':/origin_mismatch|invalid_client/.test(m)?'Client ID або адреса сайту не збігаються':/HTTP 403/.test(m)?'увімкніть Google Drive API':/HTTP 401/.test(m)?'сесія входу завершилась':m;this.setState({gStatus:interactive?'Помилка: '+hint:'Натисніть «Синхронізувати»'})}
     this._syncing=false;
   };
-  DK=['nwHist','ovdpPos','txs','portfolio','goals','categories','limits','targets','recurring','watchlist','ovdp','comp','pass'];
+  DK=['nwHist','openBal','catMap','rules','accounts','transfers','debts','ovdpPos','txs','portfolio','goals','categories','limits','targets','recurring','watchlist','ovdp','comp','pass'];
   SK=this.DK.concat(['look','pal','dark','variant','cur','pinHash','autoLock']);
   ovEnsure(o){
     const s0=this.state,pos=(o.ovdpPos||s0.ovdpPos).map(p=>Object.assign({},p)),pf=(o.portfolio||s0.portfolio).map(p=>Object.assign({},p)),n=v=>parseFloat(v)||0;let ch=false,id=Date.now();
@@ -528,11 +790,77 @@ class Component extends DCLogic {
     if(!quiet&&this.SK.some(k=>k in o)){
       o=Object.assign({},o,{lastEdit:new Date().toISOString()});
       if(s0.gOn&&s0.gcid&&!this._applyingRemote){clearTimeout(this._as);this._as=setTimeout(()=>this.doSync(false),5000)}
-      if(text){const snap={txs:s0.txs,portfolio:s0.portfolio,ovdpPos:s0.ovdpPos,goals:s0.goals,recurring:s0.recurring,categories:s0.categories,limits:s0.limits,targets:s0.targets};
+      if(text){const snap={};this.DK.forEach(k=>snap[k]=s0[k]);
         o.log=[{id:Date.now(),ts:new Date().toISOString(),text,snap},...s0.log].slice(0,30);}
     }
-    this.setState(o,()=>{const s=this.state,x={};this.PK.forEach(k=>x[k]=s[k]);try{localStorage.setItem('bella_proto2',JSON.stringify(x))}catch(e){}});
+    this.setState(o,()=>this.persistNow());
   };
+  persistNow(){const s=this.state,x={};this.PK.forEach(k=>x[k]=s[k]);this.persist(JSON.stringify(x));clearTimeout(this._rt);this._rt=setTimeout(()=>this.syncReminders(),1500)}
+  hasBio(){const W=window;try{return !!(W.AndroidApp&&AndroidApp.biometricAvailable&&AndroidApp.biometricAvailable())}catch(e){return false}}
+  bioAuth(){
+    const W=window;if(!(W.AndroidApp&&AndroidApp.authenticate))return;
+    W.__bio=W.__bio||{};if(!W.__bioCb)W.__bioCb=(id,ok)=>{const f=W.__bio[id];if(f){delete W.__bio[id];f(ok)}};
+    const id='b'+Date.now();W.__bio[id]=ok=>{if(ok&&this.state.locked)this.setState({locked:false,pinBuf:'',pinMsg:'',fails:0},this.resetTimer)};
+    AndroidApp.authenticate(id)
+  }
+  bioCheck(){const s=this.state;
+    if(s.locked&&!s.encLocked&&s.pinHash&&s.bio&&this.hasBio()){if(!this._bioShown){this._bioShown=true;this.bioAuth()}}
+    if(!s.locked)this._bioShown=false}
+  syncReminders(){
+    // Нагадування для Android-обгортки: погашення ОВДП (за 7 і за 1 день, о 9:00) і копія JSON (через 14 днів, о 10:00).
+    const W=window;if(!(W.AndroidApp&&AndroidApp.setReminders)||this.state.encLocked)return;
+    const s=this.state,now=Date.now(),L=[],pd=x=>x.split('-').map(Number);
+    const at=(ymd,h)=>{const [y,m,d]=pd(ymd);return new Date(y,m-1,d,h,0,0).getTime()},addD=(ymd,n)=>{const [y,m,d]=pd(ymd);return this.fd(new Date(y,m-1,d+n))};
+    const hash=str=>{let h=7;for(const c of str)h=(h*31+c.charCodeAt(0))%90000;return h+1000};
+    const showAmt=!s.hide&&!s.pinHash;
+    s.ovdpPos.forEach(p=>{if(!p.maturity)return;[7,1].forEach(n=>{const t=at(addD(p.maturity,-n),9);if(t>now)L.push({id:hash(String(p.id)+':'+n),at:t,title:'Погашення ОВДП через '+(n===1?'1 день':n+' днів'),
+      text:(p.broker||'ОВДП')+(showAmt?' · '+Math.round(parseFloat(p.amount)||0).toLocaleString('uk-UA')+' ₴':'')+' погашається '+p.maturity.split('-').reverse().join('.')})})});
+    (s.debts||[]).forEach(d=>{const rem=Math.max(0,(parseFloat(d.total)||0)-(d.pay||[]).reduce((a,x)=>a+(parseFloat(x.amt)||0),0));if(!d.due||rem<=0)return;[7,1].forEach(n=>{const t=at(addD(d.due,-n),9);if(t>now)L.push({id:hash('d'+d.id+':'+n),at:t,title:'Строк боргу через '+(n===1?'1 день':n+' днів'),text:(d.dir==='owed'?'Вам винні: ':'Ви винні: ')+d.who+(showAmt?' · '+Math.round(rem).toLocaleString('uk-UA'):'')+' · до '+d.due.split('-').reverse().join('.')})})});
+    let due=at(addD(s.lastBackup||this.TODAY,14),10);if(due<=now){due=at(this.TODAY,10);if(due<=now)due=at(addD(this.TODAY,1),10)}
+    L.push({id:9001,at:due,title:'Зробіть копію даних',text:'Минуло 14 днів без копії. «Дані та історія» → «Копія JSON».'});
+    const j=JSON.stringify(L);if(j!==this._remSent){this._remSent=j;AndroidApp.setReminders(j)}
+  }
+  persist(txt){
+    // Поки дані зашифровані й не розблоковані, нічого не пишемо, щоб не затерти їх порожніми.
+    if(this.state.encLocked)return;
+    const plain=()=>{try{localStorage.setItem('bella_proto2',txt)}catch(e){}};
+    if(!this._encKey&&!this._pwBusy)return plain();
+    this._pwBusy++;
+    this._pw=(this._pw||Promise.resolve()).then(async()=>{
+      if(!this._encKey)return plain();
+      const iv=crypto.getRandomValues(new Uint8Array(12)),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},this._encKey,new TextEncoder().encode(txt));
+      try{localStorage.setItem('bella_proto2',JSON.stringify({enc:1,salt:this.b64(this._encSalt),iv:this.b64(iv),ct:this.b64(new Uint8Array(ct))}))}catch(e){}
+    }).catch(()=>{}).then(()=>{this._pwBusy--});
+  }
+  async encEnable(){
+    const s=this.state,a=s.encIn||'',b=s.encIn2||'';
+    if(a.length<6)return this.setState({encMsg:'Пароль має містити щонайменше 6 символів'});
+    if(a!==b)return this.setState({encMsg:'Паролі не збігаються'});
+    try{
+      const salt=crypto.getRandomValues(new Uint8Array(16));
+      this._encKey=await this.cKey(a,salt);this._encSalt=salt;
+      try{localStorage.removeItem('bella_gpw')}catch(e){}
+      this.setState({encOn:true,encIn:'',encIn2:'',encMsg:''},()=>this.persistNow());
+      this.toast('Дані на пристрої зашифровано. Пароль не відновити, зробіть копію JSON.',()=>this.setState({toast:null}));
+    }catch(e){this.setState({encMsg:'Не вдалося увімкнути шифрування'})}
+  }
+  encDisable(){this._encKey=null;this.setState({encOn:false,encMsg:''},()=>this.persistNow());this.toast('Шифрування вимкнено',()=>this.setState({toast:null}))}
+  async encUnlock(){
+    const b=this._encBlob;if(!b)return;
+    try{
+      const salt=this.ub64(b.salt),key=await this.cKey(this.state.encUnlockPw||'',salt);
+      const pl=await crypto.subtle.decrypt({name:'AES-GCM',iv:this.ub64(b.iv)},key,this.ub64(b.ct));
+      const data=JSON.parse(new TextDecoder().decode(pl));
+      this._encKey=key;this._encSalt=salt;this._encBlob=null;
+      this.setState(Object.assign({},this._D,data,{encLocked:false,encOn:true,encUnlockPw:'',encUnlockMsg:'',encWipeArm:false,locked:false}),()=>{this.genRecurring();if(this.state.gOn&&this.state.gcid)this.doSync(false)});
+    }catch(e){this.setState({encUnlockMsg:'Невірний пароль',encUnlockPw:''})}
+  }
+  encWipe(){
+    if(!this.state.encWipeArm)return this.setState({encWipeArm:true});
+    try{localStorage.removeItem('bella_proto2')}catch(e){}
+    this._encBlob=null;this._encKey=null;
+    this.setState(Object.assign({},this._D,{encLocked:false,encOn:false,encWipeArm:false,encUnlockPw:'',encUnlockMsg:'',locked:false}));
+  }
   toast=(text,undo)=>{clearTimeout(this._tt);this.setState({toast:{text,undo}});this._tt=setTimeout(()=>this.setState({toast:null}),6000)};
   undoAt=(i)=>{const l=this.state.log[i];if(!l)return;this.upd(Object.assign({},l.snap));this.setState({log:this.state.log.slice(i+1),toast:null},()=>this.upd({}));};
   Ic(inner,size=22){return React.createElement('svg',{width:size,height:size,viewBox:'0 0 24 24',fill:'none',stroke:'currentColor',strokeWidth:1.5,strokeLinecap:'round',strokeLinejoin:'round','aria-hidden':'true',dangerouslySetInnerHTML:{__html:inner}})}
@@ -554,7 +882,7 @@ class Component extends DCLogic {
     const pv=y=>sch.reduce((a,c)=>a+c.amount/Math.pow(1+y,(this.pd(c.date)-pur)/86400000/365),0);
     let lo=-.9,hi=10;for(let i=0;i<100;i++){const m=(lo+hi)/2;if(pv(m)>price)lo=m;else hi=m}return(lo+hi)/2;
   }
-  dl(name,text,type){const b=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove()}
+  dl(name,text,type){if(window.AndroidApp&&AndroidApp.save){AndroidApp.save(name,text,type);return}const b=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove()}
   pick(accept,cb){const i=document.createElement('input');i.type='file';i.accept=accept;i.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>cb(String(r.result));r.readAsText(f)};i.click()}
   async inflate(u){const s=new Blob([u]).stream().pipeThrough(new DecompressionStream('deflate-raw'));return new Uint8Array(await new Response(s).arrayBuffer())}
   async unzip(buf){
@@ -578,6 +906,14 @@ class Component extends DCLogic {
   pickStatement(cb){const i=document.createElement('input');i.type='file';i.accept='.csv,.txt,.xlsx,.xls';i.onchange=async e=>{const f=e.target.files[0];if(!f)return;try{
     if(/\.xls$/i.test(f.name))return this.toast('Формат .xls не підтримується. Збережіть файл як .xlsx або .csv',()=>this.setState({toast:null}));
     if(/\.xlsx$/i.test(f.name))cb(await this.xlsxToText(await f.arrayBuffer()));else cb(await f.text())}catch(err){this.toast('Не вдалося прочитати файл',()=>this.setState({toast:null}))}};i.click()}
+  normDesc(d){return String(d||'').toLowerCase().replace(/[\d_]+/g,' ').replace(/[^\p{L}\s]/gu,' ').replace(/\s+/g,' ').trim()}
+  learnCats(rows){
+    // Підставляє категорії з ваших попередніх виправлень і з історії операцій.
+    const s=this.state,hist={};[...s.txs].sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>{if(t.cat&&t.cat!=='Інше'&&!this.INVC.includes(t.cat))hist[this.normDesc(t.desc)]=t.cat});
+    let n=0;const cm=s.catMap||{};
+    const out=rows.map(r=>{if(r.tr)return r;const k=this.normDesc(r.desc);if(!k)return r;const c=this.ruleCat(r.desc)||cm[k]||(r.cat==='Інше'?hist[k]:null);
+      if(c&&c!==r.cat&&s.categories.concat(['Харчування','Транспорт','Розваги','Зарплата']).includes(c)){n++;return Object.assign({},r,{cat:c})}return r});
+    return {rows:out,n}}
   visRows(){const s=this.state;return s.impRows.map((r,i)=>Object.assign({},r,{i})).filter(r=>s.impTr||!r.tr)}
   dupIds(){const g={};this.state.txs.forEach(t=>{const k=[t.date,t.desc,t.amount,t.type,t.cur].join('|');(g[k]=g[k]||[]).push(t)});const out=new Set();Object.values(g).forEach(a=>{if(a.length<2)return;a.sort((x,y)=>x.id-y.id);let prev=a[0].id,later=false;a.forEach((t,i)=>{if(i&&t.id-prev>5000)later=true;prev=t.id;if(later)out.add(t.id)})});return out}
   ovK(isin,nm,mt){const i=(isin||'').trim().toLowerCase();return i||((nm||'').trim().toLowerCase()+'|'+(mt||''))}
@@ -636,7 +972,7 @@ class Component extends DCLogic {
     const sgn=t=>t.type==='income'?1:-1,dt=d=>d.split('-').reverse().slice(0,2).join('.');
     const MN=['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
     // budget
-    const fl=s.txs.filter(t=>(!s.month||t.date.startsWith(s.month))&&(!s.fCat||t.cat===s.fCat)&&(!s.fType||t.type===s.fType)&&(!s.fCur||t.cur===s.fCur)&&(!s.fSearch||t.desc.toLowerCase().includes(s.fSearch.toLowerCase())));
+    const fl=s.txs.filter(t=>(!s.month||t.date.startsWith(s.month))&&(!s.fCat||t.cat===s.fCat)&&(!s.fType||t.type===s.fType)&&(!s.fCur||t.cur===s.fCur)&&(!s.fAcc||t.acc===s.fAcc)&&(!s.fSearch||t.desc.toLowerCase().includes(s.fSearch.toLowerCase())));
     const sorters={desc_asc:(a,b)=>a.desc.localeCompare(b.desc,'uk'),desc_desc:(a,b)=>b.desc.localeCompare(a.desc,'uk'),cat_asc:(a,b)=>a.cat.localeCompare(b.cat,'uk')||b.date.localeCompare(a.date),cat_desc:(a,b)=>b.cat.localeCompare(a.cat,'uk')||b.date.localeCompare(a.date),date_desc:(a,b)=>b.date.localeCompare(a.date)||b.id-a.id,date_asc:(a,b)=>a.date.localeCompare(b.date)||a.id-b.id,amt_desc:(a,b)=>conv(b.amount,b.cur)-conv(a.amount,a.cur),amt_asc:(a,b)=>conv(a.amount,a.cur)-conv(b.amount,b.cur)};
     const list=[...fl].sort(sorters[s.sort]);
     const inc=fl.filter(t=>t.type==='income').reduce((a,t)=>a+conv(t.amount,t.cur),0),ex=fl.filter(t=>t.type==='expense').reduce((a,t)=>a+conv(t.amount,t.cur),0);
@@ -651,9 +987,14 @@ class Component extends DCLogic {
     const limRows=Object.keys(s.limits).map(c=>{const sp=s.txs.filter(t=>t.type==='expense'&&t.cat===c&&t.date.startsWith(lm)).reduce((a,t)=>a+conv(t.amount,t.cur,'UAH'),0),lim=num(s.limits[c]);const over=lim>0&&sp>lim;
       return {cat:c,spent:fmt(sp),limit:String(s.limits[c]),pct:lim>0?Math.min(100,Math.round(sp/lim*100)):0,col:over?'var(--t)':'var(--a7)',set:e=>this.upd({limits:Object.assign({},s.limits,{[c]:e.target.value})})}});
     // net worth
-    const cashBy={};s.txs.forEach(t=>cashBy[t.cur]=(cashBy[t.cur]||0)+sgn(t)*t.amount);
+    const AC=s.accounts||[],TR=s.transfers||[],accBal={},unBy={},cashBy={};
+    ['UAH','USD','EUR','PLN'].forEach(c=>{const v=num((s.openBal||{})[c]);if(v)unBy[c]=v});AC.forEach(a=>{accBal[a.id]=num(a.open)});
+    s.txs.forEach(t=>{const a=t.acc&&AC.find(x=>x.id===t.acc);if(a)accBal[a.id]+=sgn(t)*t.amount*R[t.cur]/R[a.cur];else unBy[t.cur]=(unBy[t.cur]||0)+sgn(t)*t.amount});
+    TR.forEach(tr=>{const fa=AC.find(x=>x.id===tr.from),ta=AC.find(x=>x.id===tr.to);if(!fa||!ta)return;accBal[fa.id]-=num(tr.amount);accBal[ta.id]+=(tr.amountTo!==''&&tr.amountTo!=null)?num(tr.amountTo):num(tr.amount)*R[fa.cur]/R[ta.cur]});
+    Object.entries(unBy).forEach(([c,v])=>cashBy[c]=(cashBy[c]||0)+v);AC.forEach(a=>{cashBy[a.cur]=(cashBy[a.cur]||0)+accBal[a.id]});
     const cash=Object.entries(cashBy).reduce((a,[c,v])=>a+conv(v,c),0);
-    const inv=s.portfolio.reduce((a,p)=>a+conv(p.value,p.currency),0),gTot=s.goals.reduce((a,g)=>a+conv(g.current,g.currency),0),nw=cash+inv+gTot;
+    const DB=s.debts||[],dbRem=d=>Math.max(0,num(d.total)-(d.pay||[]).reduce((a,x)=>a+num(x.amt),0)),owedMe=DB.filter(d=>d.dir==='owed').reduce((a,d)=>a+conv(dbRem(d),d.cur),0),iOwe=DB.filter(d=>d.dir!=='owed').reduce((a,d)=>a+conv(dbRem(d),d.cur),0);
+    const inv=s.portfolio.reduce((a,p)=>a+conv(p.value,p.currency),0),gTot=s.goals.reduce((a,g)=>a+conv(g.current,g.currency),0),nw=cash+inv+gTot+owedMe-iOwe;
     const hist=[.82,.86,.9,.93,.96,.98,1].map(k=>nw*k),mn=Math.min(...hist),mxh=Math.max(...hist);
     {const day=this.TODAY,last=s.nwHist[s.nwHist.length-1],v=Math.round(nw*R[cur]);if(nw>0&&(!last||last.d!==day||Math.abs(last.v-v)>Math.max(1,v*.002))&&this._snapKey!==day+':'+v){this._snapKey=day+':'+v;setTimeout(()=>{const c=this.state.nwHist,l=c[c.length-1];this.upd({nwHist:(l&&l.d===day?c.slice(0,-1):c).concat([{d:day,v}]).slice(-800)},null,true)},0)}}
     const dayMs=864e5,tfD={'1M':30,'3M':90,'6M':180,'1Y':365}[s.nwTf],nowT=Date.parse(this.TODAY);
@@ -723,9 +1064,9 @@ class Component extends DCLogic {
     const titles={budget:'Бюджет',networth:'Net Worth',ovdp:'Калькулятор ОВДП',invest:'Інвестиції та портфель',goals:'Скарбничка · Цілі',passive:'Пасивний дохід',import:'Імпорт виписки',data:'Дані та історія'};
     // forms
     const PALS=[
-      {k:'mod',n:'Modernist',L:['#f3f2f2','#201e1d','#ec3013','#ffffff','#b8200a','#201e1d'],D:['#201e1d','#f3f2f2','#ec3013','#ffffff','#ff8a76','#2b2826']},
-      {k:'noct',n:'Nocturne',L:['#f3f5fe','#292b31','#796cbf','#ffffff','#5d5294','#232532'],D:['#161826','#e9e9ed','#9184d9','#161826','#d2cefd','#1c1e2e']},
-      {k:'steel',n:'Сталь',L:['#f2f2f3','#1d1f20','#5980a6','#ffffff','#416180','#1d2d3d'],D:['#14171a','#e8eaec','#94bce3','#14171a','#b5d9fd','#1d2d3d']},
+      {k:'mod',n:'Modernist',L:['#f3f2f2','#201e1d','#c42810','#ffffff','#b8200a','#201e1d'],D:['#201e1d','#f3f2f2','#ec3013','#ffffff','#ff8a76','#2b2826']},
+      {k:'noct',n:'Nocturne',L:['#f3f5fe','#292b31','#5d5294','#ffffff','#5d5294','#232532'],D:['#161826','#e9e9ed','#9184d9','#161826','#d2cefd','#1c1e2e']},
+      {k:'steel',n:'Сталь',L:['#f2f2f3','#1d1f20','#416180','#ffffff','#416180','#1d2d3d'],D:['#14171a','#e8eaec','#94bce3','#14171a','#b5d9fd','#1d2d3d']},
       {k:'graphite',n:'Графіт',L:['#f5f5f4','#1c1c1c','#2b2b2b','#ffffff','#2b2b2b','#1c1c1c'],D:['#121212','#ececec','#e5e5e5','#121212','#ffffff','#1c1c1c']},
       {k:'forest',n:'Ліс',L:['#f1f4ef','#1b241d','#3f7d58','#ffffff','#2c5e41','#1b3427'],D:['#121a15','#e6efe8','#7fc79c','#121a15','#a6dcbb','#1b3427']},
       {k:'ocean',n:'Океан',L:['#eff5f6','#17262a','#167a8c','#ffffff','#0f5d6b','#12363d'],D:['#0f1b1e','#e2f0f2','#62c3d4','#0f1b1e','#8fdbe8','#12363d']},
@@ -747,11 +1088,12 @@ class Component extends DCLogic {
     h.f_amt=e=>this.setState({form:Object.assign({},f,{amt:e.target.value})});
     h.f_cur=e=>this.setState({form:Object.assign({},f,{cur:e.target.value})});
     h.f_date=e=>this.setState({form:Object.assign({},f,{date:e.target.value})});
+    h.f_acc=e=>this.setState({form:Object.assign({},f,{acc:e.target.value})});
     h.f_desc=e=>{const v=e.target.value,m=s.editId?null:s.txs.filter(t=>t.desc.toLowerCase()===v.trim().toLowerCase()&&v.trim()).sort(sorters.date_desc)[0];
       this.setState({form:Object.assign({},f,{desc:v},m?{cat:m.cat,type:m.type,cur:m.cur}:{})})};
     const recent=[];s.txs.filter(t=>t.type===f.type).sort(sorters.date_desc).forEach(t=>{if(!recent.includes(t.cat))recent.push(t.cat)});
     const allCats=[...new Set([...recent,...s.categories,'Депозит','ETF / Акції','Криптовалюта'])];
-    const openEdit=t=>()=>this.setState({sheet:true,editId:t.id,form:{type:t.type,amt:String(t.amount),cur:t.cur,cat:t.cat,desc:t.desc,date:t.date,rec:false}});
+    const openEdit=t=>()=>this.setState({sheet:true,editId:t.id,form:{type:t.type,amt:String(t.amount),cur:t.cur,cat:t.cat,desc:t.desc,date:t.date,rec:false,acc:t.acc||''}});
     const delTx=t=>()=>{this.upd({txs:s.txs.filter(x=>x.id!==t.id),sheet:false,editId:null},'Видалено: '+t.desc);this.toast('Операцію видалено',()=>this.undoAt(0))};
     const mth=d=>{const [y,m]=(s.month||this.TODAY.slice(0,7)).split('-').map(Number);const t=new Date(y,m-1+d,1);this.upd({month:t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')})};
     const lastS=new Date(s.lastEdit),shortFmt=lastS.toLocaleString('uk-UA',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
@@ -768,7 +1110,7 @@ class Component extends DCLogic {
       curSeg:seg([['UAH','₴'],['USD','$'],['EUR','€'],['PLN','zł']],cur,k=>this.upd({cur:k})),
       rateUsd:R.USD.toFixed(2).replace('.',','),rateEur:R.EUR.toFixed(2).replace('.',','),ratePln:R.PLN.toFixed(2).replace('.',','),
       lastEdit:lastS.toLocaleString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),lastEditShort:shortFmt,
-      sym,nwText:fmt(nw),nwDelta:baseV===null?'0':sg(nw-baseV),nwPct:baseV===null?'0,0':((nw>=baseV?'+':'−')+(Math.abs(nw-baseV)/(baseV||1)*100).toFixed(1).replace('.',',')),spark:hf.length>=2?hv.map((x,i)=>(i*300/(hv.length-1)).toFixed(1)+','+(58-(x-hmn)/((hmx-hmn)||1)*50).toFixed(1)).join(' '):pts,cards,
+      sym,nwText:fmt(nw),nwDelta:baseV===null?'0':sg(nw-baseV),nwPct:baseV===null?'0,0':((nw>=baseV?'+':'−')+(Math.abs(nw-baseV)/(baseV||1)*100).toFixed(1).replace('.',',')),spark:hf.length>=2?hv.map((x,i)=>(i*300/(hv.length-1)).toFixed(1)+','+(58-(x-hmn)/((hmx-hmn)||1)*50).toFixed(1)).join(' '):'',hasSpark:hf.length>=2,hasBase:baseV!==null,noBase:baseV===null,cards,
       nwHistNote:s.nwHist.length?'Історія: '+s.nwHist.length+' дн. (з '+dd(s.nwHist[0].d)+'). Знімок зберігається щодня при відкритті застосунку, графік зміниться, коли накопичиться більше днів.':'Знімок капіталу зберігається щодня при відкритті застосунку.',
       nwSpark,nwFrom:hf.length?dd(hf[0].d):'',nwTo:hf.length?dd(hf[hf.length-1].d):'',nwChartDelta:hf.length>=2?sg(hv[hv.length-1]-hv[0])+' '+sym:'Знімків: '+hf.length+' (потрібно ≥2)',
       nwTfSeg:seg([['1M','1М'],['3M','3М'],['6M','6М'],['1Y','1Р'],['ALL','Усе']],s.nwTf,k=>this.setState({nwTf:k})),
@@ -777,14 +1119,71 @@ class Component extends DCLogic {
         const mi=sm(s.txs,t=>t.type==='income'&&t.date.startsWith(cm)),me=sm(s.txs,t=>t.type==='expense'&&t.date.startsWith(cm)),rr=s.recurring.filter(r=>r.type==='expense'&&r.day>td),rec=sm(rr,()=>true);
         const lim=Object.keys(s.limits).reduce((a,c)=>{const sp=sm(s.txs,t=>t.type==='expense'&&t.cat===c&&t.date.startsWith(cm)),rc=sm(rr,r=>r.cat===c);return a+Math.max(0,num(s.limits[c])-sp-rc)},0);
         const fr=mi-me-rec-lim,dl=dim-td+1;return {freeText:(fr<0?'−':'')+M(Math.abs(fr)),freeCol:fr<0?'var(--t)':'var(--a7)',perDayText:M(Math.max(0,fr)/dl),daysLeft:dl,fInc:M(mi),fExp:M(me),fRec:M(rec),fLim:M(lim),saveRate:mi>0?Math.round((mi-me)/mi*100):0}})(),
+      bTabs:seg([['ov','Огляд'],['ops','Операції'],['rep','Звіт'],['set','Ліміти · правила']],s.bTab||'ov',k=>this.setState({bTab:k})),tOv:(s.bTab||'ov')==='ov',tOps:s.bTab==='ops',tRep:s.bTab==='rep',tSet:s.bTab==='set',
       isBudget:scr==='budget',incText:M(inc),expText:M(ex),balText:(inc-ex>=0?'+':'−')+M(Math.abs(inc-ex)),usePct:inc?Math.round(ex/inc*100):0,useBar:inc?Math.min(100,Math.round(ex/inc*100)):0,
       monthLabel:s.month?MN[+s.month.slice(5)-1]+' '+s.month.slice(0,4):'Увесь період',monthAllLabel:s.month?'Показати всі':'Обрати місяць',monthPrev:()=>mth(-1),monthNext:()=>mth(1),monthAll:()=>this.upd({month:s.month?'':this.TODAY.slice(0,7)}),
+      ...(()=>{const per=parseInt(s.repPer||'6'),rp=this.repData(per),mxr=Math.max(1,...rp.rows.map(r=>Math.max(r.i,r.e))),sm=m=>MN[+m.slice(5)-1].slice(0,3)+' '+m.slice(2,4);
+        return {repSeg:seg([['3','3 міс.'],['6','6 міс.'],['12','12 міс.'],['0','Весь період']],String(s.repPer||'6'),k=>this.setState({repPer:k})),
+          repHas:s.txs.length>0,repNone:s.txs.length===0,
+          repRows:rp.rows.map(r=>({label:sm(r.k),inc:fmt(r.i),exp:fmt(r.e),net:(r.net>=0?'+':'−')+fmt(Math.abs(r.net)),col:r.net>=0?'var(--a7)':'var(--t)',ip:Math.round(r.i/mxr*100),ep:Math.round(r.e/mxr*100)})),
+          repTot:{inc:fmt(rp.ti),exp:fmt(rp.te),net:(rp.ti-rp.te>=0?'+':'−')+fmt(Math.abs(rp.ti-rp.te)),rate:rp.ti>0?Math.round((rp.ti-rp.te)/rp.ti*100)+'%':'—'},
+          repCats:rp.catRows.slice(0,12).map(c=>({c:c.c,v:fmt(c.v),share:Math.round(c.share)+'%',avg:fmt(c.avg),w:Math.round(c.share)})),repNoCats:rp.catRows.length===0,
+          expXlsx:()=>this.expXlsx()}})(),
       catBars,noCatBars:catBars.length===0,dynBars,limRows,limMonth:MN[+lm.slice(5)-1],
       typeFilter:seg([['','Усі'],['income','Доходи'],['expense','Витрати']],s.fType,k=>this.setState({fType:k})),
       wideList:!!s.wide,narrowList:!s.wide,colHdrs:[['date','Дата','left'],['desc','Опис','left'],['cat','Категорія','left'],['amt','Сума','right'],[null,'≈ '+cur,'right']].map(([k,l,al])=>{const on=k&&s.sort.startsWith(k+'_'),dn=s.sort.endsWith('_desc');return{label:l,al,col:on?'var(--a7)':'var(--m)',arrow:on?(dn?' ↓':' ↑'):'',go:()=>{if(k)this.setState({sort:on?(k+(dn?'_asc':'_desc')):(k+(k==='date'||k==='amt'?'_desc':'_asc'))})}}}),
       sortSeg:seg([['date_desc','Дата ↓'],['date_asc','Дата ↑'],['amt_desc','Сума ↓'],['amt_asc','Сума ↑']],s.sort,k=>this.setState({sort:k})),
-      catOptions:s.categories.map(c=>({v:c})),resetFilters:()=>this.setState({fCat:'',fType:'',fCur:'',fSearch:''}),txCount:list.length,
-      txList:list.map(t=>({dateFull:t.date.split('-').reverse().join('.'),conv:t.cur===cur?'':'≈ '+M(conv(t.amount,t.cur)),desc:t.desc,cat:t.cat,date:dt(t.date),amt:(t.type==='income'?'+':'−')+fmt(t.amount)+' '+SYM[t.cur],col:t.type==='income'?'var(--a7)':'var(--t)',edit:openEdit(t),del:()=>delTx(t)()})),noTx:list.length===0,
+      catOptions:s.categories.map(c=>({v:c})),resetFilters:()=>this.setState({fCat:'',fType:'',fCur:'',fSearch:'',fAcc:''}),txCount:list.length,
+      txList:list.map(t=>({id:t.id,dateFull:t.date.split('-').reverse().join('.'),conv:t.cur===cur?'':'≈ '+M(conv(t.amount,t.cur)),desc:(s.selMode?(s.selIds.includes(t.id)?'☑ ':'☐ '):'')+t.desc,cat:t.cat+((s.accounts||[]).find(a=>a.id===t.acc)?' · '+(s.accounts||[]).find(a=>a.id===t.acc).name:''),date:dt(t.date),amt:(t.type==='income'?'+':'−')+fmt(t.amount)+' '+SYM[t.cur],col:t.type==='income'?'var(--a7)':'var(--t)',edit:s.selMode?()=>this.toggleSel(t.id):openEdit(t),del:()=>delTx(t)()})),noTx:list.length===0,
+      ...(()=>{
+        const accName=id=>(AC.find(a=>a.id===id)||{}).name||'',valid=id=>AC.some(a=>a.id===id);
+        const tf=valid(s.trFrom)?s.trFrom:(AC[0]||{}).id,tt=valid(s.trTo)&&s.trTo!==tf?s.trTo:((AC.find(a=>a.id!==tf)||{}).id),fa=AC.find(a=>a.id===tf),ta=AC.find(a=>a.id===tt),cross=!!(fa&&ta&&fa.cur!==ta.cur);
+        const unCash=Object.entries(unBy).reduce((a,[c,v])=>a+conv(v,c),0);
+        const accOpts=AC.map(a=>({v:a.id,label:a.name+' · '+a.cur}));
+        const todayS=this.TODAY,dRows=DB.map(d=>{const rem=dbRem(d),paid=num(d.total)-rem,over=!!d.due&&rem>0&&d.due<todayS;
+          return {who:d.who,badge:d.dir==='owed'?'Мені винні':'Я винен',left:fmt(rem)+' / '+fmt(num(d.total))+' '+SYM[d.cur],pct:num(d.total)>0?Math.min(100,Math.round(paid/num(d.total)*100)):0,
+            due:rem<=0?'Погашено':(d.due?'до '+d.due.split('-').reverse().join('.')+(over?' · прострочено':''):'без строку'),dueCol:over?'var(--a7)':'var(--m)',
+            pay:String(s.dbPay[d.id]??''),setPay:e=>this.setState({dbPay:Object.assign({},s.dbPay,{[d.id]:e.target.value})}),
+            doPay:()=>{const v=num(s.dbPay[d.id]);if(v<=0)return this.toast('Вкажіть суму платежу',()=>this.setState({toast:null}));this.upd({debts:DB.map(x=>x.id===d.id?Object.assign({},x,{pay:[...(x.pay||[]),{id:Date.now(),date:todayS,amt:v}]}):x)},'Платіж за боргом «'+d.who+'»: '+fmt(v));this.setState({dbPay:Object.assign({},s.dbPay,{[d.id]:''})})},
+            delText:s.dbDelArm===d.id?'Точно?':'✕',del:()=>{if(s.dbDelArm!==d.id)return this.setState({dbDelArm:d.id});this.upd({debts:DB.filter(x=>x.id!==d.id)},'Видалено борг: '+d.who);this.setState({dbDelArm:''})}}});
+        return {
+          accOpenV:true,hasAcc:AC.length>0,noAcc:AC.length===0,accCount:AC.length,accOpts,
+          accRows:AC.map(a=>({name:a.name,sub:a.cur+(a.cur===cur?'':' · ≈ '+M(conv(accBal[a.id],a.cur))),bal:fmt(accBal[a.id])+' '+SYM[a.cur],
+            delText:s.accDelArm===a.id?'Точно?':'✕',del:()=>{if(s.accDelArm!==a.id)return this.setState({accDelArm:a.id});
+              this.upd({accounts:AC.filter(x=>x.id!==a.id),transfers:TR.filter(t=>t.from!==a.id&&t.to!==a.id),txs:s.txs.map(t=>t.acc===a.id?Object.assign({},t,{acc:undefined}):t)},'Видалено рахунок: '+a.name);this.setState({accDelArm:''})}})),
+          hasUn:AC.length>0&&Math.abs(unCash)>0.5,unText:M(unCash),
+          setNaName:e=>this.setState({naName:e.target.value}),setNaCur:e=>this.setState({naCur:e.target.value}),setNaOpen:e=>this.setState({naOpen:e.target.value}),
+          addAcc:()=>{const nm=(s.naName||'').trim();if(!nm)return this.toast('Вкажіть назву рахунку',()=>this.setState({toast:null}));this.upd({accounts:[...AC,{id:'a'+Date.now(),name:nm,cur:s.naCur||'UAH',open:num(s.naOpen)}]},'Додано рахунок: '+nm);this.setState({naName:'',naOpen:''})},
+          canTr:AC.length>1,trFromV:tf||'',trToV:tt||'',trCross:cross,trToCur:ta?ta.cur:'',
+          setTrFrom:e=>this.setState({trFrom:e.target.value,trMsg:''}),setTrTo:e=>this.setState({trTo:e.target.value,trMsg:''}),setTrAmt:e=>this.setState({trAmt:e.target.value,trMsg:''}),setTrAmtTo:e=>this.setState({trAmtTo:e.target.value}),
+          addTr:()=>{const v=num(s.trAmt);if(!fa||!ta||fa.id===ta.id||v<=0)return this.setState({trMsg:'Оберіть два різні рахунки й суму'});
+            this.upd({transfers:[{id:Date.now(),date:todayS,from:fa.id,to:ta.id,amount:v,amountTo:cross&&num(s.trAmtTo)>0?num(s.trAmtTo):''},...TR]},'Переказ: '+fa.name+' → '+ta.name+' '+fmt(v));this.setState({trAmt:'',trAmtTo:'',trMsg:'Переказ додано'})},
+          trRows:TR.slice(0,5).map(t=>({text:t.date.split('-').reverse().join('.')+' · '+accName(t.from)+' → '+accName(t.to)+': '+fmt(num(t.amount))+' '+SYM[(AC.find(a=>a.id===t.from)||{}).cur||'UAH'],del:()=>this.upd({transfers:TR.filter(x=>x.id!==t.id)},'Видалено переказ')})),
+          hasTr:TR.length>0,
+          debtRows:dRows,hasDebts:DB.length>0,noDebts:DB.length===0,debtCount:DB.length,
+          hasDebtNote:DB.length>0,debtNote:(owedMe>0?'вам винні '+M(owedMe):'')+(owedMe>0&&iOwe>0?' · ':'')+(iOwe>0?'ви винні '+M(iOwe):'')||'усі борги погашено',
+          dbDirSeg:seg([['owe','Я винен'],['owed','Мені винні']],s.dbDir,k=>this.setState({dbDir:k})),
+          setDbWho:e=>this.setState({dbWho:e.target.value}),setDbAmt:e=>this.setState({dbAmt:e.target.value}),setDbCur:e=>this.setState({dbCur:e.target.value}),setDbDue:e=>this.setState({dbDue:e.target.value}),
+          addDebt:()=>{const w=(s.dbWho||'').trim(),v=num(s.dbAmt);if(!w||v<=0)return this.toast('Вкажіть кому/від кого й суму',()=>this.setState({toast:null}));this.upd({debts:[...DB,{id:'d'+Date.now(),who:w,dir:s.dbDir,cur:s.dbCur||'UAH',total:v,due:s.dbDue||'',pay:[]}]},'Додано борг: '+w);this.setState({dbWho:'',dbAmt:'',dbDue:''})},
+          isNative:!!(window.AndroidApp&&AndroidApp.signIn),notNative:!(window.AndroidApp&&AndroidApp.signIn),
+          setImpAcc:e=>this.setState({impAcc:e.target.value}),setFAcc:e=>this.setState({fAcc:e.target.value})}})(),
+      ...(()=>{const ids=s.selIds.filter(id=>s.txs.some(t=>t.id===id)),n=ids.length,pl=s.categories.filter(c=>!this.INVC.includes(c)),rc=this.ruleChanges(s.rlScope||'other');
+        return {selMode:s.selMode,selLabel:s.selMode?'Готово':'Вибрати',toggleSelMode:()=>this.setState({selMode:!s.selMode,selIds:[],selArm:false}),
+          selCount:n,selNone:n===0,selHas:n>0,selAllGo:()=>this.setState({selIds:list.map(t=>t.id),selArm:false}),selClear:()=>this.setState({selIds:[],selArm:false}),
+          selCats:pl.map(v=>({v})),setSelCat:e=>this.setState({selCat:e.target.value}),
+          selApply:()=>{if(!s.selCat||!n)return this.toast('Оберіть категорію й операції',()=>this.setState({toast:null}));this.upd({txs:s.txs.map(t=>ids.includes(t.id)?Object.assign({},t,{cat:s.selCat}):t)},'Змінено категорію у '+n+' операцій: '+s.selCat);this.setState({selIds:[],selArm:false});this.toast('Категорію змінено: '+n,()=>this.undoAt(0))},
+          selDelLabel:s.selArm?'Підтвердити видалення: '+n:'Видалити ('+n+')',
+          selDel:()=>{if(!n)return;if(!s.selArm)return this.setState({selArm:true});this.upd({txs:s.txs.filter(t=>!ids.includes(t.id))},'Видалено операцій: '+n);this.setState({selIds:[],selArm:false});this.toast('Видалено операцій: '+n,()=>this.undoAt(0))},
+          rulesCount:(s.rules||[]).length,ruleRows:(s.rules||[]).map(r=>({t:r.t,c:r.c,del:()=>this.upd({rules:s.rules.filter(x=>x.id!==r.id)},'Видалено правило: '+r.t)})),noRules:(s.rules||[]).length===0,
+          ruleCats:pl.map(v=>({v})),setRlTxt:e=>this.setState({rlTxt:e.target.value}),setRlCat:e=>this.setState({rlCat:e.target.value}),
+          addRule:()=>{const t=(s.rlTxt||'').trim(),c=s.rlCat||pl[0];if(!t||!c)return this.toast('Вкажіть текст і категорію',()=>this.setState({toast:null}));
+            const others=(s.rules||[]).filter(x=>String(x.t).toLowerCase()!==t.toLowerCase());this.upd({rules:[...others,{id:Date.now(),t,c}]},'Правило: «'+t+'» → '+c);this.setState({rlTxt:''})},
+          rlScopeSeg:seg([['other','Лише «Інше»'],['all','Усі операції']],s.rlScope||'other',k=>this.setState({rlScope:k})),
+          rlApplyLabel:'Застосувати до існуючих ('+rc.length+')',
+          rlApply:()=>{if(!rc.length)return this.toast('Немає операцій для зміни',()=>this.setState({toast:null}));const ids2=new Set(rc.map(t=>t.id));this.upd({txs:s.txs.map(t=>ids2.has(t.id)?Object.assign({},t,{cat:this.ruleCat(t.desc)}):t)},'Правила категорій застосовано: '+rc.length);this.toast('Змінено категорій: '+rc.length,()=>this.undoAt(0))}}})(),
+      ...(()=>{const l=s.bkList||[];return {bkShowGo:()=>this.bkShow(),bkNowGo:()=>this.bkNow(),bkHasList:l.length>0,bkMsgText:s.bkMsg||'',bkBusy:s.bkBusy,
+        bkRows:l.map(f=>({label:this.bkLabel(f.name),btn:s.bkArm===f.id?'Підтвердити':'Відновити',go:()=>this.bkRestore(f)}))}})(),
+
       recRows:s.recurring.map(r=>({desc:r.desc,day:r.day,amt:(r.type==='income'?'+':'−')+fmt(r.amount)+' '+SYM[r.cur],del:()=>this.upd({recurring:s.recurring.filter(x=>x.id!==r.id)},'Видалено шаблон: '+r.desc)})),noRec:s.recurring.length===0,
       ...(()=>{const ps=s.ovdpPos,dl=p=>p.maturity?Math.ceil((Date.parse(p.maturity)-nowT)/dayMs):null,withD=ps.map(p=>({p,d:dl(p)})),fut=withD.filter(x=>x.d!==null&&x.d>=0).sort((a,b)=>a.d-b.d),nx=fut[0],tot=ps.reduce((a,p)=>a+conv(num(p.amount),'UAH'),0),cw=ps.filter(p=>num(p.coupon)>0),cwt=cw.reduce((a,p)=>a+num(p.amount),0),avg=cwt?cw.reduce((a,p)=>a+num(p.amount)*num(p.coupon),0)/cwt:0,fd=d=>d.split('-').reverse().join('.');
         return{posTotal:M(tot),posAvg:avg?avg.toFixed(1).replace('.',',')+'%':'—',posNext:nx?fd(nx.p.maturity):'—',posAlert:!!nx&&nx.d<=30,posAlertText:nx?'ОВДП '+nx.p.broker+' ('+M(conv(num(nx.p.amount),'UAH'))+') погашається '+fd(nx.p.maturity)+(nx.d===0?' сьогодні.':' через '+nx.d+' дн.')+' Підготуйте реінвестиційний план.':'',
@@ -814,7 +1213,7 @@ return{detCalc:isO?[cf('nominal','Номінал','number'),cf('coupon','Куп�
           detDel:()=>{this.upd({portfolio:s.portfolio.filter(p=>p.id!==D.id),ovdpPos:old.lk?s.ovdpPos.filter(p=>p.lk!==old.lk):s.ovdpPos},'Видалено актив: '+old.name);close()}}})(),
       homeCards:cards.filter(c=>c.key!=='import'&&c.key!=='data'),setToImport:()=>this.setState({setOpen:false,screen:'import',imp:'idle'}),
       iEdit:Ic('<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',14),
-      isNw:scr==='networth',cashText:M(cash),invText:M(inv),goalsText:M(gTot),allocCat,allocCur,assetRows,
+      isNw:scr==='networth',openRows:['UAH','USD','EUR','PLN'].map(c=>({cur:c,sym:SYM[c],val:String((s.openBal||{})[c]??''),set:e=>this.upd({openBal:Object.assign({},s.openBal||{},{[c]:e.target.value})},'Початковий залишок '+c)})),cashText:M(cash),invText:M(inv),goalsText:M(gTot),allocCat,allocCur,assetRows,
       catChip:!!s.nwCat,catChipText:'Категорія: '+s.nwCat+' · скинути',catReset:()=>this.setState({nwCat:''}),
       nwSortSeg:seg([['amt','Сума'],['name','Назва']],s.nwSort,k=>this.upd({nwSort:k})),
       isOvdp:scr==='ovdp',ytm:(ytm*100).toFixed(2).replace('.',','),ovRes,schedule,noSched:sch.length===0,watchRows,noWatch:s.ovdpPos.length===0,
@@ -831,37 +1230,37 @@ return{detCalc:isO?[cf('nominal','Номінал','number'),cf('coupon','Куп�
       passRows:prows.map(r=>({name:r.name,note:r.note,m:M(r.m),open:()=>this.setState({screen:'invest'}),edit:()=>{const p=s.portfolio.find(x=>x.id===r.id);if(p)this.setState({det:{kind:'asset',id:p.id,f:{name:p.name,category:p.category,value:String(p.value),currency:p.currency,profitPct:String(p.profitPct||0),ops:(p.ops||[]).map(o=>Object.assign({},o,{amt:String(o.amt)}))}}})}})),pc:pcv,pmt:ps.pmt,py:pyv,pt:ptv,goalIn,goalDate,curProj:M(curI),passSpark,targetY:56-Math.min(1,tg/smx)*52,
       passReset:()=>this.upd({pass:{pc:'',pmt:'0',y:'',t:''}}),
       isImport:scr==='import',importIdle:s.imp==='idle',importPreview:s.imp==='preview',importDone:s.imp==='done',impCols:s.impCols,impSkipped:s.impSkipped,
-      importRows:this.visRows().map(r=>{const cs=[...new Set([...s.categories,'Депозит','ETF / Акції','Криптовалюта'])];const setCat=e=>{const v=e.target.value,rows=s.impRows.map((x,k)=>k===r.i?Object.assign({},x,{cat:v,inv:undefined}):x);this.setState({impRows:rows,impDlg:this.INVC.includes(v)?r.i:null})};const ip=r.inv&&r.inv!=='new'?s.portfolio.find(p=>p.id===r.inv):null;return{desc:r.desc,date:dt(r.date),invNote:r.inv?' · до інвестицій: '+(ip?ip.name:'нова позиція'):'',opts:cs.map(v=>({v,sel:v===r.cat})),setCat,amt:(r.a>0?'+':'−')+fmt(Math.abs(r.a))+' ₴'}}),importCount:s.impRows.filter(r=>s.impTr||!r.tr).length,impTrOn:s.impTr,impTrLabel:(s.impTr?'Враховувати':'Не враховувати')+' перекази між рахунками: '+s.impSkipped,toggleTr:()=>this.setState({impTr:!s.impTr}),
-      pickFile:()=>this.pickStatement(t=>{const p=this.parseCsv(t);if(!p||!p.rows.length)return this.toast('Не вдалося визначити стовпці Дата / Сума',()=>this.setState({toast:null}));this.setState({imp:'preview',impRows:p.rows,impCols:p.cols,impSkipped:p.skipped})}),
+      importRows:this.visRows().map(r=>{const cs=[...new Set([...s.categories,'Депозит','ETF / Акції','Криптовалюта'])];const setCat=e=>{const v=e.target.value;if(v&&v!=='Інше'&&!this.INVC.includes(v)){const k=this.normDesc(r.desc);if(k)this.upd({catMap:Object.assign({},s.catMap||{},{[k]:v})},null,true)}const rows=s.impRows.map((x,k)=>k===r.i?Object.assign({},x,{cat:v,inv:undefined}):x);this.setState({impRows:rows,impDlg:this.INVC.includes(v)?r.i:null})};const ip=r.inv&&r.inv!=='new'?s.portfolio.find(p=>p.id===r.inv):null;return{desc:r.desc,date:dt(r.date),invNote:r.inv?' · до інвестицій: '+(ip?ip.name:'нова позиція'):'',opts:cs.map(v=>({v,sel:v===r.cat})),setCat,amt:(r.a>0?'+':'−')+fmt(Math.abs(r.a))+' ₴'}}),importCount:s.impRows.filter(r=>s.impTr||!r.tr).length,impTrOn:s.impTr,impTrLabel:(s.impTr?'Враховувати':'Не враховувати')+' перекази між рахунками: '+s.impSkipped,toggleTr:()=>this.setState({impTr:!s.impTr}),
+      pickFile:()=>this.pickStatement(t=>{const p=this.parseCsv(t);if(!p||!p.rows.length)return this.toast('Не вдалося визначити стовпці Дата / Сума',()=>this.setState({toast:null}));const L=this.learnCats(p.rows);this.setState({imp:'preview',impRows:L.rows,impCols:p.cols,impSkipped:p.skipped});if(L.n)this.toast('Категорії підставлено з вашої історії: '+L.n,()=>this.setState({toast:null}))}),
       useDemo:()=>this.setState({imp:'preview',impSkipped:0,impCols:['Дата → дата','Опис → опис','Сума → сума'],impRows:[{date:'2026-10-04',desc:'Сільпо',cat:'Харчування',a:-1120},{date:'2026-10-04',desc:'Київстар',cat:'Інше',a:-250},{date:'2026-10-03',desc:'Кешбек Mono',cat:'Інше',a:86}]}),
       ...(()=>{const k=s.impDlg,r=k!=null?s.impRows[k]:null,setInv=v=>this.setState({impRows:s.impRows.map((x,j)=>j===k?Object.assign({},x,{inv:v}):x),impDlg:null});return{impDlgOpen:!!r,impDlgCat:r?r.cat:'',impDlgTitle:r?r.desc+' · '+(r.a>0?'+':'−')+fmt(Math.abs(r.a))+' ₴':'',impDlgNote:r?(r.a>0?'Надходження зменшить позицію':'Витрата збільшить позицію')+' на '+fmt(Math.abs(r.a))+' ₴. Операція в Бюджет не потрапить.':'',impDlgPos:r?s.portfolio.filter(p=>p.category===r.cat).map(p=>({name:p.name,val:fmt2(p.value)+' '+SYM[p.currency],pick:()=>setInv(p.id)})):[],impDlgNew:()=>setInv('new'),impDlgCancel:()=>this.setState({impRows:s.impRows.map((x,j)=>j===k?Object.assign({},x,{cat:'Інше',inv:undefined}):x),impDlg:null})}})(),
       dedupeLabel:'Видалити дублікати імпорту ('+this.dupIds().size+')',dedupe:()=>{const d=this.dupIds();if(!d.size)return this.toast('Дублікатів немає',()=>{});this.upd({txs:s.txs.filter(x=>!d.has(x.id))},'Видалено дублікатів: '+d.size)},
       aiCatLabel:s.aiBusy?'ШІ підбирає категорії…':'Підібрати категорії за допомогою ШІ',
       aiCat:async()=>{if(s.aiBusy)return;if(!(window.claude&&window.claude.complete))return this.toast('ШІ доступний лише в середовищі, де підключено Claude',()=>{});const rows=s.impRows,cats=[...new Set([...s.categories,'Інше','ОВДП','Депозит','ETF / Акції','Криптовалюта','Перекази'])];this.setState({aiBusy:true});try{const lst=rows.slice(0,150).map((r,i)=>i+'|'+(r.a>0?'+':'-')+Math.abs(r.a)+'|'+r.desc).join('\n');const out=await window.claude.complete({max_tokens:4000,messages:[{role:'user',content:'Категорії: '+cats.join(', ')+'.\nДля кожного рядка (індекс|сума|опис) обери одну категорію зі списку. Відповідь лише JSON-масив рядків-категорій у тому ж порядку, без пояснень.\n'+lst}]});const arr=JSON.parse(out.slice(out.indexOf('['),out.lastIndexOf(']')+1));const nr=rows.map((r,i)=>arr[i]&&cats.includes(arr[i])&&r.cat==='Інше'?Object.assign({},r,{cat:arr[i]}):r);this.setState({impRows:nr,aiBusy:false});this.toast('Категорії підібрано. Перевірте список.',()=>{})}catch(e){this.setState({aiBusy:false});this.toast('Не вдалося підібрати категорії',()=>{})}},
-      confirmImport:()=>{const all=this.visRows(),invR=all.filter(r=>r.inv),pf=s.portfolio.map(p=>Object.assign({},p)),made={};invR.forEach(r=>{const d=(r.a<0?1:-1)*Math.abs(r.a);let p=r.inv==='new'?made[r.cat+'|'+r.desc]:pf.find(x=>x.id===r.inv);if(!p){p={id:Date.now()+Math.floor(Math.random()*1e5),name:r.desc,category:r.cat,value:0,currency:'UAH',profitPct:0};made[r.cat+'|'+r.desc]=p;pf.push(p)}p.value=Math.max(0,Math.round((num(p.value)+conv(d,'UAH',p.currency))*100)/100);p.ops=[{id:Date.now()+Math.floor(Math.random()*1e5),date:r.date,desc:r.desc,amt:String(d)},...(p.ops||[])]});const ex={};s.txs.forEach(x=>{const k=[x.date,x.desc,x.amount,x.type].join('|');ex[k]=(ex[k]||0)+1});let sk=0;const n=all.filter(r=>!r.inv).filter(r=>{const k=[r.date,r.desc,Math.abs(r.a),r.a>0?'income':'expense'].join('|');if(ex[k]>0){ex[k]--;sk++;return false}return true}).map((r,i)=>({id:Date.now()+i,type:r.a>0?'income':'expense',desc:r.desc,amount:Math.abs(r.a),cur:'UAH',cat:r.cat,date:r.date}));this.upd({txs:[...n,...s.txs],portfolio:pf,imp:'done'},'Імпортовано операцій: '+n.length+(sk?', пропущено дублікатів: '+sk:'')+(invR.length?', в інвестиції: '+invR.length:''))},
+      confirmImport:()=>{const all=this.visRows(),invR=all.filter(r=>r.inv),pf=s.portfolio.map(p=>Object.assign({},p)),made={};invR.forEach(r=>{const d=(r.a<0?1:-1)*Math.abs(r.a);let p=r.inv==='new'?made[r.cat+'|'+r.desc]:pf.find(x=>x.id===r.inv);if(!p){p={id:Date.now()+Math.floor(Math.random()*1e5),name:r.desc,category:r.cat,value:0,currency:'UAH',profitPct:0};made[r.cat+'|'+r.desc]=p;pf.push(p)}p.value=Math.max(0,Math.round((num(p.value)+conv(d,'UAH',p.currency))*100)/100);p.ops=[{id:Date.now()+Math.floor(Math.random()*1e5),date:r.date,desc:r.desc,amt:String(d)},...(p.ops||[])]});const ex={};s.txs.forEach(x=>{const k=[x.date,x.desc,x.amount,x.type].join('|');ex[k]=(ex[k]||0)+1});let sk=0;const n=all.filter(r=>!r.inv).filter(r=>{const k=[r.date,r.desc,Math.abs(r.a),r.a>0?'income':'expense'].join('|');if(ex[k]>0){ex[k]--;sk++;return false}return true}).map((r,i)=>({id:Date.now()+i,type:r.a>0?'income':'expense',desc:r.desc,amount:Math.abs(r.a),cur:'UAH',cat:r.cat,date:r.date,acc:s.impAcc||undefined}));this.upd({txs:[...n,...s.txs],portfolio:pf,imp:'done'},'Імпортовано операцій: '+n.length+(sk?', пропущено дублікатів: '+sk:'')+(invR.length?', в інвестиції: '+invR.length:''))},
       goBudget:go('budget'),
       isData:scr==='data',
-      gpw:localStorage.getItem('bella_gpw')||'',setGpw:e=>{localStorage.setItem('bella_gpw',e.target.value);this.forceUpdate()},
-      showWelcome:!localStorage.getItem('bella_welcome')&&s.txs.length>0,
+      gpw:s.gpw||'',setGpw:e=>this.upd({gpw:e.target.value},null,true),
+      showWelcome:false,
       keepDemo:()=>{localStorage.setItem('bella_welcome','1');this.forceUpdate()},
       startFresh:()=>{localStorage.setItem('bella_welcome','1');this.upd({txs:[],portfolio:[],goals:[],recurring:[],watchlist:[]},'Почато з нуля');this.forceUpdate()},
-      gcid:s.gcid,setGcid:e=>this.upd({gcid:e.target.value}),syncNow:()=>this.doSync(true),gOff:()=>{this.upd({gOn:false});this.setState({gStatus:''})},gStatusText:s.gStatus||(s.gOn?'Підключено':'Не підключено'),gOnFlag:s.gOn,
-      expJson:()=>{const x={};this.DK.forEach(k=>x[k]=s[k]);this.dl('fin_backup.json',JSON.stringify(x,null,2),'application/json')},
+      gcid:s.gcid,setGcid:e=>this.upd({gcid:e.target.value}),syncNow:()=>this.doSync(true),gOff:()=>{if(window.AndroidApp&&AndroidApp.signOut)AndroidApp.signOut();this.upd({gOn:false});this.setState({gStatus:''})},gStatusText:s.gStatus||(s.gOn?'Підключено':'Не підключено'),gOnFlag:s.gOn,
+      expJson:()=>{const x={};this.DK.forEach(k=>x[k]=s[k]);this.dl('fin_backup.json',JSON.stringify(x,null,2),'application/json');this.upd({lastBackup:this.TODAY},null,true)},
       expCsv:()=>this.dl('transactions.csv','date,type,description,amount,currency,category\n'+s.txs.map(t=>[t.date,t.type,'"'+t.desc.replace(/"/g,'""')+'"',t.amount,t.cur,t.cat].join(',')).join('\n'),'text/csv'),
       impJson:()=>this.pick('.json',t=>{try{const d=JSON.parse(t),o2={};this.DK.forEach(k=>{if(d[k]!==undefined)o2[k]=d[k]});this.upd(o2,'Відновлено з JSON');this.toast('Дані відновлено',()=>this.undoAt(0))}catch(e){this.toast('Файл не схожий на копію даних',()=>this.setState({toast:null}))}}),
             clearLabel:s.clearArm?'Підтвердити очищення':'Очистити все',
       clearAll:()=>{if(!s.clearArm)return this.setState({clearArm:true});this.upd({txs:[],portfolio:[],goals:[],recurring:[],watchlist:[],ovdpPos:[],nwHist:[],limits:{}},'Очищено всі дані');this.setState({clearArm:false});this.toast('Усі дані очищено',()=>this.undoAt(0))},
       logRows:s.log.map((l,i)=>({text:l.text,ts:new Date(l.ts).toLocaleString('uk-UA',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}),undo:()=>this.undoAt(i)})),noLog:s.log.length===0,
       showFab:!s.wide&&(scr==='home'||scr==='budget')&&!s.sheet,sheetOpen:s.sheet,isEdit:!!s.editId,canRec:!s.editId,sheetTitle:s.editId?'Редагувати операцію':'Нова операція',
-      openAdd:()=>this.setState({sheet:true,editId:null,form:{type:'expense',amt:'',cur:'UAH',cat:recent[0]||'Харчування',desc:'',date:this.TODAY,rec:false}}),
+      openAdd:()=>this.setState({sheet:true,editId:null,form:{type:'expense',amt:'',cur:'UAH',cat:recent[0]||'Харчування',desc:'',date:this.TODAY,rec:false,acc:s.lastAcc||''}}),
       closeAdd:()=>this.setState({sheet:false,editId:null}),
       addTypes:seg([['expense','Витрата'],['income','Дохід']],f.type,k=>this.setState({form:Object.assign({},f,{type:k})})),
       catChips:allCats.map(c=>({label:c,go:()=>this.setState({form:Object.assign({},f,{cat:c})}),bg:f.cat===c?'var(--a)':'transparent',fg:f.cat===c?'var(--ab)':'var(--t)'})),
       newCat:s.newCat,addCat:()=>{const c=s.newCat.trim();if(!c)return;if(!s.categories.includes(c))this.upd({categories:[...s.categories,c]},'Нова категорія: '+c);this.setState({newCat:'',form:Object.assign({},f,{cat:c})})},
       toggleRec:()=>this.setState({form:Object.assign({},f,{rec:!f.rec})}),
-      saveTx:()=>{const a=Math.abs(num(f.amt));if(!a)return;const tx={type:f.type,desc:f.desc.trim()||f.cat,amount:a,cur:f.cur,cat:f.cat,date:f.date||this.TODAY};{const old=s.editId&&s.txs.find(x=>x.id===s.editId);if(this.INVC.includes(f.cat)&&!(old&&old.cat===f.cat))return this.setState({txDlg:tx})}
+      saveTx:()=>{const a=Math.abs(num(f.amt));if(!a)return;const tx={type:f.type,desc:f.desc.trim()||f.cat,amount:a,cur:f.cur,cat:f.cat,date:f.date||this.TODAY,acc:f.acc||undefined};{const old=s.editId&&s.txs.find(x=>x.id===s.editId);if(this.INVC.includes(f.cat)&&!(old&&old.cat===f.cat))return this.setState({txDlg:tx})}
         if(s.editId){this.upd({txs:s.txs.map(t=>t.id===s.editId?Object.assign({},t,tx):t),sheet:false,editId:null},'Змінено операцію: '+tx.desc)}
-        else{const up={txs:[Object.assign({id:Date.now()},tx),...s.txs],sheet:false,screen:'budget',month:tx.date.slice(0,7)};if(f.rec)up.recurring=[...s.recurring,{id:Date.now()+1,type:tx.type,desc:tx.desc,amount:a,cur:tx.cur,cat:tx.cat,day:+tx.date.slice(8)}];this.upd(up,'Додано операцію: '+tx.desc);this.toast('Операцію додано',()=>this.undoAt(0))}},
+        else{const up={txs:[Object.assign({id:Date.now()},tx),...s.txs],sheet:false,screen:'budget',month:tx.date.slice(0,7)};if(f.rec)up.recurring=[...s.recurring,{id:Date.now()+1,type:tx.type,desc:tx.desc,amount:a,cur:tx.cur,cat:tx.cat,acc:tx.acc,day:+tx.date.slice(8),last:tx.date.slice(0,7)}];if(f.acc)up.lastAcc=f.acc;this.upd(up,'Додано операцію: '+tx.desc);this.toast('Операцію додано',()=>this.undoAt(0))}},
       ...(()=>{const d=s.txDlg,fin=id=>{const pf=s.portfolio.map(p=>Object.assign({},p)),dl=(d.type==='expense'?1:-1)*conv(d.amount,d.cur,'UAH');let p=id==='new'?null:pf.find(x=>x.id===id);if(!p){p={id:Date.now(),name:d.desc,category:d.cat,value:0,currency:'UAH',profitPct:0};pf.push(p)}p.value=Math.max(0,Math.round((num(p.value)+conv(dl,'UAH',p.currency,1))*100)/100);p.ops=[{id:Date.now(),date:d.date,desc:d.desc,amt:String(Math.round(dl*100)/100)},...(p.ops||[])];this.upd({portfolio:pf,txs:s.txs.filter(x=>x.id!==s.editId),sheet:false,editId:null,txDlg:null},'До інвестицій: '+d.desc)};return{txDlgOpen:!!d,txDlgCat:d?d.cat:'',txDlgTitle:d?d.desc+' · '+(d.type==='income'?'+':'−')+fmt(d.amount)+' '+SYM[d.cur]:'',txDlgNote:d?(d.type==='income'?'Надходження зменшить позицію':'Витрата збільшить позицію')+' на '+fmt(conv(d.amount,d.cur,'UAH'))+' ₴. Операція в Бюджет не потрапить.':'',txDlgPos:d?s.portfolio.filter(p=>p.category===d.cat).map(p=>({name:p.name,val:fmt2(p.value)+' '+SYM[p.currency],pick:()=>fin(p.id)})):[],txDlgNew:()=>fin('new'),txDlgCancel:()=>this.setState({txDlg:null,form:Object.assign({},f,{cat:'Інше'})})}})(),
       delFromSheet:()=>{const t=s.txs.find(x=>x.id===s.editId);if(t)delTx(t)()},
       rootSt:theme+(s.wide?'height:100vh;background:var(--b);color:var(--t);display:flex;overflow:hidden;':s.narrow?'height:100dvh;background:var(--color-bg);display:block;padding:0;':'min-height:100vh;background:var(--color-bg);display:flex;flex-wrap:wrap;gap:48px;justify-content:center;align-items:flex-start;padding:24px;box-sizing:border-box;'),
@@ -885,6 +1284,11 @@ return{detCalc:isO?[cf('nominal','Номінал','number'),cf('coupon','Куп�
       activity:this.resetTimer,iLock:Ic('<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',36),
       iEye:Ic(s.hide?'<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>':'<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',18),
       toggleHide:()=>this.upd({hide:!s.hide}),hideLabel:s.hide?'Показати суми':'Приховати суми',hideState:s.hide?'увімк.':'вимк.',
+      encStatus:s.encOn?'Увімкнено':'Вимкнено',encPh:s.encOn?'Новий пароль':'Пароль (від 6 символів)',encBtn:s.encOn?'Змінити пароль':'Увімкнути шифрування',
+      setEncIn:e=>this.setState({encIn:e.target.value,encMsg:''}),setEncIn2:e=>this.setState({encIn2:e.target.value,encMsg:''}),encOnGo:()=>this.encEnable(),encOffGo:()=>this.encDisable(),
+      setUnlockPw:e=>this.setState({encUnlockPw:e.target.value,encUnlockMsg:''}),unlockKey:e=>{if(e.key==='Enter')this.encUnlock()},unlockGo:()=>this.encUnlock(),
+      wipeGo:()=>this.encWipe(),wipeLabel:s.encWipeArm?'Підтвердити: стерти всі дані на цьому пристрої':'Забули пароль? Стерти дані',
+      bioShow:this.hasBio()&&!!s.bio&&!!s.pinHash&&s.locked,bioGo:()=>this.bioAuth(),bioCan:this.hasBio()&&!!s.pinHash,toggleBio:()=>this.upd({bio:!s.bio},null,true),bioState:s.bio?'увімк.':'вимк.',
       hasPin:!!s.pinHash,pinStatus:s.pinHash?'Увімкнено':'Не встановлено',pinSetupLabel:s.pinHash?'Змінити PIN':'Встановити PIN',lockOpacity:s.pinHash?1:.45,
       pinSetup:()=>this.setState({pinMode:s.pinHash?'verifyChange':'new',pinBuf:'',pinMsg:'',pinTmp:''}),
       pinRemove:()=>this.setState({pinMode:'remove',pinBuf:'',pinMsg:''}),
@@ -903,7 +1307,7 @@ return{detCalc:isO?[cf('nominal','Номінал','number'),cf('coupon','Куп�
       helpOpen:!!s.help,openHelp:()=>this.setState({help:true,helpKey:s.screen}),closeHelp:()=>this.setState({help:false}),
       helpSections:[
         ['home','Головний екран',['Показує загальний капітал, динаміку за 7 місяців і розділи з головними числами.','Перемикач ₴ $ € zł змінює валюту, у якій відображаються всі суми.','Варіанти екрана A, B, C перемикаються зліва від телефона. Кнопка + додає операцію.','Рядок «Останні зміни» показує дату й час останньої правки даних.']],
-        ['budget','Бюджет',['Стрілки ← → змінюють місяць, «Показати всі» знімає обмеження за датою.','Фільтри за типом, категорією, валютою та пошук за описом. Сортування за датою або сумою.','Торкніться операції, щоб змінити її. Кошик видаляє, а «Скасувати» у повідомленні повертає.','Ліміти: вкажіть суму на категорію, шкала покаже витрачене за місяць.','У формі позначте «Повторювати щомісяця», щоб зберегти шаблон. Знайому назву форма розпізнає й підставить категорію.']],
+        ['budget','Бюджет',['Стрілки ← → змінюють місяць, «Показати всі» знімає обмеження за датою.','Фільтри за типом, категорією, валютою та пошук за описом. Сортування за датою або сумою.','Торкніться операції, щоб змінити її. Кошик видаляє, а «Скасувати» у повідомленні повертає.','Ліміти: вкажіть суму на категорію, шкала покаже витрачене за місяць.','У формі позначте «Повторювати щомісяця»: операція додаватиметься сама в той самий день кожного місяця (скасувати можна кнопкою в повідомленні, зайву видаліть як звичайну). Знайому назву форма розпізнає й підставить категорію.']],
         ['networth','Net Worth',['Капітал = готівка за операціями бюджету + портфель + скарбнички.','Розподіл за категоріями активів і за валютами показує диверсифікацію.','Реєстр сортується за сумою або назвою; частка рахується від усього капіталу.']],
         ['ovdp','Калькулятор ОВДП',['Введіть ціну, номінал, купон, дати купівлі й погашення, кількість та комісії.','YTM рахується за днями actual/365; купони виплачуються 1 або 2 рази на рік.','Пільга: доходи від ОВДП не оподатковуються. Поле «Ціна продажу» порівнює дохідність продажу.','«Дохід у бюджет» вносить очікуваний прибуток, плюс на рядку графіка вносить окрему виплату.','«Зберегти у список» запам’ятовує випуск для порівняння; торкніться його, щоб завантажити.']],
         ['invest','Інвестиції та портфель',['Змініть вартість активу прямо в рядку або додайте новий актив із категорією та дохідністю.','Цільовий розподіл показує відхилення й скільки докупити або зменшити.','Калькулятор складного відсотка рахує суму через N років із щомісячним внеском.']],
