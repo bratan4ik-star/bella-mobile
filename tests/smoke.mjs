@@ -278,6 +278,19 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
   check('у Net Worth є розділ закритих рахунків', await p.getByText('Закриті рахунки').count() > 0);
 }
 
+// 4і. Депозит рахується в «Інвестиціях», а не в «Готівці»
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = [{ id: 'aC', name: 'Основна', cur: 'UAH', open: 1000 }, { id: 'aD', name: 'Депозит ···7777', cur: 'UAH', open: 500, deposit: true }]; s.txs = []; s.transfers = []; s.portfolio = []; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dNet Worth/ }).first().click(); await p.waitForTimeout(400);
+  const tile = async name => p.evaluate(n => { const L = document.body.innerText.split('\n').map(x => x.trim()); return L[L.indexOf(n) + 1]; }, name);
+  const cash = await tile('Готівка'), inv = await tile('Інвестиції');
+  check('депозит не входить у Готівку (1 000 ₴)', /^1\s?000/.test(cash), cash);
+  check('депозит входить в Інвестиції (500 ₴)', /^500/.test(inv), inv);
+}
+
 // 4в. Категорії банку переводяться в ваші, решта стає новими категоріями одразу
 {
   const p = await page();
