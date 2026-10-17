@@ -8,6 +8,10 @@
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png">
 <script src="./vendor/react.production.min.js"></script>
 <script src="./vendor/react-dom.production.min.js"></script>
+<script src="./vendor/d3-quadtree.min.js"></script>
+<script src="./vendor/d3-dispatch.min.js"></script>
+<script src="./vendor/d3-timer.min.js"></script>
+<script src="./vendor/d3-force.min.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -136,6 +140,13 @@
 <button onClick="{{ expXlsx }}" style="width:100%;margin-top:10px;padding:12px;border:1px solid var(--a);background:transparent;color:var(--a7);border-radius:0;font:500 14px var(--font-body)">Експорт у Excel (.xlsx)</button>
 </sc-if>
 <sc-if value="{{ repNone }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m)">Додайте першу операцію або імпортуйте виписку, і тут з'явиться звіт.</div></sc-if>
+</sc-if>
+
+<sc-if value="{{ tMap }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Зв'язки витрат · {{ mapMonth }}</div>
+<div style="display:flex;gap:4px;margin-bottom:8px"><sc-for list="{{ mapSeg }}" as="f" hint-placeholder-count="2"><button onClick="{{ f.go }}" style="padding:4px 10px;min-height:44px;border:1px solid var(--d);border-radius:0;font:500 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
+<div id="flow-map" style="width:100%;height:380px;border:1px solid var(--d);overflow:hidden"></div>
+<div style="font-size:12px;color:var(--m);padding-top:6px">{{ mapHint }}</div>
 </sc-if>
 
 <sc-if value="{{ tSet }}" hint-placeholder-val="{{ false }}">
@@ -584,8 +595,8 @@ class Component extends DCLogic {
     this._kd=e=>{const t=e.target,tg=t&&t.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||e.ctrlKey||e.metaKey||e.altKey||this.state.locked||this.state.narrow)return;const K=['home','budget','networth','ovdp','invest','goals','passive','import','data'];if(/^[0-8]$/.test(e.key))this.setState({screen:K[+e.key],imp:'idle',sheet:false,toast:null});else if(e.key==='n'||e.key==='N'||e.key==='т'||e.key==='Т'){e.preventDefault();this.setState({sheet:true,editId:null})}};window.addEventListener('keydown',this._kd);
     this._rs=()=>{const n=window.innerWidth<=500,w=window.innerWidth>=900;if(n!==this.state.narrow||w!==this.state.wide)this.setState({narrow:n,wide:w})};window.addEventListener('resize',this._rs);
   }
-  componentDidUpdate(){this.bioCheck();if(this._lastScr!==undefined&&this._lastScr!==this.state.screen){const el=document.querySelector('.sc[style*="flex: 1"]')||document.querySelector('.sc');if(el){el.classList.remove('bpg');void el.offsetWidth;el.classList.add('bpg');el.scrollTop=0}}const l=this.state.look||'nocturne';if(document.documentElement.dataset.look!==l)document.documentElement.dataset.look=l;this._lastScr=this.state.screen}
-  componentWillUnmount(){window.removeEventListener('keydown',this._kd);window.removeEventListener('resize',this._rs);document.removeEventListener('visibilitychange',this._vis);clearTimeout(this._lt)}
+  componentDidUpdate(){this.bioCheck();this.syncMap();if(this._lastScr!==undefined&&this._lastScr!==this.state.screen){const el=document.querySelector('.sc[style*="flex: 1"]')||document.querySelector('.sc');if(el){el.classList.remove('bpg');void el.offsetWidth;el.classList.add('bpg');el.scrollTop=0}}const l=this.state.look||'nocturne';if(document.documentElement.dataset.look!==l)document.documentElement.dataset.look=l;this._lastScr=this.state.screen}
+  componentWillUnmount(){window.removeEventListener('keydown',this._kd);window.removeEventListener('resize',this._rs);document.removeEventListener('visibilitychange',this._vis);clearTimeout(this._lt);if(this._fm)this._fm.sim.stop()}
   ruleCat(desc){const d=String(desc||'').toLowerCase();const r=(this.state.rules||[]).find(x=>x.t&&d.includes(String(x.t).toLowerCase()));return r?r.c:null}
   ruleChanges(scope){const s=this.state;return s.txs.filter(t=>{const rc=this.ruleCat(t.desc);return rc&&rc!==t.cat&&!this.INVC.includes(t.cat)&&(scope==='all'||t.cat==='Інше')})}
   toggleSel(id){const a=this.state.selIds;this.setState({selIds:a.includes(id)?a.filter(x=>x!==id):[...a,id],selArm:false})}
@@ -630,6 +641,60 @@ class Component extends DCLogic {
       const l=await this.bkList_(tok);this.setState({bkList:l.map(x=>({id:x.id,name:x.name})),bkBusy:false,bkMsg:'Дані відновлено з копії '+this.bkLabel(f.name)});
       this.toast('Дані відновлено. Попередній стан збережено окремою копією.',()=>this.setState({toast:null}));this.doSync(false)
     }catch(e){this._applyingRemote=false;this.setState({bkBusy:false,bkMsg:'Помилка: '+String(e.message||e)})}
+  }
+  // ---- граф зв'язків і мапа витрат (d3-force з vendor/, глобальний d3) ----
+  mapData(){
+    const s=this.state,R=this.R,cur=s.cur,conv=(a,f)=>a*R[f]/R[cur],mind=s.mapMode==='mind',col=s.mapCollapsed||{};
+    const byCat={},cats={};
+    s.txs.filter(t=>t.type==='expense'&&(!s.month||t.date.startsWith(s.month))).forEach(t=>{const v=conv(t.amount,t.cur);cats[t.cat]=(cats[t.cat]||0)+v;(byCat[t.cat]=byCat[t.cat]||[]).push({t,v})});
+    const names=Object.keys(cats).sort((a,b)=>cats[b]-cats[a]),top=Math.max(1,...names.map(c=>cats[c])),nodes=[],links=[];
+    if(mind)nodes.push({id:'root',kind:'root',label:s.month?'Витрати':'Усі витрати',r:16});
+    names.forEach(c=>{
+      const id='c:'+c;
+      nodes.push({id,kind:'cat',cat:c,label:c,value:cats[c],r:8+22*Math.sqrt(cats[c]/top)});
+      if(mind)links.push({source:'root',target:id});
+      if(mind&&col[c])return;
+      byCat[c].sort((a,b)=>b.t.date.localeCompare(a.t.date)).slice(0,8).forEach(({t,v},i)=>{
+        const oid='o:'+c+':'+i;
+        nodes.push({id:oid,kind:'op',cat:c,label:t.desc||c,value:v,r:4});
+        links.push({source:oid,target:id});
+      });
+    });
+    return{nodes,links,mind};
+  }
+  syncMap(){
+    const el=document.getElementById('flow-map'),d3=window.d3;
+    if(!el||!d3||!d3.forceSimulation){if(this._fm){this._fm.sim.stop();this._fm=null}return}
+    const s=this.state,{nodes,links,mind}=this.mapData(),SYM={UAH:'₴',USD:'$',EUR:'€',PLN:'zł'};
+    const key=[mind,s.cur,s.hide,nodes.map(n=>n.id+'='+Math.round(n.value||0)).join('|')].join('#');
+    if(this._fm&&this._fm.el===el&&this._fm.key===key)return;
+    if(this._fm)this._fm.sim.stop();
+    el.innerHTML='';
+    const W=el.clientWidth||320,H=el.clientHeight||380,cx=W/2,cy=H/2,fmt=n=>s.hide?'•••':Math.round(n).toLocaleString('uk-UA')+' '+SYM[s.cur];
+    const svg=d3.select(el).append('svg').attr('viewBox','0 0 '+W+' '+H).attr('width','100%').attr('height','100%');
+    const t0=performance.now(),ease=()=>{const k=Math.min(1,(performance.now()-t0)/700);return 1-Math.pow(1-k,3)};
+    const L=svg.append('g').selectAll('line').data(links).join('line').style('stroke','var(--m)').style('stroke-width',1);
+    const N=svg.append('g').selectAll('g').data(nodes).join('g');
+    N.append('title').text(d=>d.kind==='op'?d.label+' · '+fmt(d.value):d.kind==='cat'?d.label+' · '+fmt(d.value):'');
+    N.append('circle').style('fill',d=>d.kind==='op'?'var(--m)':'var(--a)').style('fill-opacity',d=>d.kind==='op'?.6:.85)
+      .style('cursor',d=>mind&&d.kind==='cat'?'pointer':'default');
+    N.filter(d=>d.kind==='cat').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+13).style('fill','var(--t)').style('font','600 12px var(--font-body)').text(d=>d.label);
+    N.filter(d=>d.kind==='cat').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+26).style('fill','var(--m)').style('font','11px var(--font-body)').text(d=>fmt(d.value));
+    N.filter(d=>d.kind==='root').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+13).style('fill','var(--t)').style('font','600 12px var(--font-body)').text(d=>d.label);
+    const root=nodes.find(n=>n.kind==='root');if(root){root.fx=cx;root.fy=cy}
+    const sim=d3.forceSimulation(nodes)
+      .force('link',d3.forceLink(links).id(d=>d.id).distance(d=>mind?(d.source.kind==='root'?120:46):30+d.target.r*.6).strength(.6))
+      .force('charge',d3.forceManyBody().strength(d=>d.kind==='op'?-14:-70))
+      .force('collide',d3.forceCollide(d=>d.r+4))
+      .force(mind?'radial':'center',mind?d3.forceRadial(d=>d.kind==='root'?0:d.kind==='cat'?115:200,cx,cy).strength(.7):d3.forceCenter(cx,cy));
+    sim.on('tick',()=>{
+      const e=ease();
+      L.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y).style('stroke-opacity',.5*e);
+      N.attr('transform',d=>'translate('+d.x+','+d.y+')');
+      N.select('circle').attr('r',d=>d.r*e);
+    });
+    if(mind)N.filter(d=>d.kind==='cat').on('click',(ev,d)=>{const c=Object.assign({},this.state.mapCollapsed||{});c[d.cat]=!c[d.cat];this.setState({mapCollapsed:c})});
+    this._fm={el,key,sim};
   }
   repData(per){
     // Підсумки по місяцях і категоріях у валюті перегляду. per: 3, 6, 12 місяців або 0 (весь період).
@@ -1180,7 +1245,7 @@ class Component extends DCLogic {
         const lim=Object.keys(s.limits).reduce((a,c)=>{const sp=sm(s.txs,t=>t.type==='expense'&&t.cat===c&&t.date.startsWith(cm)),rc=sm(rr,r=>r.cat===c);return a+Math.max(0,num(s.limits[c])-sp-rc)},0);
         const fr=mi-me-rec-lim,dl=dim-td+1;return {freeText:(fr<0?'−':'')+M(Math.abs(fr)),freeCol:fr<0?'var(--t)':'var(--a7)',perDayText:M(Math.max(0,fr)/dl),daysLeft:dl,fInc:M(mi),fExp:M(me),fRec:M(rec),fLim:M(lim),saveRate:mi>0?Math.round((mi-me)/mi*100):0}})(),
       appVer:'1.27',
-      bTabs:seg([['ov','Огляд'],['ops','Операції'],['rep','Звіт'],['set','Ліміти · правила']],s.bTab||'ov',k=>this.setState({bTab:k})),tOv:(s.bTab||'ov')==='ov',tOps:s.bTab==='ops',tRep:s.bTab==='rep',tSet:s.bTab==='set',
+      bTabs:seg([['ov','Огляд'],['ops','Операції'],['rep','Звіт'],['map',"Зв'язки"],['set','Ліміти · правила']],s.bTab||'ov',k=>this.setState({bTab:k})),tOv:(s.bTab||'ov')==='ov',tOps:s.bTab==='ops',tRep:s.bTab==='rep',tMap:s.bTab==='map',mapSeg:seg([['graph','Граф'],['mind','Мапа']],s.mapMode||'graph',k=>this.setState({mapMode:k})),mapMonth:s.month?MN[+s.month.slice(5)-1]+' '+s.month.slice(0,4):'Увесь період',mapHint:s.mapMode==='mind'?'Торкніться категорії, щоб згорнути або розгорнути її операції.':'Розмір кола — сума витрат у категорії. Операції тяжіють до своєї категорії.',tSet:s.bTab==='set',
       isBudget:scr==='budget',incText:M(inc),expText:M(ex),balText:(inc-ex>=0?'+':'−')+M(Math.abs(inc-ex)),usePct:inc?Math.round(ex/inc*100):0,useBar:inc?Math.min(100,Math.round(ex/inc*100)):0,
       monthLabel:s.month?MN[+s.month.slice(5)-1]+' '+s.month.slice(0,4):'Увесь період',monthAllLabel:s.month?'Показати всі':'Обрати місяць',monthPrev:()=>mth(-1),monthNext:()=>mth(1),monthAll:()=>this.upd({month:s.month?'':this.TODAY.slice(0,7)}),
       ...(()=>{const per=parseInt(s.repPer||'6'),rp=this.repData(per),mxr=Math.max(1,...rp.rows.map(r=>Math.max(r.i,r.e))),sm=m=>MN[+m.slice(5)-1].slice(0,3)+' '+m.slice(2,4);

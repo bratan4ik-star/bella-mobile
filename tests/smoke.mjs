@@ -425,6 +425,30 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
   check('у файлі є дані й спецсимволи екрановані', buf.includes('Оренда') && buf.includes('Сільпо &amp; &quot;Ко&quot; &lt;тест&gt;'));
 }
 
+// 8б. Зв'язки: граф категорій і операцій, мапа зі згортанням категорій
+{
+  const p = await page();
+  await seed(p, () => {
+    const d = new Date(), day = n => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(n).padStart(2, '0');
+    s.txs = [{ id: 1, type: 'expense', desc: 'Сільпо', amount: 1200, cur: 'UAH', cat: 'Харчування', date: day(2) },
+      { id: 2, type: 'expense', desc: 'АТБ', amount: 800, cur: 'UAH', cat: 'Харчування', date: day(3) },
+      { id: 3, type: 'expense', desc: 'Оренда', amount: 15000, cur: 'UAH', cat: 'Житло', date: day(4) },
+      { id: 4, type: 'income', desc: 'Зарплата', amount: 50000, cur: 'UAH', cat: 'Зарплата', date: day(1) }];
+  });
+  await reload(p); await p.keyboard.press('1'); await p.waitForTimeout(400);
+  await p.getByRole('button', { name: "Зв'язки", exact: true }).click(); await p.waitForTimeout(1200);
+  const graphCircles = await p.locator('#flow-map circle').count();
+  check("граф «Зв'язки» малює категорії й операції", graphCircles === 2 + 4, 'кіл: ' + graphCircles);
+  await p.getByRole('button', { name: 'Мапа', exact: true }).click(); await p.waitForTimeout(1200);
+  const mindBefore = await p.locator('#flow-map circle').count();
+  check('мапа показує корінь, категорії й операції', mindBefore === 1 + 2 + 3, 'кіл: ' + mindBefore);
+  await p.locator('#flow-map g', { has: p.locator('title', { hasText: /^Житло ·/ }) }).locator('circle').click({ force: true });
+  await p.waitForTimeout(1200);
+  const mindAfter = await p.locator('#flow-map circle').count();
+  check('згортання категорії прибирає її операції', mindAfter === mindBefore - 1, 'було ' + mindBefore + ', стало ' + mindAfter);
+  check('без помилок JavaScript у розділі «Зв\'язки»', errors.length === 0, errors.join('; '));
+}
+
 // 9. Масові дії та правила категорій
 {
   const p = await page();
