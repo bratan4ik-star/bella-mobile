@@ -95,6 +95,262 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
   fs.rmSync(csv, { force: true });
 }
 
+// 4б. Картка з виписки визначається за останніми цифрами: існуючий рахунок або новий з початковим залишком
+{
+  const p = await page();
+  await seed(p, () => { s.accounts = [{ id: 'aMono', name: 'Mono', cur: 'UAH', open: 0, last4: '2222' }]; });
+  await reload(p); await p.keyboard.press('7'); await p.waitForTimeout(300);
+  const csv = path.join(ROOT, '..', 'tests', '.card.csv');
+  fs.writeFileSync(csv, 'Дата;Картка;Опис операції;Сума в валюті картки;Валюта картки;Залишок на кінець періоду;Валюта залишку\n' +
+    '02.10.2026;4000 **** **** 1111;Сільпо;-100;UAH;900;UAH\n' +
+    '01.10.2026;4000 **** **** 1111;Сільпо;-50;UAH;1000;UAH\n' +
+    '01.10.2026;4000 **** **** 2222;Зарплата;300;UAH;5300;UAH\n');
+  const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.locator('button[style*="dashed"]:visible').first().click()]);
+  await fc.setFiles(csv); await p.waitForTimeout(700);
+  const preview = await p.locator('body').innerText();
+  check('перегляд показує розпізнані картки', preview.includes('···1111') && preview.includes('···2222') && preview.includes('рахунок «Mono»'));
+  await p.locator('button:visible').filter({ hasText: /^Імпортувати/ }).first().click(); await p.waitForTimeout(500);
+  const st = await stored(p);
+  const acc1111 = (st.accounts || []).find(a => a.last4 === '1111');
+  const mono = (st.accounts || []).find(a => a.id === 'aMono');
+  check('для нової картки створено рахунок з початковим залишком', !!acc1111 && acc1111.open === 1050 && acc1111.cur === 'UAH', JSON.stringify(acc1111));
+  check('картка 2222 потрапила на наявний рахунок Mono', !!mono && (st.txs || []).filter(t => t.acc === 'aMono').length === 1, JSON.stringify(st.txs));
+  check('операції картки 1111 прив\'язані до нового рахунку', !!acc1111 && (st.txs || []).filter(t => t.acc === acc1111.id).length === 2);
+  check('нових рахунків не створено повторно', (st.accounts || []).length === 2);
+  fs.rmSync(csv, { force: true });
+}
+
+// 4г. Перекази між своїми картками стають переказами між рахунками, а не операціями Бюджету
+{
+  const p = await page();
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; });
+  await reload(p); await p.keyboard.press('7'); await p.waitForTimeout(300);
+  const csv = path.join(ROOT, '..', 'tests', '.own.csv');
+  fs.writeFileSync(csv, 'Дата;Категорія;Картка;Опис операції;Сума в валюті картки;Валюта картки;Залишок на кінець періоду;Валюта залишку\n' +
+    '02.10.2026;Переказ на свою картку;4000 **** **** 1111;На свою картку *2222;-500;UAH;1000;UAH\n' +
+    '02.10.2026;Зарахування зі своєї картки;4000 **** **** 2222;Зі своєї картки *1111;500;UAH;5500;UAH\n' +
+    '01.10.2026;Супермаркети та продукти;4000 **** **** 1111;Магазин;-100;UAH;1500;UAH\n' +
+    '01.10.2026;Заощадження;4000 **** **** 2222;10% від доходів на Скарбничку;-50;UAH;5000;UAH\n');
+  const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.locator('button[style*="dashed"]:visible').first().click()]);
+  await fc.setFiles(csv); await p.waitForTimeout(700);
+  await p.locator('button:visible').filter({ hasText: /^Імпортувати/ }).first().click(); await p.waitForTimeout(500);
+  check('звірка балансу з випискою збігається', await p.getByText('збігається з випискою').count() > 0, '');
+  const st = await stored(p);
+  const a1111 = (st.accounts || []).find(a => a.last4 === '1111');
+  const a2222 = (st.accounts || []).find(a => a.last4 === '2222');
+  const jar = (st.accounts || []).find(a => a.name === 'Скарбничка');
+  check('переказ між картками один, без дзеркального дубля', (st.transfers || []).filter(t => t.amount === 500).length === 1 && !!a1111 && !!a2222 && st.transfers.some(t => t.amount === 500 && t.from === a1111.id && t.to === a2222.id), JSON.stringify(st.transfers));
+  check('Скарбничка створюється як окремий рахунок', !!jar && st.transfers.some(t => t.from === a2222.id && t.to === jar.id && t.amount === 50));
+  check('у Бюджет потрапляє лише звичайна покупка', (st.txs || []).length === 1 && st.txs[0].cat === 'Харчування' && st.txs[0].acc === a1111.id, JSON.stringify(st.txs));
+  fs.rmSync(csv, { force: true });
+}
+
+// 4д. Картка, створена як контрагент без виписки, приймає валюту й початок з пізнішої виписки
+{
+  const p = await page();
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; });
+  const imp = async (text, name) => {
+    await reload(p); await p.keyboard.press('7'); await p.waitForTimeout(300);
+    const csv = path.join(ROOT, '..', 'tests', name);
+    fs.writeFileSync(csv, text);
+    const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.locator('button[style*="dashed"]:visible').first().click()]);
+    await fc.setFiles(csv); await p.waitForTimeout(700);
+    await p.locator('button:visible').filter({ hasText: /^Імпортувати \d/ }).first().click(); await p.waitForTimeout(500);
+    fs.rmSync(csv, { force: true });
+  };
+  const H = 'Дата;Категорія;Картка;Опис операції;Сума в валюті картки;Валюта картки;Залишок на кінець періоду;Валюта залишку\n';
+  await imp(H + '02.10.2026;Зарахування зі своєї картки;4000 **** **** 1111;Зі своєї картки *3333;200;UAH;1200;UAH\n' +
+    '01.10.2026;Супермаркети та продукти;4000 **** **** 1111;Магазин;-100;UAH;1000;UAH\n', '.adopt1.csv');
+  await imp(H + '03.10.2026;Супермаркети та продукти;5000 **** **** 3333;Кав\'ярня;-10;USD;100;USD\n' +
+    '02.10.2026;Переказ на свою картку;5000 **** **** 3333;На свою картку *1111;-40;USD;110;USD\n' +
+    '01.10.2026;Поповнення;5000 **** **** 3333;Поповнення;150;USD;150;USD\n', '.adopt2.csv');
+  const st = await stored(p);
+  const a3333 = (st.accounts || []).find(a => a.last4 === '3333');
+  check('картка з другої виписки отримала валюту USD', !!a3333 && a3333.cur === 'USD', JSON.stringify(a3333));
+  check('старі перекази з цим рахунком замінено новими', (st.transfers || []).filter(t => t.from === (a3333 || {}).id || t.to === (a3333 || {}).id).length === 1, JSON.stringify(st.transfers));
+  check('рахунок отримав початок з другої виписки (0 USD)', !!a3333 && a3333.open === 0, String(a3333 && a3333.open));
+}
+
+// 4е. Картка, на яку відкрито депозит, називається депозитом
+{
+  const p = await page();
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; });
+  await reload(p); await p.keyboard.press('7'); await p.waitForTimeout(300);
+  const csv = path.join(ROOT, '..', 'tests', '.dep.csv');
+  fs.writeFileSync(csv, 'Дата;Категорія;Картка;Опис операції;Сума в валюті картки;Валюта картки;Залишок на кінець періоду;Валюта залишку\n' +
+    '09.08.2025;Заощадження;4000 **** **** 2222;Відкриття депозиту *7777;-60000;UAH;100000;UAH\n' +
+    '10.08.2025;Заощадження;4000 **** **** 2222;Видача частини депозиту;5000;UAH;105000;UAH\n');
+  const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.locator('button[style*="dashed"]:visible').first().click()]);
+  await fc.setFiles(csv); await p.waitForTimeout(700);
+  await p.locator('button:visible').filter({ hasText: /^Імпортувати \d/ }).first().click(); await p.waitForTimeout(500);
+  const st = await stored(p);
+  const dep = (st.accounts || []).find(a => a.last4 === '7777');
+  check('рахунок за депозитом названо депозитом', !!dep && dep.name === 'Депозит ···7777', JSON.stringify(dep));
+  check('виведення з депозиту — переказ із депозиту, а не дохід у Бюджеті', (st.transfers || []).some(t => dep && t.from === dep.id && t.amount === 5000) && (st.txs || []).every(t => t.desc !== 'Видача частини депозиту'));
+  check('депозит, відкритий у виписці, не потрапляє в попередження', await p.getByText('Депозит ···7777').count() === 0 || await p.getByText('Без виписки').count() === 0);
+  fs.rmSync(csv, { force: true });
+}
+
+// 4є. Купівля ОВДП з картки йде в портфель і зменшує баланс картки (без подвійного обліку)
+{
+  const p = await page();
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; s.portfolio = []; });
+  await reload(p); await p.keyboard.press('7'); await p.waitForTimeout(300);
+  const csv = path.join(ROOT, '..', 'tests', '.ovdp.csv');
+  fs.writeFileSync(csv, 'Дата;Категорія;Картка;Опис операції;Сума в валюті картки;Валюта картки;Залишок на кінець періоду;Валюта залишку\n' +
+    '02.10.2026;Інше;4000 **** **** 2222;Купівля державних облігацій;-1000;UAH;4000;UAH\n' +
+    '01.10.2026;Зарахування;4000 **** **** 2222;Зарплата;5000;UAH;5000;UAH\n');
+  const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.locator('button[style*="dashed"]:visible').first().click()]);
+  await fc.setFiles(csv); await p.waitForTimeout(700);
+  const idx = await p.evaluate(() => [...document.querySelectorAll('select')].findIndex(s => (s.parentElement.firstElementChild || {}).textContent?.includes('Купівля державних облігацій')));
+  await p.locator('select').nth(idx).selectOption('ОВДП'); await p.waitForTimeout(300);
+  await p.locator('button:visible').filter({ hasText: /Нова позиція/ }).first().click(); await p.waitForTimeout(300);
+  await p.locator('button:visible').filter({ hasText: /^Імпортувати \d/ }).first().click(); await p.waitForTimeout(500);
+  check('звірка з випискою враховує купівлю ОВДП', await p.getByText('···2222 збігається з випискою').count() > 0);
+  const st = await stored(p);
+  const a = (st.accounts || []).find(x => x.last4 === '2222');
+  const bal = a ? a.open + (st.txs || []).filter(t => t.acc === a.id).reduce((x, t) => x + (t.type === 'income' ? 1 : -1) * t.amount, 0) + (st.portfolio || []).flatMap(x => x.ops || []).filter(o => o.acc === a.id).reduce((x, o) => x + Number(o.accAmt), 0) : null;
+  check('баланс картки після купівлі ОВДП = 4000, позиція = 1000', bal === 4000 && (st.portfolio || []).some(x => x.value === 1000), String(bal));
+  fs.rmSync(csv, { force: true });
+}
+
+// 4ж. Купівля ОВДП, що вже лежить у Бюджеті як витрата, при повторному імпорті переходить у портфель без зміни балансу
+{
+  const p = await page();
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; s.portfolio = []; });
+  const H = 'Дата;Категорія;Картка;Опис операції;Сума в валюті картки;Валюта картки;Залишок на кінець періоду;Валюта залишку\n';
+  const body = H + '02.10.2026;Інше;4000 **** **** 2222;Купівля державних облігацій;-1000;UAH;4000;UAH\n' + '01.10.2026;Зарахування;4000 **** **** 2222;Зарплата;5000;UAH;5000;UAH\n';
+  const run = async mark => {
+    await reload(p); await p.keyboard.press('7'); await p.waitForTimeout(300);
+    const csv = path.join(ROOT, '..', 'tests', '.ovdp2.csv'); fs.writeFileSync(csv, body);
+    const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.locator('button[style*="dashed"]:visible').first().click()]);
+    await fc.setFiles(csv); await p.waitForTimeout(700);
+    if (mark) {
+      const idx = await p.evaluate(() => [...document.querySelectorAll('select')].findIndex(s => (s.parentElement.firstElementChild || {}).textContent?.includes('Купівля державних облігацій')));
+      await p.locator('select').nth(idx).selectOption('ОВДП'); await p.waitForTimeout(300);
+      await p.locator('button:visible').filter({ hasText: /Нова позиція/ }).first().click(); await p.waitForTimeout(300);
+    }
+    await p.locator('button:visible').filter({ hasText: /^Імпортувати \d/ }).first().click(); await p.waitForTimeout(500);
+    fs.rmSync(csv, { force: true });
+  };
+  await run(false); await run(true);
+  const st = await stored(p);
+  const a = (st.accounts || []).find(x => x.last4 === '2222');
+  const bal = a.open + (st.txs || []).filter(t => t.acc === a.id).reduce((x, t) => x + (t.type === 'income' ? 1 : -1) * t.amount, 0) + (st.portfolio || []).flatMap(x => x.ops || []).filter(o => o.acc === a.id).reduce((x, o) => x + Number(o.accAmt), 0);
+  check('після повторного імпорту баланс картки лишився 4000', bal === 4000, String(bal));
+  check('купівля пішла в портфель і зникла з Бюджету', (st.portfolio || []).some(x => x.value === 1000) && !(st.txs || []).some(t => t.desc === 'Купівля державних облігацій'), JSON.stringify(st.txs));
+}
+
+// 4з. Операція з рахунку, віднесена в Бюджеті до ОВДП, зберігає зв'язок з рахунком (баланс картки зменшується)
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = [{ id: 'aT', name: 'Mono', cur: 'UAH', open: 1000 }]; s.txs = []; s.transfers = []; s.portfolio = []; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dБюджет/ }).first().click(); await p.waitForTimeout(400);
+  await p.locator('button[aria-label="Додати операцію"]:visible').first().click(); await p.waitForTimeout(300);
+  await p.locator('input[aria-label="Сума"]').fill('300');
+  await p.locator('select[aria-label="Рахунок"]').last().selectOption({ label: 'Mono · UAH' });
+  await p.locator('button:visible').filter({ hasText: /^ОВДП$/ }).first().click(); await p.waitForTimeout(200);
+  await p.getByRole('button', { name: 'Зберегти запис' }).click(); await p.waitForTimeout(400);
+  await p.locator('button:visible').filter({ hasText: /Нова позиція/ }).first().click(); await p.waitForTimeout(500);
+  const st = await stored(p);
+  const op = ((st.portfolio || [])[0] || { ops: [] }).ops[0];
+  check('інвестиційна операція зберігає рахунок і суму списання', !!op && op.acc === 'aT' && op.accAmt === -300, JSON.stringify(op));
+  check('операція зникла з Бюджету, але баланс рахунку зменшився', (st.txs || []).length === 0 && !!op);
+}
+
+// 4и. Закритий рахунок не входить у капітал і списки, а його перекази не ламають баланс інших рахунків
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = [{ id: 'aA', name: 'Основна', cur: 'UAH', open: 1000 }, { id: 'aB', name: 'Стара', cur: 'UAH', open: 500 }]; s.txs = []; s.portfolio = []; s.transfers = [{ id: 1, date: '2026-01-01', from: 'aB', to: 'aA', amount: 200, amountTo: '' }]; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dNet Worth/ }).first().click(); await p.waitForTimeout(400);
+  const cash = () => p.evaluate(() => { const L = document.body.innerText.split('\n').map(x => x.trim()); return L[L.indexOf('Готівка') + 1]; });
+  const before = await cash();
+  await p.locator('button[aria-label="Закрити рахунок"]').nth(1).click(); await p.waitForTimeout(400);
+  const after = await cash();
+  const st = await stored(p);
+  check('до закриття в готівці 1 500 (1 200 + 300)', before.startsWith('1') && /1\s?500/.test(before), before);
+  check('закритий рахунок виходить із готівки, баланс основного лишається 1 200', /1\s?200/.test(after), after);
+  check('рахунок позначено закритим, переказ збережено', (st.accounts || []).find(a => a.id === 'aB').closed === true && (st.transfers || []).length === 1);
+  check('у Net Worth є розділ закритих рахунків', await p.getByText('Закриті рахунки').count() > 0);
+}
+
+// 4і. Депозит рахується в «Інвестиціях», а не в «Готівці»
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = [{ id: 'aC', name: 'Основна', cur: 'UAH', open: 1000 }, { id: 'aD', name: 'Депозит ···7777', cur: 'UAH', open: 500, deposit: true }]; s.txs = []; s.transfers = []; s.portfolio = []; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dNet Worth/ }).first().click(); await p.waitForTimeout(400);
+  const tile = async name => p.evaluate(n => { const L = document.body.innerText.split('\n').map(x => x.trim()); return L[L.indexOf(n) + 1]; }, name);
+  const cash = await tile('Готівка'), inv = await tile('Інвестиції');
+  check('депозит не входить у Готівку (1 000 ₴)', /^1\s?000/.test(cash), cash);
+  check('депозит входить в Інвестиції (500 ₴)', /^500/.test(inv), inv);
+}
+
+// 4к. Натискання на позицію в «Інвестиціях» відкриває лист редагування
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; s.portfolio = [{ id: 'pX', name: 'Тестова позиція', category: 'ETF / Акції', value: 1000, currency: 'UAH', profitPct: 5, ops: [] }]; s.ovdpPos = []; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dІнвестиції/ }).first().click(); await p.waitForTimeout(400);
+  await p.getByText('Тестова позиція').first().click(); await p.waitForTimeout(400);
+  check('лист редагування позиції відкривається по натисканню', await p.getByText('Актив · ETF / Акції').count() > 0);
+}
+
+// 4л. «Розділити купівлі на окремі активи»: кожна купівля стає окремою позицією, сума не змінюється
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; s.ovdpPos = []; s.portfolio = [{ id: 'pY', name: 'Облігації', category: 'ОВДП', value: 300, currency: 'UAH', profitPct: 0, ops: [{ id: 1, date: '2026-07-14', desc: 'Купівля', amt: '100' }, { id: 2, date: '2026-09-22', desc: 'Купівля', amt: '200' }] }]; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dІнвестиції/ }).first().click(); await p.waitForTimeout(400);
+  await p.getByText('Розділити купівлі на окремі активи').first().click(); await p.waitForTimeout(400);
+  const st = await stored(p);
+  const sum = (st.portfolio || []).reduce((a, x) => a + x.value, 0);
+  check('кожна купівля стала окремою позицією', (st.portfolio || []).length === 2 && (st.portfolio || []).every(x => x.ops.length === 1), JSON.stringify((st.portfolio || []).map(x => x.name)));
+  check('сума позицій не змінилась (300)', sum === 300, String(sum));
+}
+
+// 4м. Огляд портфеля: вкладено, результат, частки; щоденний знімок зберігає вартість інвестицій
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = [{ id: 'aD', name: 'Депозит ···7777', cur: 'UAH', open: 3000, deposit: true }]; s.txs = []; s.transfers = []; s.ovdpPos = []; s.nwHist = [];
+    s.portfolio = [{ id: 'p1', name: 'Облігація А', category: 'ОВДП', value: 1100, currency: 'UAH', profitPct: 0, ops: [{ id: 1, date: '2026-07-14', desc: 'Купівля', amt: '1000' }] }]; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dІнвестиції/ }).first().click(); await p.waitForTimeout(500);
+  const t = await p.locator('body').innerText();
+  check('огляд портфеля: вартість 4 100, вкладено 4 000, результат +100', /Огляд портфеля/i.test(t) && /4\s?100/.test(t) && /Вкладено 4\s?000/.test(t) && /\+100/.test(t), t.slice(0, 300));
+  check('частки холдингів: депозит 73%, облігація 27%', t.includes('73%') && t.includes('27%'));
+  const st = await stored(p);
+  check('щоденний знімок містить вартість інвестицій', (st.nwHist || []).some(x => x.i === 4100), JSON.stringify(st.nwHist));
+}
+
+// 4в. Категорії банку переводяться в ваші, решта стає новими категоріями одразу
+{
+  const p = await page();
+  await seed(p, () => { s.accounts = []; });
+  await reload(p); await p.keyboard.press('7'); await p.waitForTimeout(300);
+  const csv = path.join(ROOT, '..', 'tests', '.bankcat.csv');
+  fs.writeFileSync(csv, 'Дата;Категорія;Картка;Опис операції;Сума в валюті картки;Валюта картки\n' +
+    '02.10.2026;Супермаркети та продукти;4000 **** **** 1111;Магазин;-100;UAH\n' +
+    '01.10.2026;Побутова техніка;4000 **** **** 1111;Фокстрот;-500;UAH\n' +
+    '01.10.2026;Зарахування;4000 **** **** 1111;Зарплата, ТОВ;300;UAH\n');
+  const [fc] = await Promise.all([p.waitForEvent('filechooser'), p.locator('button[style*="dashed"]:visible').first().click()]);
+  await fc.setFiles(csv); await p.waitForTimeout(700);
+  const st = await stored(p);
+  check('нові категорії з виписки додано до списку', ['Побутова техніка'].every(c => (st.categories || []).includes(c)), JSON.stringify(st.categories));
+  const cats = await p.evaluate(() => [...document.querySelectorAll('select')].map(x => x.value).join(','));
+  check('категорія банку переведена у вашу (Супермаркети → Харчування)', cats.startsWith('Харчування'), cats);
+  check('зарплата розпізнається за описом', cats.includes('Зарплата'), cats);
+  fs.rmSync(csv, { force: true });
+}
+
 // 5. Шифрування: у сховищі шифртекст, пароль потрібен, неправильний пароль відхиляється
 {
   const p = await page();
@@ -356,6 +612,29 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
   check('вкладка «Звіт» показує звіт за період', await shown('Звіт за період'));
   await p.getByRole('button', { name: 'Ліміти · правила', exact: true }).click(); await p.waitForTimeout(200);
   check('вкладка «Ліміти · правила» показує ліміти, правила й повторювані', await shown('Ліміти витрат') && await shown('Правила категорій') && await shown('Повторювані щомісяця'));
+}
+
+// 16. «Очистити все» стирає всі особисті дані, включно з рахунками, боргами і калькулятором ОВДП
+{
+  const p = await page();
+  await seed(p, () => {
+    const d = new Date(), mk = n => d.getFullYear() + '-' + String(d.getMonth() + 1 - n).padStart(2, '0') + '-01';
+    s.txs = [{ id: 1, type: 'expense', desc: 'Тест', amount: 500, cur: 'UAH', cat: 'Інше', date: mk(0) }];
+    s.accounts = [{ id: 'a1', name: 'Картка', cur: 'UAH', open: 9000 }];
+    s.debts = [{ id: 'd1', who: 'Іван', dir: 'owe', cur: 'UAH', total: 4000, due: '', pay: [] }];
+    s.openBal = { UAH: '700', USD: '', EUR: '', PLN: '' };
+    s.rules = [{ id: 1, t: 'тест', c: 'Інше' }];
+  });
+  await reload(p); await p.keyboard.press('8'); await p.waitForTimeout(300);
+  await p.getByRole('button', { name: 'Очистити все' }).click(); await p.waitForTimeout(200);
+  await p.getByRole('button', { name: 'Підтвердити очищення' }).click(); await p.waitForTimeout(400);
+  const st = await stored(p);
+  check('після очищення немає операцій, рахунків, боргів, правил і початкового залишку',
+    st.txs.length === 0 && st.accounts.length === 0 && st.debts.length === 0 && st.rules.length === 0 && !(st.openBal.UAH));
+  await p.keyboard.press('0'); await p.waitForTimeout(400);
+  const nw = (await p.locator('text=Загальний капітал').first().locator('xpath=following-sibling::*[1]').innerText()).replace(/\s/g, '');
+  check('головний екран показує нуль, без залишків', /^0₴?$/.test(nw) || nw.startsWith('0'), nw);
+  check('картка ОВДП не показує демонстраційних 16,4%', (await p.locator('text=16,4% YTM').count()) === 0);
 }
 
 check('жодної помилки JavaScript у консолі за весь час', errors.length === 0, errors.join('; '));
