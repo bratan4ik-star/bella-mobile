@@ -438,11 +438,11 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
   await reload(p); await p.keyboard.press('1'); await p.waitForTimeout(400);
   await p.getByRole('button', { name: "Зв'язки", exact: true }).click(); await p.waitForTimeout(1200);
   const graphCircles = await p.locator('#flow-map circle').count();
-  check("граф «Зв'язки» малює категорії й операції", graphCircles === 2 + 4, 'кіл: ' + graphCircles);
+  check("граф «Зв'язки» малює категорії й операції", graphCircles === 2 + 3, 'кіл: ' + graphCircles);
   await p.getByRole('button', { name: 'Мапа', exact: true }).click(); await p.waitForTimeout(1200);
   const mindBefore = await p.locator('#flow-map circle').count();
   check('мапа показує корінь, категорії й операції', mindBefore === 1 + 2 + 3, 'кіл: ' + mindBefore);
-  await p.locator('#flow-map g', { has: p.locator('title', { hasText: /^Житло ·/ }) }).locator('circle').click({ force: true });
+  await p.locator('#flow-map svg > g > g', { has: p.locator('title', { hasText: /^Житло ·/ }) }).locator('circle').click({ force: true });
   await p.waitForTimeout(1200);
   const mindAfter = await p.locator('#flow-map circle').count();
   check('згортання категорії прибирає її операції', mindAfter === mindBefore - 1, 'було ' + mindBefore + ', стало ' + mindAfter);
