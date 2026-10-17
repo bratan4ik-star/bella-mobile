@@ -671,7 +671,7 @@ class Component extends DCLogic {
     if(this._fm&&this._fm.el===el&&this._fm.key===key)return;
     if(this._fm)this._fm.sim.stop();
     el.innerHTML='';
-    const W=el.clientWidth||320,H=el.clientHeight||380,cx=W/2,cy=H/2,fmt=n=>s.hide?'•••':Math.round(n).toLocaleString('uk-UA')+' '+SYM[s.cur];
+    const W=el.clientWidth||320,H=el.clientHeight||380,cx=W/2,cy=H/2,m=Math.min(W,H),fmt=n=>s.hide?'•••':Math.round(n).toLocaleString('uk-UA')+' '+SYM[s.cur];
     const svg=d3.select(el).append('svg').attr('viewBox','0 0 '+W+' '+H).attr('width','100%').attr('height','100%');
     const t0=performance.now(),ease=()=>{const k=Math.min(1,(performance.now()-t0)/700);return 1-Math.pow(1-k,3)};
     const L=svg.append('g').selectAll('line').data(links).join('line').style('stroke','var(--m)').style('stroke-width',1);
@@ -686,11 +686,12 @@ class Component extends DCLogic {
     const sim=d3.forceSimulation(nodes)
       .force('link',d3.forceLink(links).id(d=>d.id).distance(d=>mind?(d.source.kind==='root'?120:46):30+d.target.r*.6).strength(.6))
       .force('charge',d3.forceManyBody().strength(d=>d.kind==='op'?-14:-70))
-      .force('collide',d3.forceCollide(d=>d.r+4))
-      .force(mind?'radial':'center',mind?d3.forceRadial(d=>d.kind==='root'?0:d.kind==='cat'?115:200,cx,cy).strength(.7):d3.forceCenter(cx,cy));
+      .force('collide',d3.forceCollide(d=>d.kind==='cat'?d.r+30:d.r+4))
+      .force(mind?'radial':'center',mind?d3.forceRadial(d=>d.kind==='root'?0:d.kind==='cat'?m*.24:m*.42,cx,cy).strength(.7):d3.forceCenter(cx,cy));
     sim.on('tick',()=>{
       const e=ease();
       L.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y).style('stroke-opacity',.5*e);
+      nodes.forEach(d=>{d.x=Math.max(d.r,Math.min(W-d.r,d.x));d.y=Math.max(d.r+4,Math.min(H-d.r-30,d.y))});
       N.attr('transform',d=>'translate('+d.x+','+d.y+')');
       N.select('circle').attr('r',d=>d.r*e);
     });
