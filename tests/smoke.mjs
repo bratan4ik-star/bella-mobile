@@ -291,6 +291,46 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
   check('депозит входить в Інвестиції (500 ₴)', /^500/.test(inv), inv);
 }
 
+// 4к. Натискання на позицію в «Інвестиціях» відкриває лист редагування
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; s.portfolio = [{ id: 'pX', name: 'Тестова позиція', category: 'ETF / Акції', value: 1000, currency: 'UAH', profitPct: 5, ops: [] }]; s.ovdpPos = []; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dІнвестиції/ }).first().click(); await p.waitForTimeout(400);
+  await p.getByText('Тестова позиція').first().click(); await p.waitForTimeout(400);
+  check('лист редагування позиції відкривається по натисканню', await p.getByText('Актив · ETF / Акції').count() > 0);
+}
+
+// 4л. «Розділити купівлі на окремі активи»: кожна купівля стає окремою позицією, сума не змінюється
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = []; s.txs = []; s.transfers = []; s.ovdpPos = []; s.portfolio = [{ id: 'pY', name: 'Облігації', category: 'ОВДП', value: 300, currency: 'UAH', profitPct: 0, ops: [{ id: 1, date: '2026-07-14', desc: 'Купівля', amt: '100' }, { id: 2, date: '2026-09-22', desc: 'Купівля', amt: '200' }] }]; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dІнвестиції/ }).first().click(); await p.waitForTimeout(400);
+  await p.getByText('Розділити купівлі на окремі активи').first().click(); await p.waitForTimeout(400);
+  const st = await stored(p);
+  const sum = (st.portfolio || []).reduce((a, x) => a + x.value, 0);
+  check('кожна купівля стала окремою позицією', (st.portfolio || []).length === 2 && (st.portfolio || []).every(x => x.ops.length === 1), JSON.stringify((st.portfolio || []).map(x => x.name)));
+  check('сума позицій не змінилась (300)', sum === 300, String(sum));
+}
+
+// 4м. Огляд портфеля: вкладено, результат, частки; щоденний знімок зберігає вартість інвестицій
+{
+  const p = await page({ viewport: { width: 390, height: 844 } });
+  await seed(p, () => { s.accounts = [{ id: 'aD', name: 'Депозит ···7777', cur: 'UAH', open: 3000, deposit: true }]; s.txs = []; s.transfers = []; s.ovdpPos = []; s.nwHist = [];
+    s.portfolio = [{ id: 'p1', name: 'Облігація А', category: 'ОВДП', value: 1100, currency: 'UAH', profitPct: 0, ops: [{ id: 1, date: '2026-07-14', desc: 'Купівля', amt: '1000' }] }]; });
+  await reload(p);
+  await p.locator('button[aria-label="Меню"]:visible').first().click(); await p.waitForTimeout(250);
+  await p.locator('button:visible').filter({ hasText: /^0\dІнвестиції/ }).first().click(); await p.waitForTimeout(500);
+  const t = await p.locator('body').innerText();
+  check('огляд портфеля: вартість 4 100, вкладено 4 000, результат +100', /Огляд портфеля/i.test(t) && /4\s?100/.test(t) && /Вкладено 4\s?000/.test(t) && /\+100/.test(t), t.slice(0, 300));
+  check('частки холдингів: депозит 73%, облігація 27%', t.includes('73%') && t.includes('27%'));
+  const st = await stored(p);
+  check('щоденний знімок містить вартість інвестицій', (st.nwHist || []).some(x => x.i === 4100), JSON.stringify(st.nwHist));
+}
+
 // 4в. Категорії банку переводяться в ваші, решта стає новими категоріями одразу
 {
   const p = await page();

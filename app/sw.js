@@ -1,5 +1,5 @@
 // Offline cache for the app shell. Bump C when any precached file changes.
-const C = 'fin-v27';
+const C = 'fin-v28';
 const F = [
   './',
   'index.html',
