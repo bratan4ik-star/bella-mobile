@@ -449,6 +449,24 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
   check('без помилок JavaScript у розділі «Зв\'язки»', errors.length === 0, errors.join('; '));
 }
 
+// 8в. Карта портфеля: повністю продана позиція не потрапляє на карту
+{
+  const p = await page();
+  await seed(p, () => {
+    s.portfolio = [{ id: 1, name: 'ETF S&P 500', category: 'ETF / Акції', value: 120, currency: 'USD', profitPct: 0, ops: [{ amt: 4000, date: '2026-01-10' }] },
+      { id: 2, name: 'Без операцій', category: 'Криптовалюта', value: 50000, currency: 'UAH', profitPct: 0, ops: [] },
+      { id: 3, name: 'Продаж', category: 'ETF / Акції', value: 0, currency: 'UAH', profitPct: 0, ops: [{ amt: 1000, date: '2026-02-01' }, { amt: -1000, date: '2026-03-01' }] }];
+    s.nwHist = [];
+  });
+  await reload(p); await p.keyboard.press('4'); await p.waitForTimeout(1200);
+  const circles = await p.locator('#port-map circle').count();
+  check('карта портфеля: 2 категорії + 2 позиції, закрита позиція прихована', circles === 4, 'кіл: ' + circles);
+  await p.locator('#port-map circle').nth(2).click({ force: true }); await p.waitForTimeout(200);
+  const info = await p.locator('#port-map-info').innerText();
+  check('тап по позиції показує суму й результат', /ETF S&P 500/.test(info) && /\+944/.test(info), info);
+  check('без помилок JavaScript на екрані «Інвестиції»', errors.length === 0, errors.join('; '));
+}
+
 // 9. Масові дії та правила категорій
 {
   const p = await page();
