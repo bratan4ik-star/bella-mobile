@@ -35,12 +35,13 @@ final class Reminders {
         try {
             SharedPreferences p = c.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
             AlarmManager am = c.getSystemService(AlarmManager.class);
+            // Спершу розбираємо новий список: якщо JSON зіпсований, старі нагадування лишаються на місці.
+            JSONArray now = new JSONArray(json);
             JSONArray old = new JSONArray(p.getString("list", "[]"));
             for (int k = 0; k < old.length(); k++) {
                 JSONObject o = old.getJSONObject(k);
                 am.cancel(pi(c, o.getInt("id"), "", ""));
             }
-            JSONArray now = new JSONArray(json);
             long t = System.currentTimeMillis();
             channel(c);
             for (int k = 0; k < now.length(); k++) {
