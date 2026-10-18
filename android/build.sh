@@ -25,6 +25,8 @@ rm -rf "$B"; mkdir -p "$B/res" "$B/classes" "$B/assets"
 
 # Client ID для входу через Google підставляється в маніфест. Без нього вхід вимкнено.
 CID="${ANDROID_CLIENT_ID:-}"
+# Значення іде в sed і в XML: дозволяємо лише символи, які є в Client ID Google.
+[[ -z "$CID" || "$CID" =~ ^[0-9A-Za-z._-]+$ ]] || { echo "ANDROID_CLIENT_ID має неправильний формат"; exit 1; }
 SCHEME="com.googleusercontent.apps.${CID%.apps.googleusercontent.com}"
 [ -n "$CID" ] || SCHEME="ua.fin.manager.noauth"
 sed -e "s|@@CLIENT_ID@@|$CID|" -e "s|@@SCHEME@@|$SCHEME|" "$ROOT/android/AndroidManifest.xml" > "$B/AndroidManifest.xml"

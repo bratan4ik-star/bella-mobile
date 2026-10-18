@@ -1,6 +1,7 @@
 package ua.fin.manager;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.hardware.biometrics.BiometricManager;
@@ -47,8 +48,9 @@ public class MainActivity extends Activity {
     private ValueCallback<Uri[]> fileCb;
 
     private static final String SCOPE = "https://www.googleapis.com/auth/drive.appdata";
-    private String accessToken;
-    private long accessExpiry;
+    // Пишеться з фонових потоків (вхід, оновлення токена), читається з потоку WebView: тому volatile.
+    private volatile String accessToken;
+    private volatile long accessExpiry;
     private String pendingCb, pendingVerifier, pendingState;
 
     @Override
@@ -88,9 +90,13 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView v, String url) {
-                // Зовнішні посилання відкриваємо в браузері, а не в застосунку.
-                if (HOST.equals(Uri.parse(url).getHost())) return false;
-                try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url))); } catch (Exception ignored) {}
+                // Зовнішні посилання відкриваємо в браузері, а не в застосунку. Лише http(s): інші схеми з сторінки ігноруємо.
+                Uri u = Uri.parse(url);
+                if (HOST.equals(u.getHost())) return false;
+                String scheme = u.getScheme();
+                if ("http".equals(scheme) || "https".equals(scheme)) {
+                    try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) {}
+                }
                 return true;
             }
         });
@@ -112,7 +118,8 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (b != null) web.restoreState(b); else web.loadUrl("https://" + HOST + "/index.html");
+        // Якщо збережений стан WebView порожній, restoreState повертає null, і сторінка лишилася б білою.
+        if (b == null || web.restoreState(b) == null) web.loadUrl("https://" + HOST + "/index.html");
     }
 
     @Override
@@ -194,7 +201,8 @@ public class MainActivity extends Activity {
         accessToken = t;
         accessExpiry = System.currentTimeMillis() + r.optLong("expires_in", 3600) * 1000;
         String rt = r.optString("refresh_token", null);
-        if (rt != null) prefs().edit().putString("rt", rt).apply();
+        String sealed = rt == null ? null : TokenVault.encrypt(rt);
+        if (sealed != null) prefs().edit().putString("rt", sealed).apply();
         return t;
     }
 
@@ -232,7 +240,12 @@ public class MainActivity extends Activity {
                 + "&code_challenge=" + challenge + "&code_challenge_method=S256");
         runOnUiThread(new Runnable() {
             public void run() {
-                startActivity(new Intent(Intent.ACTION_VIEW, url));
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, url));
+                } catch (ActivityNotFoundException e) {
+                    pendingCb = null;
+                    done(cb, null, "немає браузера для входу");
+                }
             }
         });
     }
@@ -290,7 +303,10 @@ public class MainActivity extends Activity {
                     try {
                         if (clientId().isEmpty()) { done(cb, null, "У цій збірці не задано Client ID Android"); return; }
                         if (accessToken != null && System.currentTimeMillis() < accessExpiry - 60000) { done(cb, accessToken, null); return; }
-                        String rt = prefs().getString("rt", null);
+                        String stored = prefs().getString("rt", null);
+                        String rt = TokenVault.decrypt(stored);
+                        // Запис без шифрування (від старих версій) або пошкоджений: прибираємо, далі буде вхід заново.
+                        if (stored != null && rt == null) prefs().edit().remove("rt").apply();
                         if (rt != null) {
                             JSONObject r = post("grant_type=refresh_token&refresh_token=" + enc(rt) + "&client_id=" + enc(clientId()));
                             String t = store(r);
