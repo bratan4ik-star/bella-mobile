@@ -1,5 +1,5 @@
 // Offline cache for the app shell. Bump C when any precached file changes.
-const C = 'fin-v28';
+const C = 'fin-v30';
 const F = [
   './',
   'index.html',
@@ -7,6 +7,11 @@ const F = [
   'Field.dc.html',
   'vendor/react.production.min.js',
   'vendor/react-dom.production.min.js',
+  'vendor/d3-selection.min.js',
+  'vendor/d3-quadtree.min.js',
+  'vendor/d3-dispatch.min.js',
+  'vendor/d3-timer.min.js',
+  'vendor/d3-force.min.js',
   '_ds/nocturne-20784bdc-6977-4a9c-b05c-2e700e589536/styles.css',
   'manifest.webmanifest',
   'icon-192.png',

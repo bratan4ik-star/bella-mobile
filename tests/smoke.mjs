@@ -425,6 +425,48 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
   check('у файлі є дані й спецсимволи екрановані', buf.includes('Оренда') && buf.includes('Сільпо &amp; &quot;Ко&quot; &lt;тест&gt;'));
 }
 
+// 8б. Зв'язки: граф категорій і операцій, мапа зі згортанням категорій
+{
+  const p = await page();
+  await seed(p, () => {
+    const d = new Date(), day = n => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(n).padStart(2, '0');
+    s.txs = [{ id: 1, type: 'expense', desc: 'Сільпо', amount: 1200, cur: 'UAH', cat: 'Харчування', date: day(2) },
+      { id: 2, type: 'expense', desc: 'АТБ', amount: 800, cur: 'UAH', cat: 'Харчування', date: day(3) },
+      { id: 3, type: 'expense', desc: 'Оренда', amount: 15000, cur: 'UAH', cat: 'Житло', date: day(4) },
+      { id: 4, type: 'income', desc: 'Зарплата', amount: 50000, cur: 'UAH', cat: 'Зарплата', date: day(1) }];
+  });
+  await reload(p); await p.keyboard.press('1'); await p.waitForTimeout(400);
+  await p.getByRole('button', { name: "Зв'язки", exact: true }).click(); await p.waitForTimeout(1200);
+  const graphCircles = await p.locator('#flow-map circle').count();
+  check("граф «Зв'язки» малює категорії й операції", graphCircles === 2 + 3, 'кіл: ' + graphCircles);
+  await p.getByRole('button', { name: 'Мапа', exact: true }).click(); await p.waitForTimeout(1200);
+  const mindBefore = await p.locator('#flow-map circle').count();
+  check('мапа показує корінь, категорії й операції', mindBefore === 1 + 2 + 3, 'кіл: ' + mindBefore);
+  await p.locator('#flow-map svg > g > g', { has: p.locator('title', { hasText: /^Житло ·/ }) }).locator('circle').click({ force: true });
+  await p.waitForTimeout(1200);
+  const mindAfter = await p.locator('#flow-map circle').count();
+  check('згортання категорії прибирає її операції', mindAfter === mindBefore - 1, 'було ' + mindBefore + ', стало ' + mindAfter);
+  check('без помилок JavaScript у розділі «Зв\'язки»', errors.length === 0, errors.join('; '));
+}
+
+// 8в. Карта портфеля: повністю продана позиція не потрапляє на карту
+{
+  const p = await page();
+  await seed(p, () => {
+    s.portfolio = [{ id: 1, name: 'ETF S&P 500', category: 'ETF / Акції', value: 120, currency: 'USD', profitPct: 0, ops: [{ amt: 4000, date: '2026-01-10' }] },
+      { id: 2, name: 'Без операцій', category: 'Криптовалюта', value: 50000, currency: 'UAH', profitPct: 0, ops: [] },
+      { id: 3, name: 'Продаж', category: 'ETF / Акції', value: 0, currency: 'UAH', profitPct: 0, ops: [{ amt: 1000, date: '2026-02-01' }, { amt: -1000, date: '2026-03-01' }] }];
+    s.nwHist = [];
+  });
+  await reload(p); await p.keyboard.press('4'); await p.waitForTimeout(1200);
+  const circles = await p.locator('#port-map circle').count();
+  check('карта портфеля: 2 категорії + 2 позиції, закрита позиція прихована', circles === 4, 'кіл: ' + circles);
+  await p.locator('#port-map circle').nth(2).click({ force: true }); await p.waitForTimeout(200);
+  const info = await p.locator('#port-map-info').innerText();
+  check('тап по позиції показує суму й результат', /ETF S&P 500/.test(info) && /\+944/.test(info), info);
+  check('без помилок JavaScript на екрані «Інвестиції»', errors.length === 0, errors.join('; '));
+}
+
 // 9. Масові дії та правила категорій
 {
   const p = await page();
