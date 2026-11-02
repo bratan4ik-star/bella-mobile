@@ -1,0 +1,21 @@
+{
+  "appId": "ua.bella.finance",
+  "appName": "Bella Finance",
+  "webDir": "www",
+  "backgroundColor": "#161826",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 600,
+      "backgroundColor": "#161826",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#161826",
+      "overlaysWebView": false
+    }
+  }
+}

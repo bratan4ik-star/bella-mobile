@@ -1,0 +1,22 @@
+{
+  "name": "bella-finance",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bella Finance: особистий фінансовий менеджер",
+  "scripts": {
+    "sync": "npx cap sync android",
+    "open": "npx cap open android",
+    "build:debug": "cd android && ./gradlew assembleDebug",
+    "build:release": "cd android && ./gradlew assembleRelease",
+    "build:aab": "cd android && ./gradlew bundleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.0",
+    "@capacitor/status-bar": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}
