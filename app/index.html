@@ -8,6 +8,11 @@
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png">
 <script src="./vendor/react.production.min.js"></script>
 <script src="./vendor/react-dom.production.min.js"></script>
+<script src="./vendor/d3-selection.min.js"></script>
+<script src="./vendor/d3-quadtree.min.js"></script>
+<script src="./vendor/d3-dispatch.min.js"></script>
+<script src="./vendor/d3-timer.min.js"></script>
+<script src="./vendor/d3-force.min.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -138,6 +143,13 @@
 <sc-if value="{{ repNone }}" hint-placeholder-val="{{ false }}"><div style="font-size:13px;color:var(--m)">Додайте першу операцію або імпортуйте виписку, і тут з'явиться звіт.</div></sc-if>
 </sc-if>
 
+<sc-if value="{{ tMap }}" hint-placeholder-val="{{ false }}">
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Зв'язки витрат · {{ mapMonth }}</div>
+<div style="display:flex;gap:4px;margin-bottom:8px"><sc-for list="{{ mapSeg }}" as="f" hint-placeholder-count="2"><button onClick="{{ f.go }}" style="padding:4px 10px;min-height:44px;border:1px solid var(--d);border-radius:0;font:500 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
+<div id="flow-map" style="width:100%;height:380px;border:1px solid var(--d);overflow:hidden"></div>
+<div style="font-size:12px;color:var(--m);padding-top:6px">{{ mapHint }}</div>
+</sc-if>
+
 <sc-if value="{{ tSet }}" hint-placeholder-val="{{ false }}">
 <div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 6px">Ліміти витрат, ₴ · {{ limMonth }}</div>
 <sc-for list="{{ limRows }}" as="l" hint-placeholder-count="3"><div style="padding:8px 0;border-bottom:1px solid var(--d)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="flex:1">{{ l.cat }}</span><span style="font-size:13px;color:{{ l.col }}">{{ l.spent }} з</span><input type="number" aria-label="Ліміт" value="{{ l.limit }}" onInput="{{ l.set }}" style="width:84px;padding:6px;border:1px solid var(--d);background:transparent;color:var(--t);border-radius:0;font:15px var(--font-body);text-align:right"></div><div style="height:3px;background:var(--d);margin-top:6px"><div style="height:3px;background:{{ l.col }};width:{{ l.pct }}%"></div></div></div></sc-for>
@@ -259,7 +271,7 @@
 <div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 8px">Параметри облігації</div>
 <div style="display:flex;flex-direction:column;gap:10px">
 <dc-import name="Field" label="Назва / ISIN" type="text" placeholder="" value="{{ o.name }}" handler="{{ h.o_name }}" hint-size="100%,64px"></dc-import>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
 <label style="font-size:12px;color:var(--m)">Валюта<select value="{{ o.cur }}" onChange="{{ h.o_cur }}" style="display:block;width:100%;margin-top:4px;padding:11px 8px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:16px var(--font-body)"><option value="UAH">UAH</option><option value="USD">USD</option><option value="EUR">EUR</option></select></label>
 <label style="font-size:12px;color:var(--m)">Виплати купона<select value="{{ o.freq }}" onChange="{{ h.o_freq }}" style="display:block;width:100%;margin-top:4px;padding:11px 8px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:16px var(--font-body)"><option value="2">2 рази на рік</option><option value="1">Раз на рік</option></select></label>
 <dc-import name="Field" label="Номінал" type="number" placeholder="" value="{{ o.nominal }}" handler="{{ h.o_nominal }}" hint-size="100%,64px"></dc-import>
@@ -287,6 +299,9 @@
 <sc-if value="{{ pfHasHist }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 300 64" style="width:100%;height:90px;display:block;margin-top:8px" preserveAspectRatio="none"><polyline points="{{ pfSpark }}" fill="none" stroke="var(--a)" stroke-width="1.5" vector-effect="non-scaling-stroke"></polyline></svg><div style="font-size:12px;color:var(--m)">{{ pfChgText }}</div></sc-if>
 <sc-if value="{{ pfNoHist }}" hint-placeholder-val="{{ true }}"><div style="font-size:12px;color:var(--m);padding:10px 0 2px;line-height:1.45">Графік вартості з’явиться, коли накопичиться історія: знімок зберігається щодня, коли ви відкриваєте застосунок.</div></sc-if>
 <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px"><sc-for list="{{ pfTfSeg }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" style="padding:4px 8px;min-height:32px;border:1px solid var(--d);border-radius:0;font:500 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div></div>
+<div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 6px">Карта портфеля</div>
+<div id="port-map" style="width:100%;height:260px;border:1px solid var(--d);overflow:hidden"></div>
+<div id="port-map-info" style="font-size:12px;color:var(--m);padding:6px 0 2px;min-height:18px"></div>
 <div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:14px 0 6px">Холдинги</div>
 <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px"><sc-for list="{{ pfCatSeg }}" as="f" hint-placeholder-count="4"><button onClick="{{ f.go }}" style="white-space:nowrap;padding:4px 8px;min-height:32px;border:1px solid var(--d);border-radius:0;font:500 12px var(--font-body);background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button></sc-for></div>
 <sc-if value="{{ pfHasRows }}" hint-placeholder-val="{{ true }}"><div style="border:1px solid var(--d)">
@@ -419,7 +434,7 @@
 </div>
 
 <sc-if value="{{ showFab }}" hint-placeholder-val="{{ true }}">
-<button onClick="{{ openAdd }}" aria-label="Додати операцію" style="position:absolute;right:{{ fabRight }};bottom:24px;width:56px;height:56px;border:0;border-radius:0;background:var(--a);color:var(--ab);display:grid;place-items:center;box-shadow:var(--shadow-md)">{{ iPlus }}</button>
+<button onClick="{{ openAdd }}" aria-label="Додати операцію" style="position:absolute;right:{{ fabRight }};bottom:{{ fabBottom }};width:56px;height:56px;border:0;border-radius:0;background:var(--a);color:var(--ab);display:grid;place-items:center;box-shadow:var(--shadow-md)">{{ iPlus }}</button>
 </sc-if>
 
 <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
@@ -442,6 +457,7 @@
 </div>
 </sc-if>
 
+<sc-if value="{{ tabBarShow }}" hint-placeholder-val="{{ false }}"><nav style="position:absolute;left:0;right:0;bottom:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);background:var(--b);border-top:1px solid var(--d);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))"><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4"><button onClick="{{ t.go }}" aria-current="{{ t.on }}" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 2px;border:0;background:transparent;color:{{ t.fg }};font:500 11px var(--font-body)">{{ t.icon }}<span>{{ t.label }}</span></button></sc-for></nav></sc-if>
 <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
 <div class="bfi" onClick="{{ closeMenu }}" style="position:absolute;inset:0;background:rgba(10,12,14,.5);z-index:7"></div>
 <div class="sc bsl" style="position:absolute;z-index:8;left:0;top:0;bottom:0;width:min(86%,340px);overflow:auto;background:var(--sb);color:#f2f2f3;padding:20px 18px calc(24px + env(safe-area-inset-bottom,0px));box-sizing:border-box;display:flex;flex-direction:column;gap:18px">
@@ -546,8 +562,9 @@ class Component extends DCLogic {
     if(window.AndroidApp&&AndroidApp.signIn&&!sv.gcid)sv.gcid='android';
     if(!sv.mod){sv.mod=1;sv.noct=1;sv.look='modernist';sv.pal='mod';sv.dark=false;sv.lastEdit=new Date().toISOString()}
     if(!sv.noct){sv.noct=1;sv.look='nocturne';sv.pal='noct';sv.dark=true;sv.lastEdit=new Date().toISOString()}
+    if(!sv.pfDesign){sv.pfDesign=1;sv.pal='portfolio';sv.look='nocturne';sv.dark=true;sv.lastEdit=new Date().toISOString()}
     const D={
-      variant:'feed',pal:'noct',look:'nocturne',noct:0,dark:true,cur:'UAH',lastEdit:'1970-01-01T00:00:00Z',month:this.TODAY.slice(0,7),nwSort:'amt',
+      variant:'feed',pal:'portfolio',look:'nocturne',noct:0,dark:true,pfDesign:0,cur:'UAH',lastEdit:'1970-01-01T00:00:00Z',month:this.TODAY.slice(0,7),nwSort:'amt',
       txs:[],
       portfolio:[],
       goals:[],
@@ -584,8 +601,8 @@ class Component extends DCLogic {
     this._kd=e=>{const t=e.target,tg=t&&t.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||e.ctrlKey||e.metaKey||e.altKey||this.state.locked||this.state.narrow)return;const K=['home','budget','networth','ovdp','invest','goals','passive','import','data'];if(/^[0-8]$/.test(e.key))this.setState({screen:K[+e.key],imp:'idle',sheet:false,toast:null});else if(e.key==='n'||e.key==='N'||e.key==='т'||e.key==='Т'){e.preventDefault();this.setState({sheet:true,editId:null})}};window.addEventListener('keydown',this._kd);
     this._rs=()=>{const n=window.innerWidth<=500,w=window.innerWidth>=900;if(n!==this.state.narrow||w!==this.state.wide)this.setState({narrow:n,wide:w})};window.addEventListener('resize',this._rs);
   }
-  componentDidUpdate(){this.bioCheck();if(this._lastScr!==undefined&&this._lastScr!==this.state.screen){const el=document.querySelector('.sc[style*="flex: 1"]')||document.querySelector('.sc');if(el){el.classList.remove('bpg');void el.offsetWidth;el.classList.add('bpg');el.scrollTop=0}}const l=this.state.look||'nocturne';if(document.documentElement.dataset.look!==l)document.documentElement.dataset.look=l;this._lastScr=this.state.screen}
-  componentWillUnmount(){window.removeEventListener('keydown',this._kd);window.removeEventListener('resize',this._rs);document.removeEventListener('visibilitychange',this._vis);clearTimeout(this._lt)}
+  componentDidUpdate(){this.bioCheck();this.syncMap();this.syncPortMap();if(this._lastScr!==undefined&&this._lastScr!==this.state.screen){const el=document.querySelector('.sc[style*="flex: 1"]')||document.querySelector('.sc');if(el){el.classList.remove('bpg');void el.offsetWidth;el.classList.add('bpg');el.scrollTop=0}}const l=this.state.look||'nocturne';if(document.documentElement.dataset.look!==l)document.documentElement.dataset.look=l;this._lastScr=this.state.screen}
+  componentWillUnmount(){window.removeEventListener('keydown',this._kd);window.removeEventListener('resize',this._rs);document.removeEventListener('visibilitychange',this._vis);clearTimeout(this._lt);if(this._fm)this._fm.sim.stop();if(this._pm)this._pm.sim.stop()}
   ruleCat(desc){const d=String(desc||'').toLowerCase();const r=(this.state.rules||[]).find(x=>x.t&&d.includes(String(x.t).toLowerCase()));return r?r.c:null}
   ruleChanges(scope){const s=this.state;return s.txs.filter(t=>{const rc=this.ruleCat(t.desc);return rc&&rc!==t.cat&&!this.INVC.includes(t.cat)&&(scope==='all'||t.cat==='Інше')})}
   toggleSel(id){const a=this.state.selIds;this.setState({selIds:a.includes(id)?a.filter(x=>x!==id):[...a,id],selArm:false})}
@@ -630,6 +647,109 @@ class Component extends DCLogic {
       const l=await this.bkList_(tok);this.setState({bkList:l.map(x=>({id:x.id,name:x.name})),bkBusy:false,bkMsg:'Дані відновлено з копії '+this.bkLabel(f.name)});
       this.toast('Дані відновлено. Попередній стан збережено окремою копією.',()=>this.setState({toast:null}));this.doSync(false)
     }catch(e){this._applyingRemote=false;this.setState({bkBusy:false,bkMsg:'Помилка: '+String(e.message||e)})}
+  }
+  // ---- граф зв'язків і мапа витрат (d3-force з vendor/, глобальний d3) ----
+  mapData(){
+    const s=this.state,R=this.R,cur=s.cur,conv=(a,f)=>a*R[f]/R[cur],mind=s.mapMode==='mind',col=s.mapCollapsed||{};
+    const byCat={},cats={};
+    s.txs.filter(t=>t.type==='expense'&&(!s.month||t.date.startsWith(s.month))).forEach(t=>{const v=conv(t.amount,t.cur);cats[t.cat]=(cats[t.cat]||0)+v;(byCat[t.cat]=byCat[t.cat]||[]).push({t,v})});
+    const names=Object.keys(cats).sort((a,b)=>cats[b]-cats[a]),top=Math.max(1,...names.map(c=>cats[c])),nodes=[],links=[];
+    if(mind)nodes.push({id:'root',kind:'root',label:s.month?'Витрати':'Усі витрати',r:16});
+    names.forEach(c=>{
+      const id='c:'+c;
+      nodes.push({id,kind:'cat',cat:c,label:c,value:cats[c],r:8+22*Math.sqrt(cats[c]/top)});
+      if(mind)links.push({source:'root',target:id});
+      if(mind&&col[c])return;
+      byCat[c].sort((a,b)=>b.t.date.localeCompare(a.t.date)).slice(0,8).forEach(({t,v},i)=>{
+        const oid='o:'+c+':'+i;
+        nodes.push({id:oid,kind:'op',cat:c,label:t.desc||c,value:v,r:4});
+        links.push({source:oid,target:id});
+      });
+    });
+    return{nodes,links,mind};
+  }
+  syncMap(){
+    const el=document.getElementById('flow-map'),d3=window.d3;
+    if(!el||!d3||!d3.forceSimulation){if(this._fm){this._fm.sim.stop();this._fm=null}return}
+    const s=this.state,{nodes,links,mind}=this.mapData(),SYM={UAH:'₴',USD:'$',EUR:'€',PLN:'zł'};
+    const key=[mind,s.cur,s.hide,nodes.map(n=>n.id+'='+Math.round(n.value||0)).join('|')].join('#');
+    if(this._fm&&this._fm.el===el&&this._fm.key===key)return;
+    if(this._fm)this._fm.sim.stop();
+    el.innerHTML='';
+    const W=el.clientWidth||320,H=el.clientHeight||380,cx=W/2,cy=H/2,m=Math.min(W,H),fmt=n=>s.hide?'•••':Math.round(n).toLocaleString('uk-UA')+' '+SYM[s.cur];
+    const svg=d3.select(el).append('svg').attr('viewBox','0 0 '+W+' '+H).attr('width','100%').attr('height','100%');
+    const t0=performance.now(),ease=()=>{const k=Math.min(1,(performance.now()-t0)/700);return 1-Math.pow(1-k,3)};
+    const L=svg.append('g').selectAll('line').data(links).join('line').style('stroke','var(--m)').style('stroke-width',1);
+    const N=svg.append('g').selectAll('g').data(nodes).join('g');
+    N.append('title').text(d=>d.kind==='op'?d.label+' · '+fmt(d.value):d.kind==='cat'?d.label+' · '+fmt(d.value):'');
+    N.append('circle').style('fill',d=>d.kind==='op'?'var(--m)':'var(--a)').style('fill-opacity',d=>d.kind==='op'?.6:.85)
+      .style('cursor',d=>mind&&d.kind==='cat'?'pointer':'default');
+    N.filter(d=>d.kind==='cat').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+13).style('fill','var(--t)').style('font','600 12px var(--font-body)').text(d=>d.label);
+    N.filter(d=>d.kind==='cat').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+26).style('fill','var(--m)').style('font','11px var(--font-body)').text(d=>fmt(d.value));
+    N.filter(d=>d.kind==='root').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+13).style('fill','var(--t)').style('font','600 12px var(--font-body)').text(d=>d.label);
+    const root=nodes.find(n=>n.kind==='root');if(root){root.fx=cx;root.fy=cy}
+    // Півширина вузла разом з підписом: на вузькому екрані підпис не має виходити за край полотна.
+    N.each(function(d){let w=0;d3.select(this).selectAll('text').each(function(){w=Math.max(w,this.getComputedTextLength())});d.hw=Math.max(d.r,w/2+2)});
+    const sim=d3.forceSimulation(nodes)
+      .force('link',d3.forceLink(links).id(d=>d.id).distance(d=>mind?(d.source.kind==='root'?120:46):30+d.target.r*.6).strength(.6))
+      .force('charge',d3.forceManyBody().strength(d=>d.kind==='op'?-14:-70))
+      .force('collide',d3.forceCollide(d=>d.kind==='cat'?d.r+30:d.r+4))
+      .force(mind?'radial':'center',mind?d3.forceRadial(d=>d.kind==='root'?0:d.kind==='cat'?m*.24:m*.42,cx,cy).strength(.7):d3.forceCenter(cx,cy));
+    sim.on('tick',()=>{
+      const e=ease();
+      L.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y).style('stroke-opacity',.5*e);
+      nodes.forEach(d=>{d.x=Math.max(d.hw,Math.min(W-d.hw,d.x));d.y=Math.max(d.r+4,Math.min(H-d.r-30,d.y))});
+      N.attr('transform',d=>'translate('+d.x+','+d.y+')');
+      N.select('circle').attr('r',d=>d.r*e);
+    });
+    if(mind)N.filter(d=>d.kind==='cat').on('click',(ev,d)=>{const c=Object.assign({},this.state.mapCollapsed||{});c[d.cat]=!c[d.cat];this.setState({mapCollapsed:c})});
+    this._fm={el,key,sim};
+  }
+  // ---- карта портфеля на екрані «Інвестиції» (d3-force з vendor/) ----
+  portHolds(){
+    const s=this.state,R=this.R,cur=s.cur,conv=(a,f)=>a*R[f]/R[cur];
+    return s.portfolio.map(p=>{const ops=p.ops||[],val=conv(p.value,p.currency);return{id:p.id,name:p.name,cat:p.category||'Інше',val,cost:ops.length?ops.reduce((a,o)=>a+conv(parseFloat(o.amt)||0,'UAH'),0):val,known:ops.length>0}}).filter(h=>!(h.known&&Math.abs(h.val)<0.5&&Math.abs(h.cost)<0.5));
+  }
+  syncPortMap(){
+    const el=document.getElementById('port-map'),info=document.getElementById('port-map-info'),d3=window.d3;
+    if(!el||!d3||!d3.forceSimulation){if(this._pm){this._pm.sim.stop();this._pm=null}return}
+    const s=this.state,hs=this.portHolds(),SYM={UAH:'₴',USD:'$',EUR:'€',PLN:'zł'};
+    if(!hs.length){if(this._pm){this._pm.sim.stop();this._pm=null}el.innerHTML='';if(info)info.textContent='Додайте актив, і тут з\'явиться карта портфеля.';return}
+    const nodes=[...new Set(hs.map(h=>h.cat))].map(c=>({id:'c:'+c,kind:'cat',label:c,r:16}));
+    const top=Math.max(1,...hs.map(h=>Math.abs(h.val)));
+    hs.forEach(h=>nodes.push({id:'h:'+h.id,kind:'pos',label:h.name,cat:h.cat,val:h.val,pnl:h.known?h.val-h.cost:null,r:6+20*Math.sqrt(Math.abs(h.val)/top)}));
+    const links=hs.map(h=>({source:'h:'+h.id,target:'c:'+h.cat}));
+    const key=[s.cur,s.hide,nodes.map(n=>n.id+'='+Math.round(n.val||0)+':'+(n.pnl==null?'u':Math.sign(Math.round(n.pnl)))).join('|')].join('#');
+    if(this._pm&&this._pm.el===el&&this._pm.key===key)return;
+    if(this._pm)this._pm.sim.stop();
+    el.innerHTML='';
+    const W=el.clientWidth||320,H=el.clientHeight||260,cx=W/2,cy=H/2,fmt=n=>s.hide?'•••':Math.round(n).toLocaleString('uk-UA')+' '+SYM[s.cur];
+    const svg=d3.select(el).append('svg').attr('viewBox','0 0 '+W+' '+H).attr('width','100%').attr('height','100%');
+    const t0=performance.now(),ease=()=>{const k=Math.min(1,(performance.now()-t0)/700);return 1-Math.pow(1-k,3)};
+    const L=svg.append('g').selectAll('line').data(links).join('line').style('stroke','var(--m)').style('stroke-width',1);
+    const N=svg.append('g').selectAll('g').data(nodes).join('g');
+    N.append('circle').style('fill',d=>d.kind==='cat'?'var(--m)':d.pnl==null?'var(--m)':d.pnl>=0.5?'var(--a7)':d.pnl<=-0.5?'var(--t)':'var(--m)').style('fill-opacity',d=>d.kind==='cat'?.25:.85).style('cursor',d=>d.kind==='pos'?'pointer':'default');
+    N.filter(d=>d.kind==='cat').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+13).style('fill','var(--t)').style('font','600 12px var(--font-body)').text(d=>d.label);
+    N.each(function(d){let w=0;d3.select(this).selectAll('text').each(function(){w=Math.max(w,this.getComputedTextLength())});d.hw=Math.max(d.r,w/2+2)});
+    const sim=d3.forceSimulation(nodes)
+      .force('link',d3.forceLink(links).id(d=>d.id).distance(d=>46+d.source.r).strength(.6))
+      .force('charge',d3.forceManyBody().strength(d=>d.kind==='cat'?-120:-20))
+      .force('collide',d3.forceCollide(d=>d.kind==='cat'?d.r+26:d.r+3))
+      .force('center',d3.forceCenter(cx,cy));
+    sim.on('tick',()=>{
+      const e=ease();
+      nodes.forEach(d=>{d.x=Math.max(d.hw,Math.min(W-d.hw,d.x));d.y=Math.max(d.r+4,Math.min(H-d.r-22,d.y))});
+      L.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y).style('stroke-opacity',.5*e);
+      N.attr('transform',d=>'translate('+d.x+','+d.y+')');
+      N.select('circle').attr('r',d=>d.r*e);
+    });
+    N.filter(d=>d.kind==='pos').on('click',(ev,d)=>{
+      if(!info)return;
+      const pnl=d.pnl==null?'результат невідомий':(d.pnl>=0?'+':'−')+fmt(Math.abs(d.pnl))+' до вкладених';
+      info.textContent=d.label+' · '+fmt(d.val)+' · '+pnl;
+    });
+    if(info)info.textContent='Розмір бульбашки — частка позиції. Зелений — плюс, сірий — результат невідомий. Торкніться позиції.';
+    this._pm={el,key,sim};
   }
   repData(per){
     // Підсумки по місяцях і категоріях у валюті перегляду. per: 3, 6, 12 місяців або 0 (весь період).
@@ -796,7 +916,13 @@ class Component extends DCLogic {
     const kp=p=>this.ovK(p.isin,p.broker,p.maturity),ka=a=>this.ovK(a.isin,a.name,a.calc&&a.calc.maturity);
     pf.forEach(a=>{if(a.category!=='ОВДП'||a.lk)return;const p=pos.find(x=>!x.lk&&(kp(x)===ka(a)||(a.currency==='UAH'&&n(x.amount)===n(a.value))));const lk=++id;a.lk=lk;ch=true;if(p)p.lk=lk;else{const c=a.calc||{};pos.push({id:++id,lk,broker:a.name,isin:a.isin||'',amount:Math.round(n(a.value)*(this.R[a.currency]||1)*100)/100,coupon:c.coupon!=null&&c.coupon!==''?c.coupon:String(a.profitPct||''),maturity:c.maturity||'',calc:Object.assign({},c)})}});
     pos.forEach(p=>{if(p.lk)return;const lk=++id;p.lk=lk;ch=true;pf.push({id:++id,lk,name:p.broker,isin:p.isin||'',category:'ОВДП',value:n(p.amount),currency:'UAH',profitPct:n(p.coupon),calc:Object.assign({},p.calc||{},{coupon:String(p.coupon||''),maturity:p.maturity||''})})});
-    return ch?Object.assign({},o,{ovdpPos:pos,portfolio:pf}):o;
+    // Пов'язана позиція ОВДП: одне поле на всіх сторінках. Змінене поле переноситься в інший запис.
+    pf.forEach(a=>{if(!a.lk)return;const p=pos.find(x=>x.lk===a.lk);if(!p)return;const pa=s0.portfolio.find(x=>x.id===a.id)||{},pp=s0.ovdpPos.find(x=>x.lk===a.lk)||{},R=this.R[a.currency]||1;
+      if(n(a.value)!==n(pa.value))p.amount=Math.round(n(a.value)*R*100)/100;else if(n(p.amount)!==n(pp.amount))a.value=Math.round(n(p.amount)/R*100)/100;
+      if(a.name!==pa.name)p.broker=a.name;else if(p.broker!==pp.broker)a.name=p.broker;
+      if((a.isin||'')!==(pa.isin||''))p.isin=a.isin||'';else if((p.isin||'')!==(pp.isin||''))a.isin=p.isin||'';
+      if(n(a.profitPct)!==n(pa.profitPct))p.coupon=String(a.profitPct||'');else if(String(p.coupon||'')!==String(pp.coupon||''))a.profitPct=n(p.coupon)});
+    return Object.assign({},o,{ovdpPos:pos,portfolio:pf});
   }
   upd=(o,text,quiet)=>{
     if('portfolio' in o||'ovdpPos' in o)o=this.ovEnsure(o);
@@ -1044,8 +1170,8 @@ class Component extends DCLogic {
     const base=s.nwHist.find(x=>nowT-Date.parse(x.d)<=31*dayMs),baseV=base&&base.d!==this.TODAY?base.v/R[cur]:null;
     const sg=n=>(n>=0?'+':'−')+fmt(Math.abs(n));
     const pts=hist.map((h,i)=>(i*50)+','+(56-(h-mn)/((mxh-mn)||1)*48)).join(' ');
-    const reg=[{n:'Готівка та картки',t:'Бюджет',v:cash,orig:'у валютах операцій'},...s.portfolio.map(p=>({id:p.id,raw:p.value,cc:p.currency,n:p.name,t:p.category,v:conv(p.value,p.currency),orig:fmt(p.value)+' '+SYM[p.currency]})),...s.goals.map(g=>({n:'Скарбничка: '+g.title,t:'Цілі',v:conv(g.current,g.currency),orig:fmt(g.current)+' '+SYM[g.currency]})),...AC.filter(a=>!a.closed&&this.isDep(a)).map(a=>({n:a.name,t:'Депозит',v:conv(accBal[a.id],a.cur),orig:fmt(accBal[a.id])+' '+SYM[a.cur]}))];
-    const assetRows=[...reg].filter(a=>!s.nwCat||a.t===s.nwCat).sort((a,b)=>s.nwSort==='name'?a.n.localeCompare(b.n,'uk'):b.v-a.v).map(a=>({n:a.n,t:a.t,v:M(a.v),orig:a.orig,sh:Math.round(a.v/(nw||1)*100),hasPen:!!a.id,open:()=>this.setState({screen:(!a.id&&a.t!=='Депозит')?'budget':(a.t==='ОВДП'?'ovdp':'invest')}),edit:()=>{if(a.id){const p=s.portfolio.find(x=>x.id===a.id);if(p)this.setState({det:{kind:'asset',id:a.id,f:{name:p.name,category:p.category,value:String(p.value),currency:p.currency,profitPct:String(p.profitPct||0),ops:(p.ops||[]).map(o=>Object.assign({},o,{amt:String(o.amt)}))}}})}},canEdit:!!a.id,editing:!!a.id&&s.editA===a.id,notEditing:!(a.id&&s.editA===a.id),startEdit:()=>this.setState({editA:a.id,editV:String(a.raw)}),editVal:s.editV,onEdit:e=>this.setState({editV:e.target.value}),curCode:a.cc,saveEdit:()=>{const v=num(s.editV);if(v>0&&a.id)this.upd({portfolio:s.portfolio.map(p=>p.id===a.id?Object.assign({},p,{value:v}):p)},'Змінено вартість: '+a.n);this.setState({editA:null})},keyEdit:e=>{if(e.key==='Enter')e.target.blur();if(e.key==='Escape'){this.setState({editA:null})}}}));
+    const reg=[{n:'Готівка та картки',t:'Бюджет',v:cash,orig:'у валютах операцій'},...s.portfolio.map(p=>({id:p.id,raw:p.value,cc:p.currency,n:p.name,t:p.category,v:conv(p.value,p.currency),orig:fmt(p.value)+' '+SYM[p.currency]})),...s.goals.map(g=>({n:'Скарбничка: '+g.title,t:'Цілі',v:conv(g.current,g.currency),orig:fmt(g.current)+' '+SYM[g.currency]})),...AC.filter(a=>!a.closed&&this.isDep(a)).map(a=>({n:a.name,t:'Депозит',aid:a.id,v:conv(accBal[a.id],a.cur),orig:fmt(accBal[a.id])+' '+SYM[a.cur]}))];
+    const assetRows=[...reg].filter(a=>!s.nwCat||a.t===s.nwCat).sort((a,b)=>s.nwSort==='name'?a.n.localeCompare(b.n,'uk'):b.v-a.v).map(a=>({n:a.n,t:a.t,v:M(a.v),orig:a.orig,sh:Math.round(a.v/(nw||1)*100),hasPen:!!(a.id||a.aid),open:()=>this.setState({screen:(!a.id&&a.t!=='Депозит')?'budget':(a.t==='ОВДП'?'ovdp':'invest')}),edit:()=>{if(a.aid)return depOpen(a.aid);if(a.id){const p=s.portfolio.find(x=>x.id===a.id);if(p)this.setState({det:{kind:'asset',id:a.id,f:{name:p.name,category:p.category,value:String(p.value),currency:p.currency,profitPct:String(p.profitPct||0),ops:(p.ops||[]).map(o=>Object.assign({},o,{amt:String(o.amt)}))}}})}},canEdit:!!a.id,editing:!!a.id&&s.editA===a.id,notEditing:!(a.id&&s.editA===a.id),startEdit:()=>this.setState({editA:a.id,editV:String(a.raw)}),editVal:s.editV,onEdit:e=>this.setState({editV:e.target.value}),curCode:a.cc,saveEdit:()=>{const v=num(s.editV);if(v>0&&a.id)this.upd({portfolio:s.portfolio.map(p=>p.id===a.id?Object.assign({},p,{value:v}):p)},'Змінено вартість: '+a.n);this.setState({editA:null})},keyEdit:e=>{if(e.key==='Enter')e.target.blur();if(e.key==='Escape'){this.setState({editA:null})}}}));
     const grp=(arr)=>{const g={};arr.forEach(([k,v])=>g[k]=(g[k]||0)+v);return Object.entries(g).sort((a,b)=>b[1]-a[1]).map(([k,v])=>({label:k,pct:Math.round(v/(nw||1)*100)}))};
     const allocCat=grp(reg.map(r=>[r.t,r.v])).map(b=>({...b,op:!s.nwCat||s.nwCat===b.label?1:.45,pick:()=>this.setState({nwCat:s.nwCat===b.label?'':b.label})}));
     const allocCur=grp([...Object.entries(cashBy).map(([c,v])=>[c,conv(v,c)]),...s.portfolio.map(p=>[p.currency,conv(p.value,p.currency)]),...s.goals.map(g=>[g.currency,conv(g.current,g.currency)])]);
@@ -1062,13 +1188,13 @@ class Component extends DCLogic {
     // invest
     const pfTot=inv;
     const depAcc=AC.filter(a=>!a.closed&&this.isDep(a));
+    const depOpen=id=>{const a=AC.find(x=>x.id===id);if(a)this.setState({det:{kind:'dep',id,f:{name:a.name,balance:String(Math.round(accBal[id]*100)/100),rate:String(a.rate||'')}}})};
     const openPos=p=>()=>{const o=p.lk?s.ovdpPos.find(x=>x.lk===p.lk):null;if(o)return this.setState({det:{kind:'pos',id:o.id,f:Object.assign({},o,{calc:o.calc||{}})}});this.setState({det:{kind:'asset',id:p.id,f:{name:p.name,category:p.category,value:String(p.value),currency:p.currency,profitPct:String(p.profitPct||0),ops:(p.ops||[]).map(x=>Object.assign({},x,{amt:String(x.amt)}))}}})};
     const splitPos=()=>{let n=0;const pf=[];s.portfolio.forEach(p=>{const ops=p.ops||[];if(!p.lk&&ops.length>1&&ops.every(o=>num(o.amt)>0)){n++;ops.forEach((o,i)=>pf.push(Object.assign({},p,{id:'s'+Date.now()+'_'+n+'_'+i+'_'+Math.floor(Math.random()*1e6),name:p.name+' · '+o.date.split('-').reverse().join('.')+' · '+fmt(Math.round(conv(num(o.amt),'UAH',p.currency)*100)/100)+' '+SYM[p.currency],value:Math.round(conv(num(o.amt),'UAH',p.currency)*100)/100,ops:[o]})))}else pf.push(p)});if(!n)return this.toast('Немає позицій з кількома купівлями',()=>this.setState({toast:null}));this.upd({portfolio:pf},'Розділено на окремі активи: '+n+' позицій')};
     const pfRows=s.portfolio.map(p=>({name:p.name,open:openPos(p),cat:p.category,pctText:(p.profitPct||0)+'% річних · ',cv:M(conv(p.value,p.currency)),value:String(p.value),cur:SYM[p.currency],set:e=>this.upd(Object.assign({portfolio:s.portfolio.map(x=>x.id===p.id?Object.assign({},x,{value:num(e.target.value)}):x)},p.lk?{ovdpPos:s.ovdpPos.map(x=>x.lk===p.lk?Object.assign({},x,{amount:Math.round(num(e.target.value)*(this.R[p.currency]||1)*100)/100}):x)}:{})),del:()=>this.upd({portfolio:s.portfolio.filter(x=>x.id!==p.id),ovdpPos:p.lk?s.ovdpPos.filter(x=>x.lk!==p.lk):s.ovdpPos},'Видалено актив: '+p.name)})).concat(depAcc.map(a=>({name:a.name,cat:'Депозит',pctText:'',cv:M(conv(accBal[a.id],a.cur)),value:String(Math.round(accBal[a.id]*100)/100),cur:SYM[a.cur],set:()=>{},del:()=>this.toast('Депозит змінюється через рахунок у Net Worth',()=>this.setState({toast:null}))})));
     // Огляд портфеля. Вкладено — сума операцій позиції (у ₴); без операцій результат невідомий («—»). Депозит — за балансом рахунку.
-    const depTip=()=>this.toast('Депозит змінюється через рахунок у Net Worth',()=>this.setState({toast:null}));
-    const holds=s.portfolio.map(p=>{const ops=p.ops||[],val=conv(p.value,p.currency);return{name:p.name,cat:p.category||'Інше',val,cost:ops.length?ops.reduce((a,o)=>a+conv(num(o.amt),'UAH'),0):val,known:ops.length>0,open:openPos(p)}})
-      .concat(depAcc.map(a=>{const val=conv(accBal[a.id],a.cur);return{name:a.name,cat:'Депозит',val,cost:val,known:true,dep:true,open:depTip}}));
+    const holds=s.portfolio.map(p=>{const ops=p.ops||[],val=conv(p.value,p.currency);return{name:p.name,cat:p.category||'Інше',val,cost:ops.length?ops.reduce((a,o)=>a+conv(num(o.amt),'UAH'),0):val,known:ops.length>0,open:openPos(p)}}).filter(h=>!(h.known&&Math.abs(h.val)<0.5&&Math.abs(h.cost)<0.5))
+      .concat(depAcc.map(a=>{const val=conv(accBal[a.id],a.cur);return{name:a.name,cat:'Депозит',val,cost:val,known:true,dep:true,open:()=>depOpen(a.id)}}));
     const pfCats=[...new Set(holds.map(h=>h.cat))],pfCat=pfCats.includes(s.pfCat)?s.pfCat:'';
     const hShow=holds.filter(h=>!pfCat||h.cat===pfCat),hTot=hShow.reduce((a,h)=>a+h.val,0),hK=hShow.filter(h=>h.known),hCost=hK.reduce((a,h)=>a+h.cost,0),hPnl=hK.reduce((a,h)=>a+h.val,0)-hCost;
     const pctOf=(a,b)=>b?a/b*100:0,sg2=n=>n>=0?'+':'−',pctT=(a,b)=>sg2(a)+Math.abs(pctOf(a,b)).toFixed(2).replace('.',',')+'%';
@@ -1124,6 +1250,7 @@ class Component extends DCLogic {
     const titles={budget:'Бюджет',networth:'Net Worth',ovdp:'Калькулятор ОВДП',invest:'Інвестиції та портфель',goals:'Скарбничка · Цілі',passive:'Пасивний дохід',import:'Імпорт виписки',data:'Дані та історія'};
     // forms
     const PALS=[
+      {k:'portfolio',n:'Портфель',L:['#f4f5fb','#141826','#6366f1','#ffffff','#4f46e5','#141826'],D:['#080a14','#eef0f8','#6366f1','#ffffff','#a5b4fc','#0f1323']},
       {k:'mod',n:'Modernist',L:['#f3f2f2','#201e1d','#c42810','#ffffff','#b8200a','#201e1d'],D:['#201e1d','#f3f2f2','#ec3013','#ffffff','#ff8a76','#2b2826']},
       {k:'noct',n:'Nocturne',L:['#f3f5fe','#292b31','#5d5294','#ffffff','#5d5294','#232532'],D:['#161826','#e9e9ed','#9184d9','#161826','#d2cefd','#1c1e2e']},
       {k:'steel',n:'Сталь',L:['#f2f2f3','#1d1f20','#416180','#ffffff','#416180','#1d2d3d'],D:['#14171a','#e8eaec','#94bce3','#14171a','#b5d9fd','#1d2d3d']},
@@ -1159,6 +1286,8 @@ class Component extends DCLogic {
     const lastS=new Date(s.lastEdit),shortFmt=lastS.toLocaleString('uk-UA',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
     const scr=s.screen,v=s.variant;
     const navItems=[{key:'home',label:'Головна',value:'',icon:Ic(I.home||I.wallet,18),go:go('home')}].concat(cards.map(c=>({key:c.key,label:c.label,value:c.value,icon:Ic(I[{budget:'wallet',networth:'bank',ovdp:'calc',invest:'trend',goals:'target',passive:'pct',import:'up',data:'db'}[c.key]],18),go:c.go}))).map((n,i)=>Object.assign(n,{num:'0'+i})).map(n=>{const on=scr===n.key;return Object.assign(n,{active:on,bg:on?'#f2f2f3':'transparent',fg:on?pal.D[5]:'#f2f2f3'})});
+    const tabOn=k=>scr===k,tabFg=k=>tabOn(k)?'var(--a)':'var(--m)',tIc=p=>Ic(p,20);
+    const tabs=[{label:'Головна',go:go('home'),on:tabOn('home'),fg:tabFg('home'),icon:tIc(I.home||I.wallet)},{label:'Бюджет',go:go('budget'),on:tabOn('budget'),fg:tabFg('budget'),icon:tIc(I.wallet)},{label:'Інвестиції',go:go('invest'),on:tabOn('invest'),fg:tabFg('invest'),icon:tIc(I.trend)},{label:'Ще',go:()=>this.setState({menuOpen:true}),on:!!s.menuOpen,fg:s.menuOpen?'var(--a)':'var(--m)',icon:tIc('<path d="M5 12h.01M12 12h.01M19 12h.01"/>')}];
     const LKL=[['modernist','Modernist','Світла основа, червоний акцент, Archivo, прямі кути, товсті лінії'],['nocturne','Nocturne','Темна поверхня, Inter, заокруглені кути, контурні кнопки з сяйвом'],['blueprint','Креслення','Тонкі лінії, квадратні кути, позначки на рамках'],['soft','М\'який','Заокруглені картки із заливкою, без жорстких ліній'],['bold','Контраст','Товсті рамки, жорсткі тіні, щільні заголовки'],['editorial','Журнал','Заголовки із засічками, лише лінії-розділювачі']].map(([k,n,d])=>{const on=(s.look||'nocturne')===k;return{n,d,on,bd:on?'2px solid var(--a)':'1px solid var(--d)',go:()=>this.upd(k==='modernist'?{look:k,pal:'mod'}:k==='nocturne'?{look:k,pal:'noct'}:{look:k})}});
     return {
       s,h,o:(o.cm==='amt'?o:Object.assign({},o,{coupon:String(Math.round((parseFloat(o.nominal)||0)*(parseFloat(o.coupon)||0)/100/(parseInt(o.freq)||2)*100)/100),cm:'amt'})),cp,af:s.af,ng:s.ng,f,
@@ -1179,8 +1308,8 @@ class Component extends DCLogic {
         const mi=sm(s.txs,t=>t.type==='income'&&t.date.startsWith(cm)),me=sm(s.txs,t=>t.type==='expense'&&t.date.startsWith(cm)),rr=s.recurring.filter(r=>r.type==='expense'&&r.day>td),rec=sm(rr,()=>true);
         const lim=Object.keys(s.limits).reduce((a,c)=>{const sp=sm(s.txs,t=>t.type==='expense'&&t.cat===c&&t.date.startsWith(cm)),rc=sm(rr,r=>r.cat===c);return a+Math.max(0,num(s.limits[c])-sp-rc)},0);
         const fr=mi-me-rec-lim,dl=dim-td+1;return {freeText:(fr<0?'−':'')+M(Math.abs(fr)),freeCol:fr<0?'var(--t)':'var(--a7)',perDayText:M(Math.max(0,fr)/dl),daysLeft:dl,fInc:M(mi),fExp:M(me),fRec:M(rec),fLim:M(lim),saveRate:mi>0?Math.round((mi-me)/mi*100):0}})(),
-      appVer:'1.27',
-      bTabs:seg([['ov','Огляд'],['ops','Операції'],['rep','Звіт'],['set','Ліміти · правила']],s.bTab||'ov',k=>this.setState({bTab:k})),tOv:(s.bTab||'ov')==='ov',tOps:s.bTab==='ops',tRep:s.bTab==='rep',tSet:s.bTab==='set',
+      appVer:'1.33',
+      bTabs:seg([['ov','Огляд'],['ops','Операції'],['rep','Звіт'],['map',"Зв'язки"],['set','Ліміти · правила']],s.bTab||'ov',k=>this.setState({bTab:k})),tOv:(s.bTab||'ov')==='ov',tOps:s.bTab==='ops',tRep:s.bTab==='rep',tMap:s.bTab==='map',mapSeg:seg([['graph','Граф'],['mind','Мапа']],s.mapMode||'graph',k=>this.setState({mapMode:k})),mapMonth:s.month?MN[+s.month.slice(5)-1]+' '+s.month.slice(0,4):'Увесь період',mapHint:s.mapMode==='mind'?'Торкніться категорії, щоб згорнути або розгорнути її операції.':'Розмір кола — сума витрат у категорії. Операції тяжіють до своєї категорії.',tSet:s.bTab==='set',
       isBudget:scr==='budget',incText:M(inc),expText:M(ex),balText:(inc-ex>=0?'+':'−')+M(Math.abs(inc-ex)),usePct:inc?Math.round(ex/inc*100):0,useBar:inc?Math.min(100,Math.round(ex/inc*100)):0,
       monthLabel:s.month?MN[+s.month.slice(5)-1]+' '+s.month.slice(0,4):'Увесь період',monthAllLabel:s.month?'Показати всі':'Обрати місяць',monthPrev:()=>mth(-1),monthNext:()=>mth(1),monthAll:()=>this.upd({month:s.month?'':this.TODAY.slice(0,7)}),
       ...(()=>{const per=parseInt(s.repPer||'6'),rp=this.repData(per),mxr=Math.max(1,...rp.rows.map(r=>Math.max(r.i,r.e))),sm=m=>MN[+m.slice(5)-1].slice(0,3)+' '+m.slice(2,4);
@@ -1255,19 +1384,23 @@ class Component extends DCLogic {
       ...(()=>{const D=s.det;if(!D)return{detOpen:false,detCalc:[],hasCalc:false,detOps:[],hasOps:false,opsHint:'',detInfo:[],detFields:[],detCats:[],detCurs:[],detKicker:'',detTitle:'',detIsAsset:false,detClose:()=>{},detSave:()=>{},detDel:()=>{},detLink:()=>{},detLinkLabel:''};
         const f=D.f,setM=o=>this.setState({det:Object.assign({},D,{f:Object.assign({},f,o)})}),set=(k,v)=>this.setState({det:Object.assign({},D,{f:Object.assign({},f,{[k]:v})})}),fld=(k,label,type)=>({label,type,value:f[k]==null?'':f[k],handler:e=>set(k,e.target.value)}),fd=d=>d?d.split('-').reverse().join('.'):'—',pc=x=>String(x).replace('.',',')+'%';
         const close=()=>this.setState({det:null}),jump=k=>()=>this.setState({det:null,screen:k,imp:'idle'});
+        if(D.kind==='dep'){const da=s.accounts.find(x=>x.id===D.id)||{},dcur=da.cur||'UAH',dnow=accBal[D.id]||0,dfl=(k,label,type)=>({label,type,value:D.f[k]==null?'':D.f[k],handler:e=>this.setState({det:Object.assign({},D,{f:Object.assign({},D.f,{[k]:e.target.value})})})});
+          return{detOpen:true,detKicker:'Депозит · '+dcur,detTitle:da.name||'Депозит',detInfo:[{k:'Баланс зараз',v:fmt(dnow)+' '+dcur},{k:'Ставка',v:da.rate?String(da.rate).replace('.',',')+'%':'—'}],detCalc:[],hasCalc:false,detOps:[],hasOps:false,opsHint:'',detFields:[dfl('name','Назва','text'),dfl('balance','Баланс, '+dcur,'number'),dfl('rate','Ставка, % річних','number')],detCats:[],detCurs:[],detIsAsset:false,detLink:jump('networth'),detLinkLabel:'Відкрити Net Worth',detClose:close,
+            detDel:()=>this.toast('Щоб закрити депозит, натисніть «Закрити» в Net Worth',()=>this.setState({toast:null})),
+            detSave:()=>{const nm=(D.f.name||'').trim(),nb=num(D.f.balance),rt=num(D.f.rate);if(!nm||D.f.balance===''||isNaN(nb))return;this.upd({accounts:s.accounts.map(x=>x.id===D.id?Object.assign({},x,{name:nm,open:num(x.open)+(nb-dnow),rate:rt>0?rt:undefined}):x)},'Збережено депозит: '+nm);close()}};}
         if(D.kind==='pos'){const old=s.ovdpPos.find(p=>p.id===D.id)||{},amt=num(f.amount),cp=num(f.coupon),dd=f.maturity?Math.ceil((Date.parse(f.maturity)-nowT)/dayMs):null,yr=amt*cp/100;
           const info=[{k:'Сума',v:M(conv(amt,'UAH'))},{k:'Купон',v:cp?pc(cp):'—'},{k:'Погашення',v:fd(f.maturity)},{k:'Статус',v:dd===null?'Дата не вказана':dd<0?'Погашено':dd===0?'Сьогодні':'Через '+dd+' дн.'},{k:'Дохід за рік (до податку)',v:cp?M(conv(yr,'UAH')):'—'},{k:'Дохід до погашення (до податку)',v:cp&&dd>0?M(conv(yr*dd/365,'UAH')):'—'},{k:'ISIN',v:f.isin||'—'}];
-          const cl=Object.assign({nominal:'1000',freq:'2',start:'',price:'',qty:'1',fee:'0',sell:''},old.calc||{},f.calc||{}),cset=(k,v)=>set('calc',Object.assign({},cl,{[k]:v})),cf=(k,label,type)=>({label,type,value:cl[k],handler:e=>cset(k,e.target.value)});
-          if(f.maturity){try{const oo=Object.assign({},cl,{coupon:f.coupon,maturity:f.maturity,cur:'UAH'}),sc=this.sched(oo),pr=num(cl.price),q=parseInt(cl.qty)||0,fe=num(cl.fee),sp=num(cl.sell),pu=this.pd(cl.start||'x-1-1'),pay=sc.reduce((a,c)=>a+c.amount,0)*q,net=pay-(pr*q+fe);if(pr&&sc.length){info.push({k:'YTM',v:(this.ytmOf(sc,pu,pr)*100).toFixed(2).replace('.',',')+'%'},{k:'Сума купівлі',v:M(pr*q)},{k:'Витрати',v:M(fe)},{k:'Виплата всього',v:M(pay)},{k:'Очікуваний дохід',v:(net>=0?'+':'')+M(net)});if(sp>0)info.push({k:'YTM продажу',v:(this.ytmOf(sc,pu,sp)*100).toFixed(2).replace('.',',')+'%'},{k:'Різниця купівля/продаж',v:M((pr-sp)*q)})}}catch(e){}}
+          const cl=(c=>{const pq=num(c.price)*(parseInt(c.qty)||0);if(pq>0&&Math.abs(num(c.fee)-pq)<=Math.max(1,pq*.001))c.fee='0';return c})(Object.assign({nominal:'1000',freq:'2',start:'',price:'',qty:'1',fee:'0',sell:''},old.calc||{},f.calc||{})),cset=(k,v)=>set('calc',Object.assign({},cl,{[k]:v})),cf=(k,label,type)=>({label,type,value:cl[k],handler:e=>cset(k,e.target.value)});
+          if(f.maturity){try{const oo=Object.assign({},cl,{coupon:f.coupon,maturity:f.maturity,cur:'UAH'}),sc=this.sched(oo),pr=num(cl.price),q=parseInt(cl.qty)||0,fe=(x=>{const pq=pr*q;return pq>0&&Math.abs(x-pq)<=Math.max(1,pq*.001)?0:x})(num(cl.fee)),sp=num(cl.sell),pu=this.pd(cl.start||'x-1-1'),pay=sc.reduce((a,c)=>a+c.amount,0)*q,net=pay-(pr*q+fe);if(pr&&sc.length){info.push({k:'YTM',v:(this.ytmOf(sc,pu,pr)*100).toFixed(2).replace('.',',')+'%'},{k:'Сума купівлі',v:M(pr*q)},{k:'Витрати',v:M(fe)},{k:'Виплата всього',v:M(pay)},{k:'Очікуваний дохід',v:(net>=0?'+':'')+M(net)});if(sp>0)info.push({k:'YTM продажу',v:(this.ytmOf(sc,pu,sp)*100).toFixed(2).replace('.',',')+'%'},{k:'Різниця купівля/продаж',v:M((pr-sp)*q)})}}catch(e){}}
           return{hasCalc:true,detCalc:[cf('nominal','Номінал','number'),cf('freq','Виплат на рік','number'),cf('start','Дата купівлі','date'),cf('price','Ціна купівлі','number'),cf('qty','Кількість','number'),cf('fee','Витрати','number'),cf('sell','Ціна продажу','number'),cf('sim','Дохідність за договором (sim), %','number')],hasOps:false,detOps:[],detOpen:true,detKicker:'Позиція ОВДП',detTitle:f.broker||'Без назви',detIsAsset:false,detInfo:info,detCats:[],detCurs:[],detLink:jump('ovdp'),detLinkLabel:'Відкрити розділ «ОВДП»',
-            detFields:[fld('broker','Брокер','text'),fld('isin','ISIN','text'),Object.assign(fld('amount','Вартість, ₴','number'),{handler:e=>{const v=e.target.value;setM({amount:v,calc:Object.assign({},cl,{fee:v})})}}),fld('coupon','Купон, %','number'),fld('maturity','Погашення','date')],detClose:close,
+            detFields:[fld('broker','Брокер','text'),fld('isin','ISIN','text'),fld('amount','Вартість, ₴','number'),fld('coupon','Купон, %','number'),fld('maturity','Погашення','date')],detClose:close,
             detSave:()=>{if(!f.broker.trim()||!amt)return;const np=Object.assign({},old,{broker:f.broker.trim(),isin:(f.isin||'').trim(),amount:amt,coupon:f.coupon,maturity:f.maturity,calc:cl}),pf=s.portfolio.map(p=>p);this.ovSync('pos',np,old,null,pf);
               this.upd({ovdpPos:s.ovdpPos.map(p=>p.id===D.id?np:p),portfolio:pf},'Збережено позицію ОВДП');close()},
             detDel:()=>{this.upd({ovdpPos:s.ovdpPos.filter(p=>p.id!==D.id),portfolio:old.lk?s.portfolio.filter(a=>a.lk!==old.lk):s.portfolio},'Видалено позицію ОВДП');close()}}}
         const old=s.portfolio.find(p=>p.id===D.id)||{},val=num(f.value),inUah=conv(val,f.currency),cats=Object.keys(s.targets).concat(['Готівка']).filter((c,i,a)=>a.indexOf(c)===i);
         const info=[{k:'Вартість',v:fmt(val)+' '+f.currency},{k:'У валюті перегляду',v:M(inUah)},{k:'Частка капіталу',v:Math.round(inUah/(nw||1)*100)+'%'},{k:'Категорія',v:f.category},{k:'Дохідність',v:num(f.profitPct)?(num(f.profitPct)>0?'+':'−')+pc(Math.abs(num(f.profitPct))):'—'}];
         {const tg=s.targets[f.category],now=Math.round(s.portfolio.filter(p=>p.category===f.category).reduce((a,p)=>a+conv(p.value,p.currency),0)/(nw||1)*100);if(tg!=null)info.push({k:'Цільовий розподіл категорії',v:'ціль '+tg+'% · зараз '+now+'%'});s.goals.forEach(g=>info.push({k:'Ціль «'+g.title+'»',v:Math.min(100,Math.round(g.current/g.target*100))+'% · '+fmt(g.current)+' з '+fmt(g.target)+' '+SYM[g.currency]}))}
-        const fo=f.ops||[],setOps=a=>set('ops',a);const isO=f.category==='ОВДП',cl=Object.assign({nominal:'1000',coupon:String(f.profitPct||''),freq:'2',start:'',maturity:'',price:'',qty:'1',fee:'0',sell:''},old.calc||{},f.calc||{}),cset=(k,v)=>set('calc',Object.assign({},cl,{[k]:v})),cf=(k,label,type)=>({label,type,value:cl[k],handler:e=>cset(k,e.target.value)});let cy=0;if(isO&&cl.maturity){try{const oo=Object.assign({},cl,{cur:f.currency}),sc=this.sched(oo),pr=num(cl.price),q=parseInt(cl.qty)||0,fe=num(cl.fee),sp=num(cl.sell),pu=this.pd(cl.start||'x-1-1'),pay=sc.reduce((a,c)=>a+c.amount,0)*q,net=pay-(pr*q+fe);if(pr&&sc.length){cy=this.ytmOf(sc,pu,pr)*100;info.push({k:'YTM',v:cy.toFixed(2).replace('.',',')+'%'},{k:'Сума купівлі',v:fmt(pr*q)+' '+f.currency},{k:'Виплата всього',v:fmt(pay)+' '+f.currency},{k:'Очікуваний дохід',v:(net>=0?'+':'')+fmt(net)+' '+f.currency});if(sp>0)info.push({k:'YTM продажу',v:(this.ytmOf(sc,pu,sp)*100).toFixed(2).replace('.',',')+'%'},{k:'Різниця купівля/продаж',v:fmt((pr-sp)*q)+' '+f.currency})}}catch(e){}}
+        const fo=f.ops||[],setOps=a=>set('ops',a);const isO=f.category==='ОВДП',cl=Object.assign({nominal:'1000',coupon:String(f.profitPct||''),freq:'2',start:'',maturity:'',price:'',qty:'1',fee:'0',sell:''},old.calc||{},f.calc||{}),cset=(k,v)=>set('calc',Object.assign({},cl,{[k]:v})),cf=(k,label,type)=>({label,type,value:cl[k],handler:e=>cset(k,e.target.value)});let cy=0;if(isO&&cl.maturity){try{const oo=Object.assign({},cl,{cur:f.currency}),sc=this.sched(oo),pr=num(cl.price),q=parseInt(cl.qty)||0,fe=(x=>{const pq=pr*q;return pq>0&&Math.abs(x-pq)<=Math.max(1,pq*.001)?0:x})(num(cl.fee)),sp=num(cl.sell),pu=this.pd(cl.start||'x-1-1'),pay=sc.reduce((a,c)=>a+c.amount,0)*q,net=pay-(pr*q+fe);if(pr&&sc.length){cy=this.ytmOf(sc,pu,pr)*100;info.push({k:'YTM',v:cy.toFixed(2).replace('.',',')+'%'},{k:'Сума купівлі',v:fmt(pr*q)+' '+f.currency},{k:'Виплата всього',v:fmt(pay)+' '+f.currency},{k:'Очікуваний дохід',v:(net>=0?'+':'')+fmt(net)+' '+f.currency});if(sp>0)info.push({k:'YTM продажу',v:(this.ytmOf(sc,pu,sp)*100).toFixed(2).replace('.',',')+'%'},{k:'Різниця купівля/продаж',v:fmt((pr-sp)*q)+' '+f.currency})}}catch(e){}}
 return{detCalc:isO?[cf('nominal','Номінал','number'),cf('coupon','Купон, %','number'),cf('freq','Виплат на рік','number'),cf('start','Дата купівлі','date'),cf('maturity','Погашення','date'),cf('price','Ціна купівлі','number'),cf('qty','Кількість','number'),cf('fee','Витрати','number'),cf('sell','Ціна продажу','number'),cf('sim','Дохідність за договором (sim), %','number')]:[],hasCalc:isO,detOps:fo.map(o=>({date:o.date.split('-').reverse().join('.'),desc:o.desc,amt:o.amt,setAmt:e=>setOps(fo.map(x=>x.id===o.id?Object.assign({},x,{amt:e.target.value}):x)),del:()=>setOps(fo.filter(x=>x.id!==o.id))})),hasOps:fo.length>0,opsHint:'Сума в ₴: плюс збільшує позицію, мінус зменшує. Зміни застосуються після «Зберегти».',detOpen:true,detKicker:'Актив · '+f.category,detTitle:f.name||'Без назви',detIsAsset:true,detInfo:info,detLink:jump(f.category==='ОВДП'?'ovdp':'invest'),detLinkLabel:f.category==='ОВДП'?'Відкрити розділ «ОВДП»':'Відкрити розділ «Інвестиції»',
           detFields:[fld('name','Назва','text'),...(f.category==='ОВДП'?[fld('isin','ISIN','text')]:[]),Object.assign(fld('value','Вартість','number'),{handler:e=>{const v=e.target.value;setM(f.category==='ОВДП'?{value:v,calc:Object.assign({},cl,{fee:v})}:{value:v})}}),fld('profitPct','Дохідність, %','number')],
           detCats:cats.map(c=>({label:c,go:()=>set('category',c),bg:f.category===c?'var(--a)':'transparent',fg:f.category===c?'var(--ab)':'var(--t)'})),
@@ -1351,8 +1484,8 @@ return{detCalc:isO?[cf('nominal','Номінал','number'),cf('coupon','Куп�
         else{const up={txs:[Object.assign({id:Date.now()},tx),...s.txs],sheet:false,screen:'budget',month:tx.date.slice(0,7)};if(f.rec)up.recurring=[...s.recurring,{id:Date.now()+1,type:tx.type,desc:tx.desc,amount:a,cur:tx.cur,cat:tx.cat,acc:tx.acc,day:+tx.date.slice(8),last:tx.date.slice(0,7)}];if(f.acc)up.lastAcc=f.acc;this.upd(up,'Додано операцію: '+tx.desc);this.toast('Операцію додано',()=>this.undoAt(0))}},
       ...(()=>{const d=s.txDlg,fin=id=>{const pf=s.portfolio.map(p=>Object.assign({},p)),dl=(d.type==='expense'?1:-1)*conv(d.amount,d.cur,'UAH');let p=id==='new'?null:pf.find(x=>x.id===id);if(!p){p={id:Date.now(),name:d.desc,category:d.cat,value:0,currency:'UAH',profitPct:0};pf.push(p)}p.value=Math.max(0,Math.round((num(p.value)+conv(dl,'UAH',p.currency,1))*100)/100);const ac=d.acc?(s.accounts||[]).find(a=>a.id===d.acc):null,aa=ac?(d.type==='expense'?-1:1)*Math.round(conv(d.amount,d.cur,ac.cur)*100)/100:0;p.ops=[Object.assign({id:Date.now(),date:d.date,desc:d.desc,amt:String(Math.round(dl*100)/100)},ac?{acc:ac.id,accAmt:aa}:{}),...(p.ops||[])];this.upd({portfolio:pf,txs:s.txs.filter(x=>x.id!==s.editId),sheet:false,editId:null,txDlg:null},'До інвестицій: '+d.desc)};return{txDlgOpen:!!d,txDlgCat:d?d.cat:'',txDlgTitle:d?d.desc+' · '+(d.type==='income'?'+':'−')+fmt(d.amount)+' '+SYM[d.cur]:'',txDlgNote:d?(d.type==='income'?'Надходження зменшить позицію':'Витрата збільшить позицію')+' на '+fmt(conv(d.amount,d.cur,'UAH'))+' ₴. Операція в Бюджет не потрапить'+(d&&d.acc?', баланс рахунку зменшиться (збільшиться) на ту саму суму.':'.'):'',txDlgPos:d?s.portfolio.filter(p=>p.category===d.cat).map(p=>({name:p.name,val:fmt2(p.value)+' '+SYM[p.currency],pick:()=>fin(p.id)})):[],txDlgNew:()=>fin('new'),txDlgCancel:()=>this.setState({txDlg:null,form:Object.assign({},f,{cat:'Інше'})})}})(),
       delFromSheet:()=>{const t=s.txs.find(x=>x.id===s.editId);if(t)delTx(t)()},
-      rootSt:theme+(s.wide?'height:100vh;background:var(--b);color:var(--t);display:flex;overflow:hidden;':s.narrow?'height:100dvh;background:var(--color-bg);display:block;padding:0;':'min-height:100vh;background:var(--color-bg);display:flex;flex-wrap:wrap;gap:48px;justify-content:center;align-items:flex-start;padding:24px;box-sizing:border-box;'),
-      navItems,menuOpen:!!s.menuOpen&&!s.wide,menuBtnDisp:s.wide?'none':'grid',openMenu:()=>this.setState({menuOpen:true}),closeMenu:()=>this.setState({menuOpen:false}),menuAdd:()=>this.setState({menuOpen:false,sheet:true,editId:null}),menuSet:()=>this.setState({menuOpen:false,setOpen:true}),
+      rootSt:theme+(s.wide?'height:100vh;background:var(--b);color:var(--t);display:flex;overflow:hidden;':s.narrow?'height:100dvh;background:var(--color-bg);display:block;padding:0 0 72px;box-sizing:border-box;':'min-height:100vh;background:var(--color-bg);display:flex;flex-wrap:wrap;gap:48px;justify-content:center;align-items:flex-start;padding:24px;box-sizing:border-box;'),
+      tabs,tabBarShow:!s.wide&&!s.sheet&&!s.det&&!s.txDlg,navItems,menuOpen:!!s.menuOpen&&!s.wide,menuBtnDisp:s.wide?'none':'grid',openMenu:()=>this.setState({menuOpen:true}),closeMenu:()=>this.setState({menuOpen:false}),menuAdd:()=>this.setState({menuOpen:false,sheet:true,editId:null}),menuSet:()=>this.setState({menuOpen:false,setOpen:true}),
       iMenu:Ic('<line x1="4" x2="20" y1="7" y2="7"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="17" y2="17"/>',20),
       iSet:Ic('<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>',18),
       setOpen:!!s.setOpen,openSet:()=>this.setState({setOpen:true}),closeSet:()=>this.setState({setOpen:false}),setToData:()=>this.setState({setOpen:false,screen:'data'}),
@@ -1366,7 +1499,7 @@ return{detCalc:isO?[cf('nominal','Номінал','number'),cf('coupon','Куп�
       frameSt:s.wide?'flex:1;min-width:0;height:100vh;padding:0;background:transparent;':s.narrow?'flex:none;width:100%;height:100dvh;padding:0;background:transparent;':'flex:none;width:390px;height:844px;border-radius:48px;background:#0c0d0e;padding:10px;box-shadow:var(--shadow-lg);',
       statusSt:s.wide?'height:0;overflow:hidden;':s.narrow?'height:env(safe-area-inset-top,0px);overflow:hidden;':'height:44px;padding:6px 28px 0;',
       innerRadius:(s.wide||s.narrow)?'0':'38px',
-      fabRight:s.wide?'max(32px,calc((100% - 920px)/2))':'20px',
+      fabBottom:s.wide?'24px':'84px',fabRight:s.wide?'max(32px,calc((100% - 920px)/2))':'20px',
       scPad:s.wide?'padding:8px max(32px,calc((100% - 920px)/2)) 100px;':'padding:0 16px 100px;',
       hdrPad:s.wide?'padding:16px max(32px,calc((100% - 920px)/2)) 14px;':'padding:8px 16px 12px;',
       activity:this.resetTimer,iLock:Ic('<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',36),
@@ -1394,7 +1527,7 @@ return{detCalc:isO?[cf('nominal','Номінал','number'),cf('coupon','Куп�
       iHelp:Ic('<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',20),
       helpOpen:!!s.help,openHelp:()=>this.setState({help:true,helpKey:s.screen}),closeHelp:()=>this.setState({help:false}),
       helpSections:[
-        ['start','З чого почати',['Крок 1. Net Worth → «Рахунки»: додайте картки й готівку з валютою та залишком на сьогодні.','Крок 2. Бюджет: додавайте операції кнопкою + або імпортуйте банківську виписку.','Крок 3. Дані та історія: зробіть «Копію JSON» і збережіть файл у надійному місці.','Крок 4 (за бажання): PIN, відбиток або обличчя, шифрування даних і синхронізація з Google Drive. Усе це в «Дані та історія».','Усі дані зберігаються на цьому пристрої. Інтернет потрібен лише для курсів НБУ та синхронізації.','Версія застосунку: 1.27']],
+        ['start','З чого почати',['Крок 1. Net Worth → «Рахунки»: додайте картки й готівку з валютою та залишком на сьогодні.','Крок 2. Бюджет: додавайте операції кнопкою + або імпортуйте банківську виписку.','Крок 3. Дані та історія: зробіть «Копію JSON» і збережіть файл у надійному місці.','Крок 4 (за бажання): PIN, відбиток або обличчя, шифрування даних і синхронізація з Google Drive. Усе це в «Дані та історія».','Усі дані зберігаються на цьому пристрої. Інтернет потрібен лише для курсів НБУ та синхронізації.','Версія застосунку: 1.33']],
         ['home','Головний екран',['Загальний капітал: рахунки, готівка, інвестиції, скарбнички, плюс борги, які вам винні, мінус ваші борги.','Картки розділів ведуть у відповідні розділи. Велике число в картці — головне для цього розділу.','₴ $ € zł — валюта, у якій показано суми. Дані від цього не змінюються.','«Приховати суми» ховає цифри, поки ви не вимкнете цей режим.','+ додає операцію. Під назвою розділу написано, коли дані востаннє змінювались.']],
         ['budget','Бюджет',['← → змінюють місяць. «Показати всі» — за весь час.','Вгорі: доходи, витрати і чистий баланс місяця.','Вкладка «Огляд»: скільки вільно до кінця місяця і на що йдуть витрати.','Вкладка «Операції»: фільтри, пошук і список. Торкніться операції, щоб її змінити.','«Вибрати» вмикає вибір кількох операцій: можна разом змінити категорію або видалити.','Вкладка «Звіт»: доходи, витрати й баланс по місяцях за 3, 6, 12 місяців або весь час. Звідти можна експортувати Excel.','Вкладка «Ліміти · правила»: ліміти витрат по категоріях, правила категорій і повторювані операції.','Повторювана операція («Повторювати щомісяця» у формі) додається сама того ж числа щомісяця. Зайву видаліть, як звичайну.','Правило категорії: якщо опис містить текст (наприклад «Сільпо»), категорія ставиться сама. Діє під час імпорту й за кнопкою «Застосувати».','Операції з категорій ОВДП, Депозит, ETF / Акції і Криптовалюта не йдуть у бюджет. Вони змінюють позицію в інвестиціях.']],
         ['networth','Net Worth',['Капітал = рахунки + готівка без рахунку + портфель + скарбнички − ваші борги + борги, які вам винні.','Рахунки: картки й готівка з валютою та початковим залишком. В операції можна вказати рахунок.','Переказ між своїми рахунками не йде в бюджет. Між різними валютами сума зараховується за курсом або за вказаною вами сумою.','Борги: «Я винен» зменшує капітал, «Мені винні» збільшує. Платіж зменшує залишок, у бюджет не потрапляє. Відсотки не нараховуються.','«Початковий залишок готівки» — скільки було до першої операції в застосунку.','Розподіл за категоріями й валютами показує, де ваші гроші. Реєстр сортується за сумою або назвою.']],
