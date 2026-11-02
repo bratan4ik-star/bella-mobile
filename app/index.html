@@ -271,7 +271,7 @@
 <div style="font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--m);padding:18px 0 8px">Параметри облігації</div>
 <div style="display:flex;flex-direction:column;gap:10px">
 <dc-import name="Field" label="Назва / ISIN" type="text" placeholder="" value="{{ o.name }}" handler="{{ h.o_name }}" hint-size="100%,64px"></dc-import>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+<div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px">
 <label style="font-size:12px;color:var(--m)">Валюта<select value="{{ o.cur }}" onChange="{{ h.o_cur }}" style="display:block;width:100%;margin-top:4px;padding:11px 8px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:16px var(--font-body)"><option value="UAH">UAH</option><option value="USD">USD</option><option value="EUR">EUR</option></select></label>
 <label style="font-size:12px;color:var(--m)">Виплати купона<select value="{{ o.freq }}" onChange="{{ h.o_freq }}" style="display:block;width:100%;margin-top:4px;padding:11px 8px;border:1px solid var(--d);background:var(--b);color:var(--t);border-radius:0;font:16px var(--font-body)"><option value="2">2 рази на рік</option><option value="1">Раз на рік</option></select></label>
 <dc-import name="Field" label="Номінал" type="number" placeholder="" value="{{ o.nominal }}" handler="{{ h.o_nominal }}" hint-size="100%,64px"></dc-import>
