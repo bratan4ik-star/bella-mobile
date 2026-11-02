@@ -354,7 +354,8 @@ const reload = async p => { await p.reload({ waitUntil: 'load' }); await p.waitF
 // 5. Шифрування: у сховищі шифртекст, пароль потрібен, неправильний пароль відхиляється
 {
   const p = await page();
-  await seed(p, () => { s.txs = [{ id: 1, type: 'expense', desc: 'ТАЄМНИЦЯ', amount: 777, cur: 'UAH', cat: 'Інше', date: '2026-10-01' }]; });
+  // Дата в поточному місяці: список «Операції» за замовчуванням показує саме його.
+  await seed(p, () => { const d = new Date(); s.txs = [{ id: 1, type: 'expense', desc: 'ТАЄМНИЦЯ', amount: 777, cur: 'UAH', cat: 'Інше', date: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-01' }]; });
   await reload(p); await p.keyboard.press('8'); await p.waitForTimeout(300);
   await p.locator('input[placeholder^="Пароль (від"]').fill('секрет-123'); await p.locator('input[placeholder="Повторіть пароль"]').fill('секрет-123');
   await p.getByRole('button', { name: 'Увімкнути шифрування' }).click(); await p.waitForTimeout(1500);

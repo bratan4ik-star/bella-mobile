@@ -118,6 +118,35 @@ const openInvest = async p => { await p.keyboard.press('4'); await p.waitForTime
   check('позиція без операцій: тап каже «результат невідомий»', /Облігація/.test(info) && /невідомий/.test(info), info);
 }
 
+// 8. Телефон: підписи вузлів не виходять за межі полотна ні на графі, ні на карті портфеля
+{
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const p = await ctx.newPage();
+  await p.route(/^https?:\/\/(?!localhost)/, r => r.abort());
+  p.on('pageerror', e => errors.push(e.message));
+  await p.goto(URL_, { waitUntil: 'load' }); await p.waitForTimeout(900);
+  await setState(p, d => ({
+    txs: [...baseTxs(d), expense(4, 'Аптека', 900, "Здоров'я", day(d, 5)), expense(5, 'Кіно', 450, 'Розваги', day(d, 6)), expense(6, 'Bolt', 600, 'Транспорт', day(d, 7)), expense(7, 'Комуналка', 2400, 'Житло', day(d, 8))],
+    portfolio: [{ id: 1, name: 'ОВДП', category: 'ОВДП', value: 52000, currency: 'UAH', profitPct: 0, ops: [] },
+      { id: 2, name: 'Депозит Mono', category: 'Депозит', value: 30000, currency: 'UAH', profitPct: 0, ops: [] },
+      { id: 3, name: 'VOO', category: 'ETF / Акції', value: 41000, currency: 'UAH', profitPct: 0, ops: [] }]
+  }));
+  // Підписи, що бодай частково виходять за ширину полотна.
+  const clipped = sel => p.evaluate(sel => {
+    const svg = document.querySelector(sel + ' svg'); if (!svg) return ['немає полотна'];
+    const W = svg.viewBox.baseVal.width;
+    return [...svg.querySelectorAll('text')].filter(t => { const b = t.getBBox(), x = t.getCTM().e + b.x; return x < -0.5 || x + b.width > W + 0.5; }).map(t => t.textContent);
+  }, sel);
+  await p.locator('text=Баланс місяця >> visible=true').first().click(); await p.waitForTimeout(400);
+  await p.getByRole('button', { name: "Зв'язки", exact: true }).click(); await p.waitForTimeout(3000);
+  const flow = await clipped('#flow-map');
+  check('телефон: підписи графа «Зв\'язки» в межах полотна', flow.length === 0, flow.join(', '));
+  await p.goto(URL_, { waitUntil: 'load' }); await p.waitForTimeout(900);
+  await p.locator('text=активів у портфелі >> visible=true').first().click(); await p.waitForTimeout(3000);
+  const port = await clipped('#port-map');
+  check('телефон: підписи карти портфеля в межах полотна', port.length === 0, port.join(', '));
+}
+
 check('без помилок JavaScript у всіх сценаріях', errors.length === 0, errors.join('; '));
 
 await browser.close();

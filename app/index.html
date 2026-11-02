@@ -686,6 +686,8 @@ class Component extends DCLogic {
     N.filter(d=>d.kind==='cat').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+26).style('fill','var(--m)').style('font','11px var(--font-body)').text(d=>fmt(d.value));
     N.filter(d=>d.kind==='root').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+13).style('fill','var(--t)').style('font','600 12px var(--font-body)').text(d=>d.label);
     const root=nodes.find(n=>n.kind==='root');if(root){root.fx=cx;root.fy=cy}
+    // Півширина вузла разом з підписом: на вузькому екрані підпис не має виходити за край полотна.
+    N.each(function(d){let w=0;d3.select(this).selectAll('text').each(function(){w=Math.max(w,this.getComputedTextLength())});d.hw=Math.max(d.r,w/2+2)});
     const sim=d3.forceSimulation(nodes)
       .force('link',d3.forceLink(links).id(d=>d.id).distance(d=>mind?(d.source.kind==='root'?120:46):30+d.target.r*.6).strength(.6))
       .force('charge',d3.forceManyBody().strength(d=>d.kind==='op'?-14:-70))
@@ -694,7 +696,7 @@ class Component extends DCLogic {
     sim.on('tick',()=>{
       const e=ease();
       L.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y).style('stroke-opacity',.5*e);
-      nodes.forEach(d=>{d.x=Math.max(d.r,Math.min(W-d.r,d.x));d.y=Math.max(d.r+4,Math.min(H-d.r-30,d.y))});
+      nodes.forEach(d=>{d.x=Math.max(d.hw,Math.min(W-d.hw,d.x));d.y=Math.max(d.r+4,Math.min(H-d.r-30,d.y))});
       N.attr('transform',d=>'translate('+d.x+','+d.y+')');
       N.select('circle').attr('r',d=>d.r*e);
     });
@@ -726,6 +728,7 @@ class Component extends DCLogic {
     const N=svg.append('g').selectAll('g').data(nodes).join('g');
     N.append('circle').style('fill',d=>d.kind==='cat'?'var(--m)':d.pnl==null?'var(--m)':d.pnl>=0.5?'var(--a7)':d.pnl<=-0.5?'var(--t)':'var(--m)').style('fill-opacity',d=>d.kind==='cat'?.25:.85).style('cursor',d=>d.kind==='pos'?'pointer':'default');
     N.filter(d=>d.kind==='cat').append('text').attr('text-anchor','middle').attr('dy',d=>d.r+13).style('fill','var(--t)').style('font','600 12px var(--font-body)').text(d=>d.label);
+    N.each(function(d){let w=0;d3.select(this).selectAll('text').each(function(){w=Math.max(w,this.getComputedTextLength())});d.hw=Math.max(d.r,w/2+2)});
     const sim=d3.forceSimulation(nodes)
       .force('link',d3.forceLink(links).id(d=>d.id).distance(d=>46+d.source.r).strength(.6))
       .force('charge',d3.forceManyBody().strength(d=>d.kind==='cat'?-120:-20))
@@ -733,7 +736,7 @@ class Component extends DCLogic {
       .force('center',d3.forceCenter(cx,cy));
     sim.on('tick',()=>{
       const e=ease();
-      nodes.forEach(d=>{d.x=Math.max(d.r,Math.min(W-d.r,d.x));d.y=Math.max(d.r+4,Math.min(H-d.r-22,d.y))});
+      nodes.forEach(d=>{d.x=Math.max(d.hw,Math.min(W-d.hw,d.x));d.y=Math.max(d.r+4,Math.min(H-d.r-22,d.y))});
       L.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y).style('stroke-opacity',.5*e);
       N.attr('transform',d=>'translate('+d.x+','+d.y+')');
       N.select('circle').attr('r',d=>d.r*e);
